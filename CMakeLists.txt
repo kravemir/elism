@@ -1,0 +1,10 @@
+cmake_minimum_required (VERSION 2.8.11)
+project (BP)
+
+ADD_CUSTOM_COMMAND(
+   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/main.cpp
+   COMMAND re2c ${CMAKE_CURRENT_SOURCE_DIR}/main.re -o ${CMAKE_CURRENT_BINARY_DIR}/main.cpp
+   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/main.re
+)
+
+ADD_EXECUTABLE(bp main.cpp)
