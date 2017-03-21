@@ -1,0 +1,19 @@
+# use the official gcc image, based on debian
+# see https://hub.docker.com/_/gcc/
+image: gcc
+
+build:
+  stage: build
+  before_script:
+    - apt update && apt -y install cmake re2c
+  script:
+    - sh -c "mkdir -p build; cd build; cmake ..;"
+    - sh -c "cd build; make;"
+  artifacts:
+    paths:
+      - build/bp
+
+test:
+  stage: test
+  script:
+    - bash tests/test_lexer.sh

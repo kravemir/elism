@@ -19,8 +19,6 @@ static void lex(const char *YYCURSOR)
             WS = " "|"\n";
 
             WS { continue; }
-            *   { printf ("       end: error\n"); return; }
-            end { printf ("       end: success\n"); return; }
             bin { printf ("       bin: %.*s\n", (int)(YYCURSOR - tok), tok); continue; }
             dec { printf ("       dec: %.*s\n", (int)(YYCURSOR - tok), tok); continue; }
             oct { printf ("       oct: %.*s\n", (int)(YYCURSOR - tok), tok); continue; }
@@ -36,6 +34,9 @@ static void lex(const char *YYCURSOR)
             "{"  { printf ("    symbol: {\n"); continue; }
             "}"  { printf ("    symbol: }\n"); continue; }
             ";"  { printf ("    symbol: ;\n"); continue; }
+
+            end  { printf ("       end: success\n"); return; }
+            [^]  { printf ("       end: error\n"); return; }
         */
     }
 }
