@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include <lexer.h>
-#include <parser.cpp>
 
 int main(int argc, char **argv)
 {
