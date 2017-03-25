@@ -5,15 +5,17 @@ image: gcc
 build:
   stage: build
   before_script:
-    - apt update && apt -y install cmake re2c
+    - apt update && apt -y install cmake re2c lemon
   script:
     - sh -c "mkdir -p build; cd build; cmake ..;"
     - sh -c "cd build; make;"
   artifacts:
     paths:
-      - build/bp
+      - build/bp_lexer
+      - build/bp_parser
 
 test:
   stage: test
   script:
     - bash tests/test_lexer.sh
+    - bash tests/test_parser.sh
