@@ -18,7 +18,8 @@ int main(int argc, char **argv)
     buffer_ptr = buffer;
 
     // perform lexical analysis
-    while(lex(buffer_ptr,printf)) {}
+    YYSTYPE yylval;
+    while(lex(buffer_ptr,printf,yylval)) {}
 
     // free resources
     delete[] buffer;

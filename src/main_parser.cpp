@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     YYSTYPE yylval;
     void *pParser = ParseAlloc(malloc);
     int tokenID;
-    while(tokenID = lex(buffer_ptr,dummy_printf)) {
+    while(tokenID = lex(buffer_ptr,dummy_printf,yylval)) {
         Parse(pParser, tokenID, yylval);
     }
     Parse(pParser, 0, yylval);
