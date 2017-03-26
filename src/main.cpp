@@ -1,3 +1,7 @@
+/**
+ * @author Miroslav Kravec
+ */
+
 #include <iostream>
 
 #include <lexer.h>

@@ -1,3 +1,7 @@
+/**
+ * @author Miroslav Kravec
+ */
+
 #ifndef LEXER_H
 #define LEXER_H
 
@@ -25,8 +29,18 @@ SKIP_WS:;
 
         WS { goto SKIP_WS; }
         bin { printf ("       bin: %.*s\n", (int)(YYCURSOR - tok), tok); return TOKEN_NUMBER; }
-        dec { printf ("       dec: %.*s\n", (int)(YYCURSOR - tok), tok); return TOKEN_NUMBER; }
-        oct { printf ("       oct: %.*s\n", (int)(YYCURSOR - tok), tok); return TOKEN_NUMBER; }
+        dec {
+            printf ("       dec: %.*s\n", (int)(YYCURSOR - tok), tok);
+            yylval.int_value = 0;
+            while(tok<YYCURSOR){ yylval.int_value = (yylval.int_value * 10) + (*(tok++) - '0'); }
+            return TOKEN_NUMBER;
+        }
+        oct {
+            printf ("       oct: %.*s\n", (int)(YYCURSOR - tok), tok);
+            yylval.int_value = 0;
+            while(tok<YYCURSOR){ yylval.int_value = (yylval.int_value << 3) + (*(tok++) - '0'); }
+            return TOKEN_NUMBER;
+        }
         hex { printf ("       hex: %.*s\n", (int)(YYCURSOR - tok), tok); return TOKEN_NUMBER; }
 
         "fn"        { printf ("   keyword: fn\n"); return TOKEN_FN; }

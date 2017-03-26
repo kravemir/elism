@@ -23,6 +23,28 @@ set(SOURCES
         # C/C++ sources and headers
         src/lexer.h
 
+        src/ast/ExprNode.h
+        src/ast/ExprNode.cpp
+        src/ast/IntValNode.h
+        src/ast/IntValNode.cpp
+
+        src/ast/TypeNode.cpp
+        src/ast/TypeNode.h
+        src/ast/NamedTypeNode.cpp
+        src/ast/NamedTypeNode.h
+        src/ast/ArrayTypeNode.cpp
+        src/ast/ArrayTypeNode.h
+
+        src/ast/StatementNode.h
+        src/ast/StatementNode.cpp
+        src/ast/ReturnNode.h
+        src/ast/ReturnNode.cpp
+
+        src/ast/FunctionNode.cpp
+        src/ast/FunctionNode.h
+        src/ast/Program.cpp
+        src/ast/Program.h
+
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h

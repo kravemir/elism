@@ -1,3 +1,7 @@
+/**
+ * @author Miroslav Kravec
+ */
+
 #ifndef BP_LEXER_H_H
 #define BP_LEXER_H_H
 

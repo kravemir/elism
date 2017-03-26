@@ -1,6 +1,6 @@
-fn foo() {
+fn foo () {
     return 0;
 }
-fn bar() {
+fn bar () {
     return 0;
 }
