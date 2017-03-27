@@ -1,6 +1,17 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (BP)
 
+# LLVM CONFIG
+find_package(LLVM REQUIRED CONFIG)
+
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
+
+include_directories(${LLVM_INCLUDE_DIRS})
+add_definitions(${LLVM_DEFINITIONS})
+
+llvm_map_components_to_libnames(llvm_libs core mcjit native irreader)
+
 ADD_CUSTOM_COMMAND(
    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
    COMMAND re2c -o ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/lexer.re
@@ -50,5 +61,12 @@ set(SOURCES
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
 )
 
-ADD_EXECUTABLE(bp_lexer src/main.cpp ${SOURCES})
-ADD_EXECUTABLE(bp_parser src/main_parser.cpp ${SOURCES})
+ADD_LIBRARY(shared_lib STATIC ${SOURCES})
+
+ADD_EXECUTABLE(bp_lexer src/main.cpp)
+ADD_EXECUTABLE(bp_parser src/main_parser.cpp)
+ADD_EXECUTABLE(bp_jit src/main_jit.cpp)
+
+target_link_libraries(bp_lexer shared_lib)
+target_link_libraries(bp_parser shared_lib)
+target_link_libraries(bp_jit shared_lib ${llvm_libs} rt )
