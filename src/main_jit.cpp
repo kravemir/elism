@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     // free resources
     delete[] buffer;
 
-    llvm::LLVMContext &llvmContext = llvm::getGlobalContext();
+    LLVMContext llvmContext;
     SMDiagnostic error;
     //Module *m = parseIRFile("decl.ll", error, llvmContext);
     std::unique_ptr<llvm::Module> Owner = llvm::make_unique<llvm::Module>("my cool jit", llvmContext);
@@ -121,11 +121,11 @@ int main(int argc, char **argv)
         Function *F = Function::Create(FT, Function::ExternalLinkage, "main", TheModule);
 
         // Create a new basic block to start insertion into.
-        BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", F);
-        IRBuilder<> Builder(getGlobalContext());
+        BasicBlock *BB = BasicBlock::Create(llvmContext, "entry", F);
+        IRBuilder<> Builder(llvmContext);
         Builder.SetInsertPoint(BB);
 
-        Builder.CreateRet(ConstantInt::get(getGlobalContext(),APInt((unsigned)32,42)));
+        Builder.CreateRet(ConstantInt::get(llvmContext,APInt((unsigned)32,42)));
 
         F->dump();
     }
