@@ -15,3 +15,14 @@ CodegenContext::CodegenContext(llvm::LLVMContext &llvmContext,
 void CodegenContext::codegenReturn(llvm::Value *value) {
     assert(0 && "Current context doesn't support return");
 }
+
+void CodegenContext::addValue(std::string name, llvm::Value *value) {
+    values[name] = value;
+}
+
+llvm::Value* CodegenContext::getValue(std::string name) {
+    auto it = values.find(name);
+    if(it != values.end())
+        return it->second;
+    return nullptr;
+}

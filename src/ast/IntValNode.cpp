@@ -13,5 +13,5 @@ std::string IntValNode::toString() const {
 }
 
 llvm::Value *IntValNode::codegen(CodegenContext &context) {
-    return ConstantInt::get(context.llvmContext, APInt((unsigned) 32, 42));
+    return ConstantInt::get(context.llvmContext, APInt((unsigned) 32, value));
 }

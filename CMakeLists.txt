@@ -38,6 +38,10 @@ set(SOURCES
         src/ast/ExprNode.cpp
         src/ast/IntValNode.h
         src/ast/IntValNode.cpp
+        src/ast/BiopExpr.h
+        src/ast/BiopExpr.cpp
+        src/ast/NameExpr.h
+        src/ast/NameExpr.cpp
 
         src/ast/TypeNode.cpp
         src/ast/TypeNode.h
@@ -50,6 +54,8 @@ set(SOURCES
         src/ast/StatementNode.cpp
         src/ast/ReturnNode.h
         src/ast/ReturnNode.cpp
+        src/ast/LetNode.h
+        src/ast/LetNode.cpp
 
         src/ast/FunctionNode.cpp
         src/ast/FunctionNode.h

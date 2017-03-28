@@ -17,11 +17,14 @@ public:
                    llvm::IRBuilder<> &builder);
 
     virtual void codegenReturn(llvm::Value *value);
+    virtual void addValue(std::string name, llvm::Value *value);
+    virtual llvm::Value* getValue(std::string name);
 
 public:
     llvm::Module * const module;
     llvm::LLVMContext &llvmContext;
     llvm::IRBuilder<> &builder;
+    std::map<std::string,llvm::Value*> values;
 };
 
 

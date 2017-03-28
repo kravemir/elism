@@ -45,6 +45,7 @@ SKIP_WS:;
 
         "fn"        { printf ("   keyword: fn\n"); return TOKEN_FN; }
         "return"    { printf ("   keyword: return\n"); return TOKEN_RETURN; }
+        "let"       { printf ("   keyword: ket\n"); return TOKEN_LET; }
 
         [a-zA-Z][a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);
@@ -54,6 +55,14 @@ SKIP_WS:;
             yylval.str_value = val;
             return TOKEN_IDENTIFIER;
         }
+
+        "+"  { printf ("    symbol: (\n"); return TOKEN_PLUS; }
+        "-"  { printf ("    symbol: (\n"); return TOKEN_MINUS; }
+        "*"  { printf ("    symbol: (\n"); return TOKEN_MULTIPLY; }
+        "/"  { printf ("    symbol: (\n"); return TOKEN_DIVIDE; }
+
+        "="  { printf ("    symbol: (\n"); return TOKEN_ASSIGN; }
+
 
         "("  { printf ("    symbol: (\n"); return TOKEN_LPAREN; }
         ")"  { printf ("    symbol: )\n"); return TOKEN_RPAREN; }
