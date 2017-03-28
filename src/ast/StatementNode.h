@@ -6,6 +6,7 @@
 #define BP_STATEMENTNODE_H
 
 #include <iostream>
+#include <CodegenContext.h>
 #include "ast/ExprNode.h"
 
 struct Printer {
@@ -72,6 +73,8 @@ class StatementNode {
 public:
     virtual void print(Printer &printer) const = 0;
     virtual ~StatementNode();
+
+    virtual void codegen(CodegenContext &context) = 0;
 };
 
 StatementNode* createReturnStatementNode(ExprNode *expr);

@@ -19,3 +19,9 @@ Program::~Program() {
         delete fn;
     }
 }
+
+void Program::codegen(CodegenContext &ctx) {
+    for(FunctionNode *fn : functions) {
+        fn->codegen(ctx);
+    }
+}

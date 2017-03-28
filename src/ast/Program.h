@@ -7,6 +7,7 @@
 
 
 #include <vector>
+#include <CodegenContext.h>
 #include "ast/FunctionNode.h"
 
 class Program {
@@ -16,6 +17,8 @@ public:
     void addFunction(FunctionNode *function);
 
     void print(Printer &printer);
+
+    void codegen(CodegenContext &ctx);
 
 private:
     std::vector<FunctionNode*> functions;

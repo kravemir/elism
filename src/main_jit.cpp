@@ -9,39 +9,18 @@
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
 #include "llvm/ExecutionEngine/SectionMemoryManager.h"
-#include "llvm/IR/DataLayout.h"
-#include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/LLVMContext.h"
-#include "llvm/IR/Module.h"
 #include "llvm/IR/Verifier.h"
-#include "llvm/Pass.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Transforms/Scalar.h"
 
 #include <llvm/IRReader/IRReader.h>
-#include <llvm/IR/LLVMContext.h>
 #include <llvm/Support/SourceMgr.h>
 
-#include "llvm/ADT/APFloat.h"
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/BasicBlock.h"
-#include "llvm/IR/Constants.h"
-#include "llvm/IR/DerivedTypes.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/LegacyPassManager.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/Type.h"
-#include "llvm/IR/Verifier.h"
-#include "llvm/Support/TargetSelect.h"
-#include "llvm/Target/TargetMachine.h"
-#include "llvm/Transforms/Scalar.h"
 
 #include <lexer.h>
 #include <parser.cpp>
-#include "lexer.h"
 #include "ast/Program.h"
 
 using namespace std;
@@ -58,6 +37,7 @@ int main(int argc, char **argv)
     LLVMInitializeNativeTarget();
     LLVMInitializeNativeAsmPrinter();
     LLVMInitializeNativeAsmParser();
+    LLVMLinkInMCJIT();
 
     long length;
     char *buffer;
@@ -114,20 +94,9 @@ int main(int argc, char **argv)
 
     // generate
     {
-        IntegerType *type = llvm::Type::getInt32Ty(TheModule->getContext());
-        std::vector<llvm::Type*> args_llvmtypes;
-
-        llvm::FunctionType *FT = llvm::FunctionType::get(type, args_llvmtypes, false);
-        Function *F = Function::Create(FT, Function::ExternalLinkage, "main", TheModule);
-
-        // Create a new basic block to start insertion into.
-        BasicBlock *BB = BasicBlock::Create(llvmContext, "entry", F);
         IRBuilder<> Builder(llvmContext);
-        Builder.SetInsertPoint(BB);
-
-        Builder.CreateRet(ConstantInt::get(llvmContext,APInt((unsigned)32,42)));
-
-        F->dump();
+        CodegenContext ctx(llvmContext, TheModule, Builder);
+        p.codegen(ctx);
     }
 
     // dump

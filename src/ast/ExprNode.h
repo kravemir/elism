@@ -6,10 +6,14 @@
 #define BP_EXPRNODE_H
 
 #include <string>
+#include <llvm/IR/Value.h>
+#include <CodegenContext.h>
 
 class ExprNode {
 public:
     virtual std::string toString() const = 0;
+
+    virtual llvm::Value *codegen(CodegenContext &context) = 0;
 };
 
 

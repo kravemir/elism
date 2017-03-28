@@ -15,6 +15,8 @@ public:
 
     void print(Printer &printer) const override;
 
+    void codegen(CodegenContext &context) override;
+
 private:
     ExprNode *expr;
 };

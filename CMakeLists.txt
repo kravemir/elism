@@ -56,6 +56,9 @@ set(SOURCES
         src/ast/Program.cpp
         src/ast/Program.h
 
+        src/CodegenContext.h
+        src/CodegenContext.cpp
+
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
@@ -67,6 +70,6 @@ ADD_EXECUTABLE(bp_lexer src/main.cpp)
 ADD_EXECUTABLE(bp_parser src/main_parser.cpp)
 ADD_EXECUTABLE(bp_jit src/main_jit.cpp)
 
-target_link_libraries(bp_lexer shared_lib)
-target_link_libraries(bp_parser shared_lib)
+target_link_libraries(bp_lexer shared_lib ${llvm_libs} rt )
+target_link_libraries(bp_parser shared_lib ${llvm_libs} rt )
 target_link_libraries(bp_jit shared_lib ${llvm_libs} rt )

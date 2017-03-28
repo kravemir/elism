@@ -6,8 +6,10 @@
 #define BP_FUNCTIONNODE_H
 
 #include <vector>
+
 #include "StatementNode.h"
 #include "TypeNode.h"
+#include "CodegenContext.h"
 
 class FunctionNode {
 public:
@@ -18,6 +20,9 @@ public:
     virtual ~FunctionNode();
 
     virtual void print(Printer &printer);
+
+    void codegen(CodegenContext &context);
+
 private:
     const char *name;
     TypeNode *returnType;

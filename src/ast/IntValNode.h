@@ -12,6 +12,9 @@ public:
     IntValNode(long value);
 
     std::string toString() const override;
+
+    llvm::Value *codegen(CodegenContext &context) override;
+
 private:
     long value;
 };

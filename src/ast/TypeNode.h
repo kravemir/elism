@@ -7,11 +7,16 @@
 
 #include <string>
 
+#include "llvm/IR/Type.h"
+
+#include "CodegenContext.h"
+
 class TypeNode {
 public:
     virtual ~TypeNode();
 
     virtual std::string toString() = 0;
+    virtual llvm::Type *codegen(CodegenContext &context) = 0;
 };
 
 

@@ -6,6 +6,8 @@
 
 #include <cassert>
 
+using namespace llvm;
+
 ReturnNode::ReturnNode(ExprNode *expr) : expr(expr) {
     assert(expr != nullptr);
 }
@@ -16,4 +18,8 @@ void ReturnNode::print(Printer &printer) const {
 
 ReturnNode::~ReturnNode() {
     delete expr;
+}
+
+void ReturnNode::codegen(CodegenContext &context) {
+    context.codegenReturn(expr->codegen(context));
 }
