@@ -16,6 +16,15 @@ void CodegenContext::codegenReturn(llvm::Value *value) {
     assert(0 && "Current context doesn't support return");
 }
 
+void CodegenContext::addVariable(std::string name, llvm::Value *value) {
+    assert(0 && "Current context doesn't support variables");
+}
+
+void CodegenContext::storeValue(std::string name, llvm::Value *value) {
+    assert(0 && "Current context doesn't support variables");
+}
+
+
 void CodegenContext::addValue(std::string name, llvm::Value *value) {
     values[name] = value;
 }

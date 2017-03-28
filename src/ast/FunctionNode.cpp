@@ -58,12 +58,41 @@ FunctionNode::~FunctionNode() {
 
 class FunctionContext: public CodegenContext {
 public:
-    FunctionContext(LLVMContext &llvmContext, Module *const module, IRBuilder<> &builder)
-            : CodegenContext(llvmContext, module, builder) {}
+    FunctionContext(LLVMContext &llvmContext, Module *const module, IRBuilder<> &builder, BasicBlock *entryBlock)
+            : CodegenContext(llvmContext, module, builder),
+              entryBlock(entryBlock)
+    {}
+
+    void addVariable(std::string name, llvm::Value *value) override {
+        IRBuilder<> builder(entryBlock, entryBlock->begin());
+        AllocaInst* alloca = builder.CreateAlloca(value->getType(), 0, "var." + name);
+        variables[name] = alloca;
+        builder.CreateStore(value, alloca);
+    }
+
+    void storeValue(std::string name, llvm::Value *value) override {
+        auto it = variables.find(name);
+        if(it != variables.end()) {
+            builder.CreateStore(value, it->second);
+        } else {
+            assert(0);
+        }
+    }
+
+    Value *getValue(std::string name) override {
+        auto it = variables.find(name);
+        if(it != variables.end()) {
+            return builder.CreateLoad(it->second);
+        }
+        return CodegenContext::getValue(name);
+    }
 
     void codegenReturn(llvm::Value *value) override {
         builder.CreateRet(value);
     }
+
+    std::map<std::string,llvm::AllocaInst*> variables;
+    BasicBlock *entryBlock;
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
@@ -78,7 +107,7 @@ void FunctionNode::codegen(CodegenContext &context) {
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
     context.builder.SetInsertPoint(BB);
 
-    FunctionContext functionContext(context.llvmContext, context.module, context.builder);
+    FunctionContext functionContext(context.llvmContext, context.module, context.builder, BB);
     for(StatementNode *stmt : statements) {
         stmt->codegen(functionContext);
     }

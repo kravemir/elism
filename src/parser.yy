@@ -27,6 +27,8 @@
 #include "ast/ArrayTypeNode.h"
 #include "ast/BiopExpr.h"
 #include "ast/LetNode.h"
+#include "ast/VarNode.h"
+#include "ast/AssignNode.h"
 #include "ast/NameExpr.h"
 
 std::string tokenToString(YYSTYPE &yystype) {
@@ -140,6 +142,14 @@ statement(S) ::= RETURN expr(E). {
 
 statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE). {
     S = new LetNode(tokenToString(NAME),VALUE);
+}
+
+statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE). {
+    S = new VarNode(tokenToString(NAME),0,VALUE);
+}
+
+statement(S) ::= IDENTIFIER(NAME) ASSIGN expr(VALUE). {
+    S = new AssignNode(tokenToString(NAME),VALUE);
 }
 
 %type expr { ExprNode* }

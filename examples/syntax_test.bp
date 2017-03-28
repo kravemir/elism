@@ -1,4 +1,6 @@
 fn main() -> i32 {
     let x12 = ((32 - 16) / 8 + 4) * 2;
-    return x12;
+    var v = x12;
+    v = v * 2 + x12;
+    return v;
 }
