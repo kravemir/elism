@@ -10,24 +10,42 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
 
+class CodegenValue;
+
 class CodegenContext {
 public:
     CodegenContext(llvm::LLVMContext &llvmContext,
                    llvm::Module *const module,
                    llvm::IRBuilder<> &builder);
 
-    virtual void codegenReturn(llvm::Value *value);
-    virtual void addValue(std::string name, llvm::Value *value);
-    virtual void addVariable(std::string name, llvm::Value *value);
-    virtual void storeValue(std::string name, llvm::Value *value);
-    virtual llvm::Value* getValue(std::string name);
+    virtual void codegenReturn(CodegenValue *value);
+    virtual void addValue(std::string name, CodegenValue *value);
+    virtual void addVariable(std::string name, CodegenValue *value);
+    virtual void storeValue(std::string name, CodegenValue *value);
+    virtual CodegenValue * getValue(std::string name);
 
 public:
     llvm::Module * const module;
     llvm::LLVMContext &llvmContext;
     llvm::IRBuilder<> &builder;
 
-    std::map<std::string,llvm::Value*> values;
+    std::map<std::string,CodegenValue*> values;
+};
+
+class CodegenValue {
+public:
+    CodegenValue(llvm::Value *value);
+    CodegenValue(llvm::Value *value, llvm::Type *const callReturnType);
+
+    virtual CodegenValue* doCall(CodegenContext &ctx);
+
+    bool isCallable() const {
+        return callReturnType != nullptr;
+    }
+
+public:
+    llvm::Value *value;
+    llvm::Type * const callReturnType;
 };
 
 

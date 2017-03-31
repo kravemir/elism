@@ -14,7 +14,7 @@ public:
 
     std::string toString() const override;
 
-    llvm::Value *codegen(CodegenContext &context) override;
+    CodegenValue * codegen(CodegenContext &context) override;
 
 private:
     const char OP;

@@ -1,5 +1,9 @@
+fn foo() -> i32 {
+    return ((32 - 16) / 8 + 4) * 2;
+}
+
 fn main() -> i32 {
-    let x12 = ((32 - 16) / 8 + 4) * 2;
+    let x12 = foo();
     var v = x12;
     v = v * 2 + x12;
     return v;

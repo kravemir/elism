@@ -58,41 +58,56 @@ FunctionNode::~FunctionNode() {
 
 class FunctionContext: public CodegenContext {
 public:
-    FunctionContext(LLVMContext &llvmContext, Module *const module, IRBuilder<> &builder, BasicBlock *entryBlock)
-            : CodegenContext(llvmContext, module, builder),
+    FunctionContext(CodegenContext &parent,BasicBlock *entryBlock)
+            : CodegenContext(parent.llvmContext, parent.module, parent.builder),
+              parent(parent),
               entryBlock(entryBlock)
     {}
 
-    void addVariable(std::string name, llvm::Value *value) override {
+    void addVariable(std::string name, CodegenValue *value) override {
+        //printf("Add variable: %s\n",name.c_str());
         IRBuilder<> builder(entryBlock, entryBlock->begin());
-        AllocaInst* alloca = builder.CreateAlloca(value->getType(), 0, "var." + name);
+        AllocaInst* alloca = builder.CreateAlloca(value->value->getType(), 0, "var." + name);
         variables[name] = alloca;
-        builder.CreateStore(value, alloca);
+        this->builder.CreateStore(value->value, alloca);
     }
 
-    void storeValue(std::string name, llvm::Value *value) override {
+    void storeValue(std::string name, CodegenValue *value) override {
         auto it = variables.find(name);
         if(it != variables.end()) {
-            builder.CreateStore(value, it->second);
+            builder.CreateStore(value->value, it->second);
         } else {
             assert(0);
         }
     }
 
-    Value *getValue(std::string name) override {
+    CodegenValue * getValue(std::string name) override {
+        //printf("Get function: %s\n",name.c_str());
         auto it = variables.find(name);
         if(it != variables.end()) {
-            return builder.CreateLoad(it->second);
+            return new CodegenValue(builder.CreateLoad(it->second));
         }
-        return CodegenContext::getValue(name);
+        CodegenValue *value = CodegenContext::getValue(name);
+        if(!value)
+            return parent.getValue(name);
+        return value;
     }
 
-    void codegenReturn(llvm::Value *value) override {
-        builder.CreateRet(value);
+    void codegenReturn(CodegenValue *value) override {
+        builder.CreateRet(value->value);
     }
 
+    CodegenContext &parent;
     std::map<std::string,llvm::AllocaInst*> variables;
     BasicBlock *entryBlock;
+};
+
+struct FunctionValue: CodegenValue {
+    FunctionValue(Value *value, Type *const callReturnType) : CodegenValue(value, callReturnType) {}
+
+    CodegenValue *doCall(CodegenContext &ctx) override {
+        return new CodegenValue(ctx.builder.CreateCall(value,{},"call"));
+    }
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
@@ -101,16 +116,17 @@ void FunctionNode::codegen(CodegenContext &context) {
     // TODO: args
 
     llvm::FunctionType *FT = llvm::FunctionType::get(returnType, args_llvmtypes, false);
-    Function *F = Function::Create(FT, Function::ExternalLinkage, "main", context.module);
+    Function *F = Function::Create(FT, Function::ExternalLinkage, name, context.module);
 
     // Create a new basic block to start insertion into.
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
     context.builder.SetInsertPoint(BB);
 
-    FunctionContext functionContext(context.llvmContext, context.module, context.builder, BB);
+    FunctionContext functionContext(context, BB);
     for(StatementNode *stmt : statements) {
         stmt->codegen(functionContext);
     }
 
     F->dump();
+    context.addValue(name,new FunctionValue(F,returnType));
 }

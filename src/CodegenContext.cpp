@@ -12,26 +12,52 @@ CodegenContext::CodegenContext(llvm::LLVMContext &llvmContext,
           builder(builder)
 {}
 
-void CodegenContext::codegenReturn(llvm::Value *value) {
+void CodegenContext::codegenReturn(CodegenValue *value) {
     assert(0 && "Current context doesn't support return");
 }
 
-void CodegenContext::addVariable(std::string name, llvm::Value *value) {
+void CodegenContext::addVariable(std::string name, CodegenValue *value) {
     assert(0 && "Current context doesn't support variables");
 }
 
-void CodegenContext::storeValue(std::string name, llvm::Value *value) {
+void CodegenContext::storeValue(std::string name, CodegenValue *value) {
     assert(0 && "Current context doesn't support variables");
 }
 
 
-void CodegenContext::addValue(std::string name, llvm::Value *value) {
+void CodegenContext::addValue(std::string name, CodegenValue *value) {
+    //printf("Add %p: %s\n",this,name.c_str());
+    assert(value);
     values[name] = value;
 }
 
-llvm::Value* CodegenContext::getValue(std::string name) {
+CodegenValue * CodegenContext::getValue(std::string name) {
+    //printf("Get %p: %s\n",this,name.c_str());
     auto it = values.find(name);
     if(it != values.end())
         return it->second;
+    /*printf("Get: -- not found --\n");
+    for(auto it : values) {
+        printf("Contains: %s\n", it.first.c_str());
+    }*/
+    return nullptr;
+}
+
+CodegenValue::CodegenValue(llvm::Value *value)
+        : value(value),
+          callReturnType(nullptr)
+{
+    assert(value);
+}
+
+CodegenValue::CodegenValue(llvm::Value *value, llvm::Type *const callReturnType)
+        : value(value),
+          callReturnType(callReturnType)
+{
+    assert(value);
+}
+
+CodegenValue *CodegenValue::doCall(CodegenContext &ctx) {
+    assert(0);
     return nullptr;
 }

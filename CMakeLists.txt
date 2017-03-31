@@ -74,7 +74,7 @@ set(SOURCES
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
-)
+        src/ast/expressions/CallExprNode.cpp src/ast/expressions/CallExprNode.h)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 

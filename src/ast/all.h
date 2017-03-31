@@ -13,6 +13,7 @@
 #include "expressions/BinaryOperationExprNode.h"
 #include "expressions/ConstIntExprNode.h"
 #include "expressions/NameExprNode.h"
+#include "expressions/CallExprNode.h"
 
 #include "statements/AssignStatementNode.h"
 #include "statements/LetStatementNode.h"

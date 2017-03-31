@@ -10,6 +10,8 @@ std::string NameExprNode::toString() const {
     return name;
 }
 
-llvm::Value *NameExprNode::codegen(CodegenContext &context) {
-    return context.getValue(name);
+CodegenValue * NameExprNode::codegen(CodegenContext &context) {
+    CodegenValue *value = context.getValue(name);
+    assert(value);
+    return value;
 }

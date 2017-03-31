@@ -150,13 +150,22 @@ add_expr(E) ::= add_expr(E1) MINUS mult_expr(E2). {
 add_expr(E) ::= mult_expr(E1). { E = E1; }
 
 %type mult_expr { ExprNode* }
-mult_expr(E) ::= mult_expr(E1) MULTIPLY atom(E2). {
+mult_expr(E) ::= mult_expr(E1) MULTIPLY atom_expr(E2). {
     E = new BinaryOperationExprNode('*', E1,E2);
 }
-mult_expr(E) ::= mult_expr(E1) DIVIDE atom(E2). {
+mult_expr(E) ::= mult_expr(E1) DIVIDE atom_expr(E2). {
     E = new BinaryOperationExprNode('/', E1,E2);
 }
-mult_expr(E) ::= atom(E1). { E = E1; }
+mult_expr(E) ::= atom_expr(E1). { E = E1; }
+
+%type atom_expr { ExprNode* }
+atom_expr(AE) ::= atom(A). {
+    AE = A;
+}
+
+atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
+    AE = new CallExprNode(AE_);
+}
 
 %type atom { ExprNode* }
 atom(E) ::= NUMBER(N). {

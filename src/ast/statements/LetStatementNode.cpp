@@ -17,6 +17,6 @@ void LetStatementNode::print(Printer &printer) const {
 }
 
 void LetStatementNode::codegen(CodegenContext &context) {
-    Value *val = expr->codegen(context);
+    CodegenValue *val = expr->codegen(context);
     context.addValue(name,val);
 }

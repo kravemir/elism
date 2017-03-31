@@ -21,6 +21,7 @@ void VarStatementNode::print(Printer &printer) const {
 }
 
 void VarStatementNode::codegen(CodegenContext &context) {
-    Value* value = expr->codegen(context);
+    CodegenValue* value = expr->codegen(context);
+    assert(value);
     context.addVariable(name,value);
 }

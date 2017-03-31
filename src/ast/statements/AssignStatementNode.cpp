@@ -13,6 +13,6 @@ void AssignStatementNode::print(Printer &printer) const {
 }
 
 void AssignStatementNode::codegen(CodegenContext &context) {
-    Value* value = expr->codegen(context);
+    CodegenValue* value = expr->codegen(context);
     context.storeValue(name,value);
 }

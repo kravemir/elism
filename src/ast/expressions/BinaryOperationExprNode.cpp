@@ -12,9 +12,9 @@ std::string BinaryOperationExprNode::toString() const {
     return "(" + e1->toString() + " " + OP + " " + e2->toString() + ")";
 }
 
-llvm::Value *BinaryOperationExprNode::codegen(CodegenContext &context) {
-    Value* v1 = e1->codegen(context);
-    Value* v2 = e2->codegen(context);
+CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context) {
+    Value* v1 = e1->codegen(context)->value;
+    Value* v2 = e2->codegen(context)->value;
     // TODO: types
 
     Value *res = nullptr;
@@ -30,5 +30,5 @@ llvm::Value *BinaryOperationExprNode::codegen(CodegenContext &context) {
         default:
             assert(0);
     }
-    return res;
+    return new CodegenValue(res);
 }
