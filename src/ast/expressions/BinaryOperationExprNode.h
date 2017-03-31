@@ -6,11 +6,11 @@
 #define BP_BIOPEXPR_H
 
 
-#include "ExprNode.h"
+#include "ast/ExprNode.h"
 
-class BiopExpr: public ExprNode {
+class BinaryOperationExprNode: public ExprNode {
 public:
-    BiopExpr(const char OP, ExprNode *const e1, ExprNode *const e2);
+    BinaryOperationExprNode(const char OP, ExprNode *const e1, ExprNode *const e2);
 
     std::string toString() const override;
 

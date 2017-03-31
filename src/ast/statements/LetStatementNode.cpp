@@ -2,13 +2,13 @@
 // Created by miroslav on 3/28/17.
 //
 
-#include "LetNode.h"
+#include "LetStatementNode.h"
 
 using namespace llvm;
 
-LetNode::LetNode(const std::string &name, ExprNode *const expr) : name(name), expr(expr) {}
+LetStatementNode::LetStatementNode(const std::string &name, ExprNode *const expr) : name(name), expr(expr) {}
 
-void LetNode::print(Printer &printer) const {
+void LetStatementNode::print(Printer &printer) const {
     printer.print("let ");
     printer.print(name);
     printer.print(" = ");
@@ -16,7 +16,7 @@ void LetNode::print(Printer &printer) const {
     printer.println(";");
 }
 
-void LetNode::codegen(CodegenContext &context) {
+void LetStatementNode::codegen(CodegenContext &context) {
     Value *val = expr->codegen(context);
     context.addValue(name,val);
 }

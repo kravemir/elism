@@ -6,12 +6,12 @@
 #define BP_RETURNNODE_H
 
 
-#include "StatementNode.h"
+#include "ast/StatementNode.h"
 
-class ReturnNode: public StatementNode {
+class ReturnStatementNode: public StatementNode {
 public:
-    ReturnNode(ExprNode *expr);
-    virtual ~ReturnNode();
+    ReturnStatementNode(ExprNode *expr);
+    virtual ~ReturnStatementNode();
 
     void print(Printer &printer) const override;
 

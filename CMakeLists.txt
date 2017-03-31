@@ -34,31 +34,37 @@ set(SOURCES
         # C/C++ sources and headers
         src/lexer.h
 
+        src/ast/all.h
+
         src/ast/ExprNode.h
         src/ast/ExprNode.cpp
-        src/ast/IntValNode.h
-        src/ast/IntValNode.cpp
-        src/ast/BiopExpr.h
-        src/ast/BiopExpr.cpp
-        src/ast/NameExpr.h
-        src/ast/NameExpr.cpp
+        src/ast/expressions/ConstIntExprNode.h
+        src/ast/expressions/ConstIntExprNode.cpp
+        src/ast/expressions/BinaryOperationExprNode.h
+        src/ast/expressions/BinaryOperationExprNode.cpp
+        src/ast/expressions/NameExprNode.h
+        src/ast/expressions/NameExprNode.cpp
 
         src/ast/TypeNode.cpp
         src/ast/TypeNode.h
-        src/ast/NamedTypeNode.cpp
-        src/ast/NamedTypeNode.h
-        src/ast/ArrayTypeNode.cpp
-        src/ast/ArrayTypeNode.h
+        src/ast/types/NamedTypeNode.cpp
+        src/ast/types/NamedTypeNode.h
+        src/ast/types/ArrayTypeNode.cpp
+        src/ast/types/ArrayTypeNode.h
 
         src/ast/StatementNode.h
         src/ast/StatementNode.cpp
-        src/ast/ReturnNode.h
-        src/ast/ReturnNode.cpp
-        src/ast/LetNode.h
-        src/ast/LetNode.cpp
+        src/ast/statements/ReturnStatementNode.h
+        src/ast/statements/ReturnStatementNode.cpp
+        src/ast/statements/LetStatementNode.h
+        src/ast/statements/LetStatementNode.cpp
+        src/ast/statements/VarStatementNode.h
+        src/ast/statements/VarStatementNode.cpp
+        src/ast/statements/AssignStatementNode.h
+        src/ast/statements/AssignStatementNode.cpp
 
-        src/ast/FunctionNode.cpp
-        src/ast/FunctionNode.h
+        src/ast/declarations/FunctionNode.cpp
+        src/ast/declarations/FunctionNode.h
         src/ast/Program.cpp
         src/ast/Program.h
 
@@ -68,7 +74,7 @@ set(SOURCES
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
-        src/ast/VarNode.cpp src/ast/VarNode.h src/ast/AssignNode.cpp src/ast/AssignNode.h)
+)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 

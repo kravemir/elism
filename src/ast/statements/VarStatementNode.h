@@ -6,12 +6,12 @@
 #define BP_VARNODE_H
 
 
-#include "StatementNode.h"
-#include "TypeNode.h"
+#include "ast/StatementNode.h"
+#include "ast/TypeNode.h"
 
-class VarNode: public StatementNode {
+class VarStatementNode: public StatementNode {
 public:
-    VarNode(const std::string &name, const TypeNode *type, ExprNode *const expr);
+    VarStatementNode(const std::string &name, const TypeNode *type, ExprNode *const expr);
 
     void print(Printer &printer) const override;
 

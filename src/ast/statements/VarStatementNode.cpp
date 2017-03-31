@@ -2,11 +2,11 @@
 // Created by miroslav on 3/28/17.
 //
 
-#include "VarNode.h"
+#include "VarStatementNode.h"
 
 using namespace llvm;
 
-VarNode::VarNode(const std::string &name,
+VarStatementNode::VarStatementNode(const std::string &name,
                  const TypeNode *type,
                  ExprNode *const expr)
         : name(name),
@@ -16,11 +16,11 @@ VarNode::VarNode(const std::string &name,
     assert(expr);
 }
 
-void VarNode::print(Printer &printer) const {
+void VarStatementNode::print(Printer &printer) const {
     printer.print("var " + name + " = " + expr->toString() + ";" );
 }
 
-void VarNode::codegen(CodegenContext &context) {
+void VarStatementNode::codegen(CodegenContext &context) {
     Value* value = expr->codegen(context);
     context.addVariable(name,value);
 }

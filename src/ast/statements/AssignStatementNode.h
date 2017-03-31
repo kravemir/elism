@@ -2,15 +2,15 @@
 // Created by miroslav on 3/28/17.
 //
 
-#ifndef BP_LETNODE_H
-#define BP_LETNODE_H
+#ifndef BP_ASSIGNNODE_H
+#define BP_ASSIGNNODE_H
 
 
-#include "StatementNode.h"
+#include "ast/StatementNode.h"
 
-class LetNode: public StatementNode {
+class AssignStatementNode: public StatementNode {
 public:
-    LetNode(const std::string &name, ExprNode *const expr);
+    AssignStatementNode(const std::string &name, ExprNode *const expr);
 
     void print(Printer &printer) const override;
 
@@ -22,4 +22,4 @@ private:
 };
 
 
-#endif //BP_LETNODE_H
+#endif //BP_ASSIGNNODE_H

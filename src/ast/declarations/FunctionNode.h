@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "StatementNode.h"
-#include "TypeNode.h"
+#include "ast/StatementNode.h"
+#include "ast/TypeNode.h"
 #include "CodegenContext.h"
 
 class FunctionNode {

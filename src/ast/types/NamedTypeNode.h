@@ -6,7 +6,7 @@
 #define BP_NAMEDTYPENODE_H
 
 #include <CodegenContext.h>
-#include "TypeNode.h"
+#include "ast/TypeNode.h"
 
 class NamedTypeNode: public TypeNode {
 public:

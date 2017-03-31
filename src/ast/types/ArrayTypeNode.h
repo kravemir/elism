@@ -7,7 +7,7 @@
 
 
 #include <CodegenContext.h>
-#include "TypeNode.h"
+#include "ast/TypeNode.h"
 
 class ArrayTypeNode: public TypeNode {
 public:

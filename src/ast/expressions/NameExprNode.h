@@ -6,11 +6,11 @@
 #define BP_NAMEEXPR_H
 
 
-#include "ExprNode.h"
+#include "ast/ExprNode.h"
 
-class NameExpr: public ExprNode {
+class NameExprNode: public ExprNode {
 public:
-    NameExpr(const std::string &name);
+    NameExprNode(const std::string &name);
 
     std::string toString() const override;
 

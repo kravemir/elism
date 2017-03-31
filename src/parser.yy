@@ -14,22 +14,7 @@
 #include "parser.h"
 #include "lexer.h"
 
-#include "ast/StatementNode.h"
-#include "ast/ReturnNode.h"
-
-#include "ast/ExprNode.h"
-#include "ast/IntValNode.h"
-
-#include "ast/FunctionNode.h"
-#include "ast/Program.h"
-#include "ast/TypeNode.h"
-#include "ast/NamedTypeNode.h"
-#include "ast/ArrayTypeNode.h"
-#include "ast/BiopExpr.h"
-#include "ast/LetNode.h"
-#include "ast/VarNode.h"
-#include "ast/AssignNode.h"
-#include "ast/NameExpr.h"
+#include "ast/all.h"
 
 std::string tokenToString(YYSTYPE &yystype) {
     if(yystype.str_value) {
@@ -137,19 +122,19 @@ statement_list(SL) ::= statement(S) SEMICOLON. {
 
 %type statement { StatementNode* }
 statement(S) ::= RETURN expr(E). {
-    S = new ReturnNode(E);
+    S = new ReturnStatementNode(E);
 }
 
 statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE). {
-    S = new LetNode(tokenToString(NAME),VALUE);
+    S = new LetStatementNode(tokenToString(NAME),VALUE);
 }
 
 statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE). {
-    S = new VarNode(tokenToString(NAME),0,VALUE);
+    S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
 
 statement(S) ::= IDENTIFIER(NAME) ASSIGN expr(VALUE). {
-    S = new AssignNode(tokenToString(NAME),VALUE);
+    S = new AssignStatementNode(tokenToString(NAME),VALUE);
 }
 
 %type expr { ExprNode* }
@@ -157,28 +142,28 @@ expr(E) ::= add_expr(E_). { E = E_; }
 
 %type add_expr { ExprNode* }
 add_expr(E) ::= add_expr(E1) PLUS mult_expr(E2). {
-    E = new BiopExpr('+', E1,E2);
+    E = new BinaryOperationExprNode('+', E1,E2);
 }
 add_expr(E) ::= add_expr(E1) MINUS mult_expr(E2). {
-    E = new BiopExpr('-', E1,E2);
+    E = new BinaryOperationExprNode('-', E1,E2);
 }
 add_expr(E) ::= mult_expr(E1). { E = E1; }
 
 %type mult_expr { ExprNode* }
 mult_expr(E) ::= mult_expr(E1) MULTIPLY atom(E2). {
-    E = new BiopExpr('*', E1,E2);
+    E = new BinaryOperationExprNode('*', E1,E2);
 }
 mult_expr(E) ::= mult_expr(E1) DIVIDE atom(E2). {
-    E = new BiopExpr('/', E1,E2);
+    E = new BinaryOperationExprNode('/', E1,E2);
 }
 mult_expr(E) ::= atom(E1). { E = E1; }
 
 %type atom { ExprNode* }
 atom(E) ::= NUMBER(N). {
-    E = new IntValNode(N.int_value);
+    E = new ConstIntExprNode(N.int_value);
 }
 atom(E) ::= IDENTIFIER(NAME). {
-    E = new NameExpr(tokenToString(NAME));
+    E = new NameExprNode(tokenToString(NAME));
 }
 atom(E) ::= LPAREN expr(E1) RPAREN. {
     E = E1;

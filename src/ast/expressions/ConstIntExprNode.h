@@ -5,11 +5,11 @@
 #ifndef BP_INTVALNODE_H
 #define BP_INTVALNODE_H
 
-#include "ExprNode.h"
+#include "ast/ExprNode.h"
 
-class IntValNode: public ExprNode {
+class ConstIntExprNode: public ExprNode {
 public:
-    IntValNode(long value);
+    ConstIntExprNode(long value);
 
     std::string toString() const override;
 

@@ -2,17 +2,17 @@
 // Created by miroslav on 3/28/17.
 //
 
-#include "BiopExpr.h"
+#include "BinaryOperationExprNode.h"
 
 using namespace llvm;
 
-BiopExpr::BiopExpr(const char OP, ExprNode *const e1, ExprNode *const e2) : OP(OP), e1(e1), e2(e2) {}
+BinaryOperationExprNode::BinaryOperationExprNode(const char OP, ExprNode *const e1, ExprNode *const e2) : OP(OP), e1(e1), e2(e2) {}
 
-std::string BiopExpr::toString() const {
+std::string BinaryOperationExprNode::toString() const {
     return "(" + e1->toString() + " " + OP + " " + e2->toString() + ")";
 }
 
-llvm::Value *BiopExpr::codegen(CodegenContext &context) {
+llvm::Value *BinaryOperationExprNode::codegen(CodegenContext &context) {
     Value* v1 = e1->codegen(context);
     Value* v2 = e2->codegen(context);
     // TODO: types
