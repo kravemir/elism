@@ -150,8 +150,8 @@ statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE). {
     S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
 
-statement(S) ::= IDENTIFIER(NAME) ASSIGN expr(VALUE). {
-    S = new AssignStatementNode(tokenToString(NAME),VALUE);
+statement(S) ::= expr(TARGET) ASSIGN expr(VALUE). {
+    S = new AssignStatementNode(TARGET,VALUE);
 }
 
 %type expr { ExprNode* }

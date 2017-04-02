@@ -84,7 +84,7 @@ public:
         //printf("Get function: %s\n",name.c_str());
         auto it = variables.find(name);
         if(it != variables.end()) {
-            return new CodegenValue(it->second.first,builder.CreateLoad(it->second.second));
+            return new CodegenValue(it->second.first,builder.CreateLoad(it->second.second,name),it->second.second);
         }
         CodegenValue *value = CodegenContext::getValue(name);
         if(!value)

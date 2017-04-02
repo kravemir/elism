@@ -6,13 +6,17 @@
 
 using namespace llvm;
 
-AssignStatementNode::AssignStatementNode(const std::string &name, ExprNode *const expr) : name(name), expr(expr) {}
+AssignStatementNode::AssignStatementNode(ExprNode *const targetExpr, ExprNode *const valueExpr)
+        : targetExpr(targetExpr),
+          valueExpr(valueExpr)
+{}
 
 void AssignStatementNode::print(Printer &printer) const {
     printer.println("TODO");
 }
 
 void AssignStatementNode::codegen(CodegenContext &context) {
-    CodegenValue* value = expr->codegen(context);
-    context.storeValue(name,value);
+    CodegenValue* target = targetExpr->codegen(context);
+    CodegenValue* value = valueExpr->codegen(context);
+    target->doStore(context,value);
 }

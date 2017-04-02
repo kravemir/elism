@@ -13,7 +13,7 @@ public:
 
     std::string toString() const override;
 
-    CodegenValue * codegen(CodegenContext &context) override;
+    CodegenValue * codegen(CodegenContext &context, const llvm::Twine &Name = "") override;
 
 private:
     long value;

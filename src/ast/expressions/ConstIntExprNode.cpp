@@ -17,7 +17,7 @@ struct IntType: CodegenType {
 
 };
 
-CodegenValue * ConstIntExprNode::codegen(CodegenContext &context) {
+CodegenValue * ConstIntExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     return new CodegenValue(
             new IntType(Type::getInt64Ty(context.llvmContext)),
             ConstantInt::get(context.llvmContext, APInt((unsigned) 32, (uint64_t) value))

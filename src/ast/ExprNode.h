@@ -13,7 +13,7 @@ class ExprNode {
 public:
     virtual std::string toString() const = 0;
 
-    virtual CodegenValue * codegen(CodegenContext &context) = 0;
+    virtual CodegenValue * codegen(CodegenContext &context, const llvm::Twine &Name = "") = 0;
 };
 
 

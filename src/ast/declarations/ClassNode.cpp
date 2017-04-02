@@ -38,7 +38,7 @@ struct ClassType: CodegenType {
                     },
                     "child." + name + ".addr"
             );
-            return new CodegenValue(it->second.second,ctx.builder.CreateLoad(ptr));
+            return new CodegenValue(it->second.second,ctx.builder.CreateLoad(ptr,"child."+name),ptr);
         }
         assert(0);
         return nullptr;

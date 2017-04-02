@@ -10,7 +10,7 @@ std::string ChildExprNode::toString() const {
     return base->toString() + "." + childName;
 }
 
-CodegenValue *ChildExprNode::codegen(CodegenContext &context) {
+CodegenValue *ChildExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     CodegenValue *base = this->base->codegen(context);
-    return base->type->getChild(context,base,childName);
+    return base->type->getChild(context,base,childName); // todo: Name
 }

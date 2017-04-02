@@ -55,7 +55,7 @@ CodegenType::CodegenType(llvm::Type *const storeType, CodegenType *const callRet
 {
 }
 
-CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value) {
+CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value, const llvm::Twine &Name) {
     assert(0);
     return nullptr;
 }
@@ -65,16 +65,22 @@ CodegenValue *CodegenType::getChild(CodegenContext &ctx, CodegenValue *value, st
     return nullptr;
 }
 
-CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value)
+CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress)
         : type(type),
-          value(value)
+          value(value),
+          storeAddress(storeAddress)
 {
     assert(type);
     assert(value);
 }
 
-CodegenValue *CodegenValue::doCall(CodegenContext &ctx) {
-    return type->doCall(ctx, this);
+CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const llvm::Twine &Name) {
+    return type->doCall(ctx, this, Name);
+}
+
+void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
+    // TODO: type check
+    ctx.builder.CreateStore(value->value, storeAddress);
 }
 
 ChildCodegenContext::ChildCodegenContext(CodegenContext &parent)

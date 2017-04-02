@@ -2,6 +2,7 @@
 // Created by miroslav on 3/28/17.
 //
 
+#include <ast/expressions/NameExprNode.h>
 #include "VarStatementNode.h"
 
 using namespace llvm;

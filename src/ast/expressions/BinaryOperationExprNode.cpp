@@ -12,7 +12,7 @@ std::string BinaryOperationExprNode::toString() const {
     return "(" + e1->toString() + " " + OP + " " + e2->toString() + ")";
 }
 
-CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context) {
+CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     CodegenValue* cv1 = e1->codegen(context);
     CodegenValue* cv2 = e2->codegen(context);
     Value *v1 = cv1->value;
@@ -22,13 +22,13 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context) {
     Value *res = nullptr;
     switch(OP) {
         case '+':
-            res = context.builder.CreateAdd(v1, v2); break;
+            res = context.builder.CreateAdd(v1, v2, Name); break;
         case '-':
-            res = context.builder.CreateSub(v1, v2); break;
+            res = context.builder.CreateSub(v1, v2, Name); break;
         case '*':
-            res = context.builder.CreateMul(v1, v2); break;
+            res = context.builder.CreateMul(v1, v2, Name); break;
         case '/':
-            res = context.builder.CreateSDiv(v1, v2); break;
+            res = context.builder.CreateSDiv(v1, v2, Name); break;
         default:
             assert(0);
     }

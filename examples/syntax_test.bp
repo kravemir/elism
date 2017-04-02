@@ -11,5 +11,6 @@ fn main() -> i32 {
     let x12 = TestClass();
     var v = x12.x;
     v = v * 2 + x12.x;
-    return v;
+    x12.y = v;
+    return x12.y;
 }

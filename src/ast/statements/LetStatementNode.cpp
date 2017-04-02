@@ -2,6 +2,7 @@
 // Created by miroslav on 3/28/17.
 //
 
+#include <ast/expressions/NameExprNode.h>
 #include "LetStatementNode.h"
 
 using namespace llvm;
@@ -17,6 +18,6 @@ void LetStatementNode::print(Printer &printer) const {
 }
 
 void LetStatementNode::codegen(CodegenContext &context) {
-    CodegenValue *val = expr->codegen(context);
-    context.addValue(name,val);
+    CodegenValue* value = expr->codegen(context, name);
+    context.addValue(name,value);
 }

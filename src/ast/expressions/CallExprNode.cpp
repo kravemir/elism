@@ -10,7 +10,7 @@ std::string CallExprNode::toString() const {
     return expr->toString() + "()";
 }
 
-CodegenValue * CallExprNode::codegen(CodegenContext &context) {
-    CodegenValue *callee = expr->codegen(context);
-    return callee->doCall(context);
+CodegenValue * CallExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
+    CodegenValue *callee = expr->codegen(context, Name + ".callee");
+    return callee->doCall(context, Name);
 }

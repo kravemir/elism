@@ -10,15 +10,15 @@
 
 class AssignStatementNode: public StatementNode {
 public:
-    AssignStatementNode(const std::string &name, ExprNode *const expr);
+    AssignStatementNode(ExprNode *const targetExpr, ExprNode *const valueExpr);
 
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;
 
 private:
-    const std::string name;
-    ExprNode * const expr;
+    ExprNode * const targetExpr;
+    ExprNode * const valueExpr;
 };
 
 
