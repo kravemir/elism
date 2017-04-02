@@ -13,8 +13,10 @@ std::string BinaryOperationExprNode::toString() const {
 }
 
 CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context) {
-    Value* v1 = e1->codegen(context)->value;
-    Value* v2 = e2->codegen(context)->value;
+    CodegenValue* cv1 = e1->codegen(context);
+    CodegenValue* cv2 = e2->codegen(context);
+    Value *v1 = cv1->value;
+    Value *v2 = cv2->value;
     // TODO: types
 
     Value *res = nullptr;
@@ -30,5 +32,5 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context) {
         default:
             assert(0);
     }
-    return new CodegenValue(res);
+    return new CodegenValue(cv1->type, res);
 }

@@ -12,6 +12,14 @@ std::string ConstIntExprNode::toString() const {
     return std::to_string(value);
 }
 
+struct IntType: CodegenType {
+    IntType(Type *const storeType) : CodegenType(storeType) {}
+
+};
+
 CodegenValue * ConstIntExprNode::codegen(CodegenContext &context) {
-    return new CodegenValue(ConstantInt::get(context.llvmContext, APInt((unsigned) 32, value)));
+    return new CodegenValue(
+            new IntType(Type::getInt64Ty(context.llvmContext)),
+            ConstantInt::get(context.llvmContext, APInt((unsigned) 32, (uint64_t) value))
+    );
 }

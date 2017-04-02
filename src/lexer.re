@@ -47,6 +47,7 @@ SKIP_WS:;
         "return"    { printf ("   keyword: return\n"); return TOKEN_RETURN; }
         "let"       { printf ("   keyword: ket\n"); return TOKEN_LET; }
         "var"       { printf ("   keyword: var\n"); return TOKEN_VAR; }
+        "class"     { printf ("   keyword: class\n"); return TOKEN_CLASS; }
 
         [a-zA-Z][a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);
@@ -63,6 +64,7 @@ SKIP_WS:;
         "/"  { printf ("    symbol: (\n"); return TOKEN_DIVIDE; }
 
         "="  { printf ("    symbol: (\n"); return TOKEN_ASSIGN; }
+        "."  { printf ("    symbol: (\n"); return TOKEN_DOT; }
 
 
         "("  { printf ("    symbol: (\n"); return TOKEN_LPAREN; }

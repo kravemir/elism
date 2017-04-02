@@ -2,9 +2,14 @@ fn foo() -> i32 {
     return ((32 - 16) / 8 + 4) * 2;
 }
 
+class TestClass {
+    var x = ((32 - 16) / 8 + 4) * 2;
+    var y = 4512;
+}
+
 fn main() -> i32 {
-    let x12 = foo();
-    var v = x12;
-    v = v * 2 + x12;
+    let x12 = TestClass();
+    var v = x12.x;
+    v = v * 2 + x12.x;
     return v;
 }

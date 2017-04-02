@@ -55,6 +55,23 @@ top_level_node ::= function(F). {
     p->addFunction(F);
 }
 
+top_level_node ::= class(C). {
+    p->addClass(C);
+}
+
+%type class { ClassNode* }
+class(C) ::= CLASS IDENTIFIER(NAME) LBRACE class_statements(CS) RBRACE. {
+    C = new ClassNode(NAME.str_value,std::move(*CS));
+    delete CS;
+}
+
+%type class_statements { std::vector<VarStatementNode*>* }
+class_statements(CS) ::= . { CS = new std::vector<VarStatementNode*>(); }
+class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
+  CS = CS_;
+  CS->push_back(new VarStatementNode(tokenToString(NAME),0,VALUE));
+}
+
 %type function { FunctionNode* }
 function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
     F = new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB));
@@ -165,6 +182,10 @@ atom_expr(AE) ::= atom(A). {
 
 atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
     AE = new CallExprNode(AE_);
+}
+
+atom_expr(AE) ::= atom_expr(AE_) DOT IDENTIFIER(CHILD_NAME). {
+    AE = new ChildExprNode(AE_, tokenToString(CHILD_NAME));
 }
 
 %type atom { ExprNode* }

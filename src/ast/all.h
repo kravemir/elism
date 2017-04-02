@@ -14,6 +14,7 @@
 #include "expressions/ConstIntExprNode.h"
 #include "expressions/NameExprNode.h"
 #include "expressions/CallExprNode.h"
+#include "expressions/ChildExprNode.h"
 
 #include "statements/AssignStatementNode.h"
 #include "statements/LetStatementNode.h"
@@ -21,6 +22,7 @@
 #include "statements/VarStatementNode.h"
 
 #include "declarations/FunctionNode.h"
+#include "declarations/ClassNode.h"
 
 #include "types/ArrayTypeNode.h"
 #include "types/NamedTypeNode.h"

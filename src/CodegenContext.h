@@ -11,6 +11,8 @@
 #include <llvm/IR/IRBuilder.h>
 
 class CodegenValue;
+class CodegenType;
+class CodegenContext;
 
 class CodegenContext {
 public:
@@ -32,21 +34,56 @@ public:
     std::map<std::string,CodegenValue*> values;
 };
 
-class CodegenValue {
+class CodegenType {
 public:
-    CodegenValue(llvm::Value *value);
-    CodegenValue(llvm::Value *value, llvm::Type *const callReturnType);
+    CodegenType(llvm::Type *const storeType);
+    CodegenType(llvm::Type *const storeType, CodegenType *const callReturnType);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx);
+    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value);
+    virtual CodegenValue* getChild(CodegenContext &ctx, CodegenValue *value, std::string name);
 
     bool isCallable() const {
         return callReturnType != nullptr;
     }
 
 public:
-    llvm::Value *value;
-    llvm::Type * const callReturnType;
+    llvm::Type * const storeType;
+    CodegenType * const callReturnType;
 };
+
+class CodegenValue {
+public:
+    CodegenValue(CodegenType *type, llvm::Value *value);
+
+    virtual CodegenValue* doCall(CodegenContext &ctx);
+
+    bool isCallable() const {
+        return type->isCallable();
+    }
+
+public:
+    CodegenType* type;
+    llvm::Value *value;
+};
+
+class ChildCodegenContext: public CodegenContext {
+public:
+    ChildCodegenContext(CodegenContext &parent);
+
+public:
+    CodegenContext &parent;
+};
+
+struct FunctionType: CodegenType {
+    FunctionType(CodegenType *const callReturnType) : CodegenType(nullptr, callReturnType) {
+        assert(callReturnType);
+    }
+
+    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value) override {
+        return new CodegenValue(callReturnType,ctx.builder.CreateCall(value->value,{},"call"));
+    }
+};
+
 
 
 #endif //BP_CODEGENCONTEXT_H

@@ -44,6 +44,10 @@ set(SOURCES
         src/ast/expressions/BinaryOperationExprNode.cpp
         src/ast/expressions/NameExprNode.h
         src/ast/expressions/NameExprNode.cpp
+        src/ast/expressions/CallExprNode.h
+        src/ast/expressions/CallExprNode.cpp
+        src/ast/expressions/ChildExprNode.h
+        src/ast/expressions/ChildExprNode.cpp
 
         src/ast/TypeNode.cpp
         src/ast/TypeNode.h
@@ -63,8 +67,10 @@ set(SOURCES
         src/ast/statements/AssignStatementNode.h
         src/ast/statements/AssignStatementNode.cpp
 
-        src/ast/declarations/FunctionNode.cpp
         src/ast/declarations/FunctionNode.h
+        src/ast/declarations/FunctionNode.cpp
+        src/ast/declarations/ClassNode.h
+        src/ast/declarations/ClassNode.cpp
         src/ast/Program.cpp
         src/ast/Program.h
 
@@ -73,8 +79,7 @@ set(SOURCES
 
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/parser.h
-        src/ast/expressions/CallExprNode.cpp src/ast/expressions/CallExprNode.h)
+        ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 

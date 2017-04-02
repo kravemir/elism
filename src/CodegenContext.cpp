@@ -43,21 +43,41 @@ CodegenValue * CodegenContext::getValue(std::string name) {
     return nullptr;
 }
 
-CodegenValue::CodegenValue(llvm::Value *value)
-        : value(value),
+CodegenType::CodegenType(llvm::Type *const storeType)
+        : storeType(storeType),
           callReturnType(nullptr)
 {
-    assert(value);
 }
 
-CodegenValue::CodegenValue(llvm::Value *value, llvm::Type *const callReturnType)
-        : value(value),
+CodegenType::CodegenType(llvm::Type *const storeType, CodegenType *const callReturnType)
+        : storeType(storeType),
           callReturnType(callReturnType)
 {
+}
+
+CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value) {
+    assert(0);
+    return nullptr;
+}
+
+CodegenValue *CodegenType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
+    assert(0);
+    return nullptr;
+}
+
+CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value)
+        : type(type),
+          value(value)
+{
+    assert(type);
     assert(value);
 }
 
 CodegenValue *CodegenValue::doCall(CodegenContext &ctx) {
-    assert(0);
-    return nullptr;
+    return type->doCall(ctx, this);
+}
+
+ChildCodegenContext::ChildCodegenContext(CodegenContext &parent)
+        : CodegenContext(parent.llvmContext, parent.module, parent.builder),
+          parent(parent) {
 }

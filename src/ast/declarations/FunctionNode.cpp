@@ -56,11 +56,10 @@ FunctionNode::~FunctionNode() {
     }
 }
 
-class FunctionContext: public CodegenContext {
+class FunctionContext: public ChildCodegenContext {
 public:
-    FunctionContext(CodegenContext &parent,BasicBlock *entryBlock)
-            : CodegenContext(parent.llvmContext, parent.module, parent.builder),
-              parent(parent),
+    FunctionContext(CodegenContext &parent, BasicBlock *entryBlock)
+            : ChildCodegenContext(parent),
               entryBlock(entryBlock)
     {}
 
@@ -68,14 +67,14 @@ public:
         //printf("Add variable: %s\n",name.c_str());
         IRBuilder<> builder(entryBlock, entryBlock->begin());
         AllocaInst* alloca = builder.CreateAlloca(value->value->getType(), 0, "var." + name);
-        variables[name] = alloca;
+        variables[name] = std::make_pair(value->type,alloca);
         this->builder.CreateStore(value->value, alloca);
     }
 
     void storeValue(std::string name, CodegenValue *value) override {
         auto it = variables.find(name);
         if(it != variables.end()) {
-            builder.CreateStore(value->value, it->second);
+            builder.CreateStore(value->value, it->second.second);
         } else {
             assert(0);
         }
@@ -85,7 +84,7 @@ public:
         //printf("Get function: %s\n",name.c_str());
         auto it = variables.find(name);
         if(it != variables.end()) {
-            return new CodegenValue(builder.CreateLoad(it->second));
+            return new CodegenValue(it->second.first,builder.CreateLoad(it->second.second));
         }
         CodegenValue *value = CodegenContext::getValue(name);
         if(!value)
@@ -97,17 +96,8 @@ public:
         builder.CreateRet(value->value);
     }
 
-    CodegenContext &parent;
-    std::map<std::string,llvm::AllocaInst*> variables;
+    std::map<std::string,std::pair<CodegenType*,llvm::AllocaInst*>> variables;
     BasicBlock *entryBlock;
-};
-
-struct FunctionValue: CodegenValue {
-    FunctionValue(Value *value, Type *const callReturnType) : CodegenValue(value, callReturnType) {}
-
-    CodegenValue *doCall(CodegenContext &ctx) override {
-        return new CodegenValue(ctx.builder.CreateCall(value,{},"call"));
-    }
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
@@ -127,6 +117,8 @@ void FunctionNode::codegen(CodegenContext &context) {
         stmt->codegen(functionContext);
     }
 
+    ::FunctionType *CFT = new ::FunctionType(new CodegenType(returnType));
+
     F->dump();
-    context.addValue(name,new FunctionValue(F,returnType));
+    context.addValue(name,new CodegenValue(CFT,F));
 }
