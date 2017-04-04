@@ -5,6 +5,7 @@
 #include <llvm/IR/DerivedTypes.h>
 
 #include <CodegenContext.h>
+#include <codegen/IntType.h>
 #include "NamedTypeNode.h"
 
 NamedTypeNode::NamedTypeNode(const std::string &name) : name(name) {}
@@ -13,9 +14,11 @@ std::string NamedTypeNode::toString() {
     return name;
 }
 
-llvm::Type* NamedTypeNode::codegen(CodegenContext &context) {
+CodegenType* NamedTypeNode::codegen(CodegenContext &context) {
     if("i32" == name) {
-        return llvm::Type::getInt32Ty(context.llvmContext);;
+        return IntType::get32(context);
+    } else if ("i64" == name) {
+        return IntType::get64(context);
     }
     assert(0);
     return 0;

@@ -79,7 +79,7 @@ set(SOURCES
 
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/parser.h)
+        ${CMAKE_CURRENT_BINARY_DIR}/parser.h src/codegen/IntType.cpp src/codegen/IntType.h)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 

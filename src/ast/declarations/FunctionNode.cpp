@@ -101,11 +101,11 @@ public:
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
-    Type *returnType = this->returnType->codegen(context);
+    CodegenType *returnType = this->returnType->codegen(context);
     std::vector<llvm::Type*> args_llvmtypes;
     // TODO: args
 
-    llvm::FunctionType *FT = llvm::FunctionType::get(returnType, args_llvmtypes, false);
+    llvm::FunctionType *FT = llvm::FunctionType::get(returnType->storeType, args_llvmtypes, false);
     Function *F = Function::Create(FT, Function::ExternalLinkage, name, context.module);
 
     // Create a new basic block to start insertion into.
@@ -117,7 +117,7 @@ void FunctionNode::codegen(CodegenContext &context) {
         stmt->codegen(functionContext);
     }
 
-    ::FunctionType *CFT = new ::FunctionType(new CodegenType(returnType));
+    ::FunctionType *CFT = new ::FunctionType(returnType);
 
     F->dump();
     context.addValue(name,new CodegenValue(CFT,F));

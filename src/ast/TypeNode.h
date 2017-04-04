@@ -16,7 +16,7 @@ public:
     virtual ~TypeNode();
 
     virtual std::string toString() = 0;
-    virtual llvm::Type *codegen(CodegenContext &context) = 0;
+    virtual CodegenType *codegen(CodegenContext &context) = 0;
 };
 
 

@@ -16,7 +16,7 @@ ArrayTypeNode::~ArrayTypeNode() {
     delete baseType;
 }
 
-llvm::Type *ArrayTypeNode::codegen(CodegenContext &context) {
+CodegenType *ArrayTypeNode::codegen(CodegenContext &context) {
     assert(0); // TODO
     return nullptr;
 }

@@ -2,6 +2,7 @@
 // Created by miroslav on 3/28/17.
 //
 
+#include <codegen/IntType.h>
 #include "BinaryOperationExprNode.h"
 
 using namespace llvm;
@@ -19,18 +20,30 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context, const l
     Value *v2 = cv2->value;
     // TODO: types
 
-    Value *res = nullptr;
-    switch(OP) {
-        case '+':
-            res = context.builder.CreateAdd(v1, v2, Name); break;
-        case '-':
-            res = context.builder.CreateSub(v1, v2, Name); break;
-        case '*':
-            res = context.builder.CreateMul(v1, v2, Name); break;
-        case '/':
-            res = context.builder.CreateSDiv(v1, v2, Name); break;
-        default:
-            assert(0);
+    IntType *intType1 = dynamic_cast<IntType*>(cv1->type);
+    IntType *intType2 = dynamic_cast<IntType*>(cv2->type);
+
+    if(intType1 && intType2) {
+        Value *res = nullptr;
+        switch (OP) {
+            case '+':
+                res = context.builder.CreateAdd(v1, v2, Name);
+                break;
+            case '-':
+                res = context.builder.CreateSub(v1, v2, Name);
+                break;
+            case '*':
+                res = context.builder.CreateMul(v1, v2, Name);
+                break;
+            case '/':
+                res = context.builder.CreateSDiv(v1, v2, Name);
+                break;
+            default:
+                assert(0);
+        }
+        return new CodegenValue(cv1->type, res);
     }
-    return new CodegenValue(cv1->type, res);
+
+    assert(0 && "No suitable operator found");
+    return nullptr;
 }

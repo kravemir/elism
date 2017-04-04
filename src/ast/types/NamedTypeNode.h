@@ -14,7 +14,7 @@ public:
 
     std::string toString() override;
 
-    llvm::Type *codegen(CodegenContext &context) override;
+    CodegenType *codegen(CodegenContext &context) override;
 
 private:
     std::string name;
