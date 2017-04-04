@@ -21,7 +21,8 @@
 
 #include <lexer.h>
 #include <parser.cpp>
-#include "ast/Program.h"
+#include <codegen/IntType.h>
+#include <codegen/FunctionType.h>
 
 using namespace std;
 using namespace llvm;
@@ -31,6 +32,23 @@ static int dummy_printf(const char *__restrict __format, ...) {
 }
 
 static ExecutionEngine *TheExecutionEngine;
+
+static void register_printf(CodegenContext &ctx) {
+    std::vector<llvm::Type*> printf_arg_types;
+    printf_arg_types.push_back(llvm::Type::getInt8PtrTy(ctx.llvmContext));
+
+    llvm::FunctionType* printf_type =
+            llvm::FunctionType::get(
+                    llvm::Type::getInt32Ty(ctx.llvmContext), printf_arg_types, true);
+
+    llvm::Function *func = llvm::Function::Create(
+            printf_type, llvm::Function::ExternalLinkage,
+            llvm::Twine("printf"),
+            ctx.module
+    );
+    func->setCallingConv(llvm::CallingConv::C);
+    ctx.addValue("printf", new CodegenValue(new ::FunctionType(IntType::get32(ctx)), func));
+}
 
 int main(int argc, char **argv)
 {
@@ -96,6 +114,7 @@ int main(int argc, char **argv)
     {
         IRBuilder<> Builder(llvmContext);
         CodegenContext ctx(llvmContext, TheModule, Builder);
+        register_printf(ctx);
         p.codegen(ctx);
     }
 

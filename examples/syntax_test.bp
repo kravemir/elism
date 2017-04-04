@@ -12,5 +12,7 @@ fn main() -> i32 {
     var v = x12.x;
     v = v * 2 + x12.x;
     x12.y = v;
+    let str = "AAAA";
+    let a = printf("Str: %s\n", str);
     return x12.y;
 }

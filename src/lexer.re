@@ -9,6 +9,20 @@
 #include <cstring>
 #include "lexer.h"
 
+const char * make_str(const char *src, int len){
+    char *str = new char[len+1];
+    int oi = 0;
+    for(int i = 0; i < len; i++) {
+        if(src[i] == '\\' && src[i+1] == 'n') {
+            str[oi++] = '\n';
+            i++;
+        } else {
+            str[oi++] = src[i];
+        }
+    }
+    return str;
+}
+
 int lex(const char * &YYCURSOR, int printf(const char *__restrict __format, ...), YYSTYPE &yylval)
 {
     const char *tok = YYCURSOR;
@@ -65,6 +79,7 @@ SKIP_WS:;
 
         "="  { printf ("    symbol: (\n"); return TOKEN_ASSIGN; }
         "."  { printf ("    symbol: (\n"); return TOKEN_DOT; }
+        ","  { printf ("    symbol: (\n"); return TOKEN_COMMA; }
 
 
         "("  { printf ("    symbol: (\n"); return TOKEN_LPAREN; }
@@ -76,6 +91,15 @@ SKIP_WS:;
         ":"  { printf ("    symbol: ;\n"); return TOKEN_COLON; }
         ";"  { printf ("    symbol: ;\n"); return TOKEN_SEMICOLON; }
         "->" { printf ("    symbol: ->\n"); return TOKEN_BEAK; }
+
+        "\"" ( "\\". | [^"] )* "\"" {
+            printf ("    symbol: STRING\n");
+            char *val = new char[YYCURSOR-tok];
+            memcpy(val,tok+1,YYCURSOR-tok-2);
+            val[YYCURSOR-tok-2] = 0;
+            yylval.str_value = make_str(val,YYCURSOR-tok-2);
+            return TOKEN_STRING;
+        }
 
         end  { printf ("       end: success\n"); return 0; }
         [^]  { printf ("       end: error\n"); return 0; }

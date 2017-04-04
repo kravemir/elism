@@ -4,6 +4,8 @@
 
 #include "ClassNode.h"
 
+#include <codegen/FunctionType.h>
+
 using namespace llvm;
 
 ClassNode::ClassNode(const std::string &name, const std::vector<VarStatementNode *> &variables) : name(name), variables(

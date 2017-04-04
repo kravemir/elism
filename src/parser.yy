@@ -180,8 +180,12 @@ atom_expr(AE) ::= atom(A). {
     AE = A;
 }
 
+atom_expr(AE) ::= atom_expr(AE_) LPAREN call_args(CA) RPAREN. {
+    AE = new CallExprNode(AE_, *CA);
+}
+
 atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
-    AE = new CallExprNode(AE_);
+    AE = new CallExprNode(AE_, {});
 }
 
 atom_expr(AE) ::= atom_expr(AE_) DOT IDENTIFIER(CHILD_NAME). {
@@ -192,9 +196,23 @@ atom_expr(AE) ::= atom_expr(AE_) DOT IDENTIFIER(CHILD_NAME). {
 atom(E) ::= NUMBER(N). {
     E = new ConstIntExprNode(N.int_value);
 }
+atom(E) ::= STRING(NAME). {
+    E = new StringExprNode(tokenToString(NAME));
+}
 atom(E) ::= IDENTIFIER(NAME). {
     E = new NameExprNode(tokenToString(NAME));
 }
 atom(E) ::= LPAREN expr(E1) RPAREN. {
     E = E1;
+}
+
+%type call_args { std::vector<ExprNode*>* }
+call_args(CA) ::= expr(E). {
+    CA = new std::vector<ExprNode*>();
+    CA->push_back(E);
+}
+
+call_args(CA) ::= call_args(CA_) COMMA expr(E). {
+    CA = CA_;
+    CA->push_back(E);
 }

@@ -3,8 +3,7 @@
  */
 #include "FunctionNode.h"
 
-#include <CodegenContext.h>
-#include "llvm/IR/IRBuilder.h"
+#include <codegen/FunctionType.h>
 
 using namespace llvm;
 

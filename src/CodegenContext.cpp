@@ -55,7 +55,7 @@ CodegenType::CodegenType(llvm::Type *const storeType, CodegenType *const callRet
 {
 }
 
-CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value, const llvm::Twine &Name) {
+CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue*> &args, const llvm::Twine &Name) {
     assert(0);
     return nullptr;
 }
@@ -74,8 +74,8 @@ CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *s
     assert(value);
 }
 
-CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const llvm::Twine &Name) {
-    return type->doCall(ctx, this, Name);
+CodegenValue *CodegenValue::doCall(CodegenContext &ctx, std::vector<CodegenValue*> &args, const llvm::Twine &Name) {
+    return type->doCall(ctx, this, args, Name);
 }
 
 void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {

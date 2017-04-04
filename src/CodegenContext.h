@@ -39,7 +39,7 @@ public:
     CodegenType(llvm::Type *const storeType);
     CodegenType(llvm::Type *const storeType, CodegenType *const callReturnType);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, const llvm::Twine &Name = "");
+    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue*> &args, const llvm::Twine &Name = "");
     virtual CodegenValue* getChild(CodegenContext &ctx, CodegenValue *value, std::string name);
 
     bool isCallable() const {
@@ -55,7 +55,7 @@ class CodegenValue {
 public:
     CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress = nullptr);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx, const llvm::Twine &Name = "");
+    virtual CodegenValue* doCall(CodegenContext &ctx, std::vector<CodegenValue*> &args, const llvm::Twine &Name = "");
     virtual void doStore(CodegenContext &ctx, CodegenValue *value);
 
     bool isCallable() const {
@@ -74,16 +74,6 @@ public:
 
 public:
     CodegenContext &parent;
-};
-
-struct FunctionType: CodegenType {
-    FunctionType(CodegenType *const callReturnType) : CodegenType(nullptr, callReturnType) {
-        assert(callReturnType);
-    }
-
-    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, const llvm::Twine &Name = "") override {
-        return new CodegenValue(callReturnType,ctx.builder.CreateCall(value->value,{},Name));
-    }
 };
 
 

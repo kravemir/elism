@@ -10,7 +10,7 @@
 
 class CallExprNode: public ExprNode {
 public:
-    CallExprNode(ExprNode *expr);
+    CallExprNode(ExprNode *expr, std::vector<ExprNode*> args);
 
     std::string toString() const override;
 
@@ -18,6 +18,7 @@ public:
 
 private:
     ExprNode *expr;
+    std::vector<ExprNode*> args;
 };
 
 

@@ -48,6 +48,8 @@ set(SOURCES
         src/ast/expressions/CallExprNode.cpp
         src/ast/expressions/ChildExprNode.h
         src/ast/expressions/ChildExprNode.cpp
+        src/ast/expressions/StringExprNode.h
+        src/ast/expressions/StringExprNode.cpp
 
         src/ast/TypeNode.cpp
         src/ast/TypeNode.h
@@ -76,10 +78,15 @@ set(SOURCES
 
         src/CodegenContext.h
         src/CodegenContext.cpp
+        src/codegen/IntType.h
+        src/codegen/IntType.cpp
+        src/codegen/FunctionType.h
+        src/codegen/FunctionType.cpp
 
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
-        ${CMAKE_CURRENT_BINARY_DIR}/parser.h src/codegen/IntType.cpp src/codegen/IntType.h)
+        ${CMAKE_CURRENT_BINARY_DIR}/parser.h
+)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 
