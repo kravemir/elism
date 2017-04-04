@@ -16,6 +16,7 @@
 #include "expressions/CallExprNode.h"
 #include "expressions/ChildExprNode.h"
 #include "expressions/StringExprNode.h"
+#include "expressions/ArrayExprNode.h"
 
 #include "statements/AssignStatementNode.h"
 #include "statements/LetStatementNode.h"

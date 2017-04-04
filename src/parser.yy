@@ -188,6 +188,10 @@ atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
     AE = new CallExprNode(AE_, {});
 }
 
+atom_expr(AE) ::= atom_expr(AE_) LBRACKET expr(IDX) RBRACKET. {
+    AE = new ArrayElementExprNode(AE_, IDX);
+}
+
 atom_expr(AE) ::= atom_expr(AE_) DOT IDENTIFIER(CHILD_NAME). {
     AE = new ChildExprNode(AE_, tokenToString(CHILD_NAME));
 }
@@ -204,6 +208,12 @@ atom(E) ::= IDENTIFIER(NAME). {
 }
 atom(E) ::= LPAREN expr(E1) RPAREN. {
     E = E1;
+}
+atom(E) ::= LBRACKET call_args(CA) RBRACKET. {
+    E = new ArrayLiteralExprNode(*CA);
+}
+atom(E) ::= LBRACKET expr(E_) SEMICOLON NUMBER(COUNT) RBRACKET. {
+    E = new ArrayInitializerExprNode(E_, COUNT.int_value);
 }
 
 %type call_args { std::vector<ExprNode*>* }

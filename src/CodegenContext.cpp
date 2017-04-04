@@ -65,6 +65,11 @@ CodegenValue *CodegenType::getChild(CodegenContext &ctx, CodegenValue *value, st
     return nullptr;
 }
 
+CodegenValue *CodegenType::getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index) {
+    assert(0);
+    return nullptr;
+}
+
 CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress)
         : type(type),
           value(value),

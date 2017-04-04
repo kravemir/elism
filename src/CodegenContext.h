@@ -49,6 +49,8 @@ public:
 public:
     llvm::Type * const storeType;
     CodegenType * const callReturnType;
+
+    virtual CodegenValue *getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index);
 };
 
 class CodegenValue {

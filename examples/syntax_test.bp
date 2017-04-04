@@ -13,6 +13,17 @@ fn main() -> i32 {
     v = v * 2 + x12.x;
     x12.y = v;
     let str = "AAAA";
-    let a = printf("Str: %s\n", str);
+    let a = printf("x12.y: %d\n", x12.y);
+
+    let str = "AAAA";
+    let b = printf("str: %s\n", str);
+
+    let array = [ 1, 2, 3, 4, 5 ];
+    let c = printf("array: [ %d, %d, %d, %d, %d ]\n", array[0], array[1], array[2], array[3], array[4]);
+
+    let a2 = [ 0; 5 ];
+    a2[3] = 333;
+    let d = printf("a2: [ %d, %d, %d, %d, %d ]\n", a2[0], a2[1], a2[2], a2[3], a2[4]);
+
     return x12.y;
 }

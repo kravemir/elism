@@ -50,6 +50,8 @@ set(SOURCES
         src/ast/expressions/ChildExprNode.cpp
         src/ast/expressions/StringExprNode.h
         src/ast/expressions/StringExprNode.cpp
+        src/ast/expressions/ArrayExprNode.h
+        src/ast/expressions/ArrayExprNode.cpp
 
         src/ast/TypeNode.cpp
         src/ast/TypeNode.h
@@ -82,6 +84,8 @@ set(SOURCES
         src/codegen/IntType.cpp
         src/codegen/FunctionType.h
         src/codegen/FunctionType.cpp
+        src/codegen/ArrayType.h
+        src/codegen/ArrayType.cpp
 
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
