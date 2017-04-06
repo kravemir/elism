@@ -3,6 +3,7 @@
 //
 
 #include "ArrayType.h"
+#include "IntType.h"
 
 using namespace llvm;
 
@@ -32,5 +33,22 @@ CodegenValue *::ArrayType::getElement(CodegenContext &ctx, CodegenValue *value, 
     Value *elementPtr = ctx.builder.CreateGEP(arrayPtr,{index->value}, "element.ptr");
     Value* val = ctx.builder.CreateLoad(elementPtr, "element");
     return new CodegenValue(elementType, val, elementPtr);
+}
+
+CodegenValue *::ArrayType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
+    if("length" == name) {
+        return new CodegenValue(
+                IntType::get32(ctx),
+                ctx.builder.CreateLoad(ctx.builder.CreateGEP(
+                        value->value,
+                        {
+                                ConstantInt::get(Type::getInt64Ty(ctx.llvmContext), 0),
+                                ConstantInt::get(Type::getInt32Ty(ctx.llvmContext), 0)
+                        },
+                        "length"
+                ))
+        );
+    }
+    return CodegenType::getChild(ctx, value, name);
 }
 

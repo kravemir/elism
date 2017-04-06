@@ -65,7 +65,7 @@ SKIP_WS:;
         "if"        { printf ("   keyword: if\n"); return TOKEN_IF; }
         "while"        { printf ("   keyword: if\n"); return TOKEN_WHILE; }
 
-        [a-zA-Z][a-zA-Z0-9]* {
+        [a-zA-Z][_a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);
             char *val = new char[YYCURSOR-tok+1];
             memcpy(val,tok,YYCURSOR-tok);

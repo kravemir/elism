@@ -21,7 +21,7 @@ private:
 
 class ArrayInitializerExprNode: public ExprNode {
 public:
-    ArrayInitializerExprNode(ExprNode *value, int count);
+    ArrayInitializerExprNode(ExprNode *value, ExprNode *count);
 
     std::string toString() const override;
 
@@ -29,7 +29,7 @@ public:
 
 private:
     ExprNode *value;
-    int count;
+    ExprNode *count;
 };
 
 class ArrayElementExprNode: public ExprNode {

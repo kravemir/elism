@@ -5,6 +5,7 @@
 #include "ArrayExprNode.h"
 
 #include <codegen/ArrayType.h>
+#include <codegen/IntType.h>
 
 using namespace llvm;
 
@@ -84,7 +85,7 @@ CodegenValue *ArrayLiteralExprNode::codegen(CodegenContext &context, const llvm:
     return new CodegenValue(type, arrayObjectMalloc);
 }
 
-ArrayInitializerExprNode::ArrayInitializerExprNode(ExprNode *value, int count) : value(value), count(count) {}
+ArrayInitializerExprNode::ArrayInitializerExprNode(ExprNode *value, ExprNode *count) : value(value), count(count) {}
 
 std::string ArrayInitializerExprNode::toString() const {
     return "TODO";
@@ -92,6 +93,7 @@ std::string ArrayInitializerExprNode::toString() const {
 
 CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     CodegenValue *value = this->value->codegen(context, Name + ".value");
+    CodegenValue *count = this->count->codegen(context, Name + ".count");
 
     ::ArrayType *type = ::ArrayType::get(context,value->type);
 
@@ -103,7 +105,7 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
             ITy,
             value->type->storeType,
             AllocSize,
-            ConstantInt::get(context.llvmContext, APInt(32, count, false)),
+            count->value,
             nullptr, ""
     );
     context.builder.Insert(Malloc);
@@ -120,7 +122,7 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
     context.builder.Insert(arrayObjectMalloc);
 
     context.builder.CreateStore(
-            ConstantInt::get(Type::getInt64Ty(context.llvmContext), count),
+            count->value,
             context.builder.CreateGEP(
                     arrayObjectMalloc,
                     {
@@ -141,18 +143,51 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
                     "array"
             )
     );
-    for(int i = 0; i < count; i++) {
-        context.builder.CreateStore(
-                value->value,
-                context.builder.CreateGEP(
-                        Malloc,
-                        {
-                                ConstantInt::get(Type::getInt64Ty(context.llvmContext), i)
-                        },
-                        "array." + std::to_string(i)
-                )
-        );
-    }
+
+
+    context.builder.CreateMemSet(
+            Malloc,
+            value->value,
+            count->value,
+            0
+    );
+
+    Function *TheFunction = context.builder.GetInsertBlock()->getParent();
+
+    // create blocks
+    BasicBlock *ConditionBB = BasicBlock::Create(context.llvmContext, "array.condition");
+    BasicBlock *ContentBB = BasicBlock::Create(context.llvmContext, "array.content");
+    BasicBlock *ContinueBB = BasicBlock::Create(context.llvmContext, "array.continue");
+
+    context.addVariable("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
+    context.builder.CreateBr(ConditionBB);
+
+    // TODO: context variable isn't really a variable
+    TheFunction->getBasicBlockList().push_back(ConditionBB);
+    context.builder.SetInsertPoint(ConditionBB);
+    llvm::Value *cond = context.builder.CreateICmpSLT(context.getValue("array.i")->value,count->value);
+    context.builder.CreateCondBr(cond, ContentBB, ContinueBB);
+
+    TheFunction->getBasicBlockList().push_back(ContentBB);
+    context.builder.SetInsertPoint(ContentBB);
+    context.builder.CreateStore(
+            value->value,
+            context.builder.CreateGEP(
+                    Malloc,
+                    {
+                            context.getValue("array.i")->value
+                    },
+                    "array.i"
+            )
+    );
+    context.getValue("array.i")->doStore(
+            context,
+            new CodegenValue(count->type,context.builder.CreateAdd(context.getValue("array.i")->value, ConstantInt::get(count->value->getType(), 1)))
+    );
+    context.builder.CreateBr(ConditionBB);
+
+    TheFunction->getBasicBlockList().push_back(ContinueBB);
+    context.builder.SetInsertPoint(ContinueBB);
 
     return new CodegenValue(type, arrayObjectMalloc);
 }

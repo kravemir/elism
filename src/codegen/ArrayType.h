@@ -13,6 +13,8 @@ struct ArrayType: CodegenType {
 
     CodegenValue *getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index) override;
 
+    CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
+
     CodegenType *elementType;
     llvm::Type *referenceObjectType;
 

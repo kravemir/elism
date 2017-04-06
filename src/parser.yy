@@ -247,8 +247,8 @@ atom(E) ::= LPAREN expr(E1) RPAREN. {
 atom(E) ::= LBRACKET call_args(CA) RBRACKET. {
     E = new ArrayLiteralExprNode(*CA);
 }
-atom(E) ::= LBRACKET expr(E_) SEMICOLON NUMBER(COUNT) RBRACKET. {
-    E = new ArrayInitializerExprNode(E_, COUNT.int_value);
+atom(E) ::= LBRACKET expr(E_) SEMICOLON expr(COUNT) RBRACKET. {
+    E = new ArrayInitializerExprNode(E_, COUNT);
 }
 
 %type call_args { std::vector<ExprNode*>* }

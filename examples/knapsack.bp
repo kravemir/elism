@@ -1,0 +1,12 @@
+fn main () -> i32 {
+    let weights = [ 2, 5, 7, 8, 10 ];
+    let values =  [ 3, 1, 4, 2, 1 ];
+    let maxWeight = 12;
+
+    var m_current = [ 0; values.length ];
+    var m_previous = [ 0; values.length ];
+
+    printf("Number of items: %d\n", values.length);
+
+    return 0;
+}
