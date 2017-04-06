@@ -25,6 +25,7 @@
 #include "statements/ExprStatementNode.h"
 #include "statements/BlockStatementNode.h"
 #include "statements/IfStatementNode.h"
+#include "statements/WhileStatementNode.h"
 
 #include "declarations/FunctionNode.h"
 #include "declarations/ClassNode.h"

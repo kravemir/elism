@@ -76,6 +76,8 @@ set(SOURCES
         src/ast/statements/BlockStatementNode.cpp
         src/ast/statements/IfStatementNode.h
         src/ast/statements/IfStatementNode.cpp
+        src/ast/statements/WhileStatementNode.h
+        src/ast/statements/WhileStatementNode.cpp
 
         src/ast/declarations/FunctionNode.h
         src/ast/declarations/FunctionNode.cpp
@@ -96,7 +98,7 @@ set(SOURCES
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
-)
+        )
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 
