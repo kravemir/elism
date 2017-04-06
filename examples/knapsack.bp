@@ -1,3 +1,15 @@
+class rangeCls {
+    var start = 0;
+    var end  = 0;
+}
+
+fn range (start: i64, end: i64) -> rangeCls {
+    var r = rangeCls();
+    r.start = start;
+    r.end = end;
+    return r;
+}
+
 fn main () -> i32 {
     let weights = [ 2, 5, 7, 8, 10 ];
     let values =  [ 3, 1, 4, 2, 1 ];
@@ -33,6 +45,8 @@ fn main () -> i32 {
         w = w+1;
     }
 
+    var r = range(0,10);
+    printf("r.start: %d, r.end: %d\n", r.start, r.end);
 
     return 0;
 }

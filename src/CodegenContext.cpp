@@ -31,6 +31,11 @@ void CodegenContext::addValue(std::string name, CodegenValue *value) {
     values[name] = value;
 }
 
+void CodegenContext::addType(std::string name, CodegenType *type) {
+    assert(type);
+    types[name] = type;
+}
+
 CodegenValue * CodegenContext::getValue(std::string name) {
     //printf("Get %p: %s\n",this,name.c_str());
     auto it = values.find(name);
@@ -40,6 +45,13 @@ CodegenValue * CodegenContext::getValue(std::string name) {
     for(auto it : values) {
         printf("Contains: %s\n", it.first.c_str());
     }*/
+    return nullptr;
+}
+
+CodegenType *CodegenContext::getType(std::string name) {
+    auto it = types.find(name);
+    if(it != types.end())
+        return it->second;
     return nullptr;
 }
 

@@ -20,6 +20,7 @@ CodegenType* NamedTypeNode::codegen(CodegenContext &context) {
     } else if ("i64" == name) {
         return IntType::get64(context);
     }
-    assert(0);
-    return 0;
+    CodegenType *type = context.getType(name);
+    assert(type);
+    return type;
 }

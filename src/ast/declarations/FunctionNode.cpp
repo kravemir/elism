@@ -101,8 +101,13 @@ public:
 
 void FunctionNode::codegen(CodegenContext &context) {
     CodegenType *returnType = this->returnType->codegen(context);
+    std::vector<CodegenType*> arg_types;
     std::vector<llvm::Type*> args_llvmtypes;
-    // TODO: args
+    for(auto arg : arguments) {
+        CodegenType *argType = arg.second->codegen(context);
+        arg_types.push_back(argType);
+        args_llvmtypes.push_back(argType->storeType);
+    }
 
     llvm::FunctionType *FT = llvm::FunctionType::get(returnType->storeType, args_llvmtypes, false);
     Function *F = Function::Create(FT, Function::ExternalLinkage, name, context.module);
@@ -112,6 +117,11 @@ void FunctionNode::codegen(CodegenContext &context) {
     context.builder.SetInsertPoint(BB);
 
     FunctionContext functionContext(context, BB);
+    Function::arg_iterator arg = F->arg_begin();
+    for(int i = 0; i < arguments.size(); i++) {
+        arg->setName("arg." + arguments[i].first);
+        functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));
+    }
     for(StatementNode *stmt : statements) {
         stmt->codegen(functionContext);
     }

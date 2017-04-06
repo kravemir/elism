@@ -22,9 +22,12 @@ public:
 
     virtual void codegenReturn(CodegenValue *value);
     virtual void addValue(std::string name, CodegenValue *value);
+    virtual void addType(std::string name, CodegenType *type);
     virtual void addVariable(std::string name, CodegenValue *value);
     virtual void storeValue(std::string name, CodegenValue *value);
+
     virtual CodegenValue * getValue(std::string name);
+    virtual CodegenType * getType(std::string name);
 
 public:
     llvm::Module * const module;
@@ -32,6 +35,7 @@ public:
     llvm::IRBuilder<> &builder;
 
     std::map<std::string,CodegenValue*> values;
+    std::map<std::string,CodegenType*> types;
 };
 
 class CodegenType {

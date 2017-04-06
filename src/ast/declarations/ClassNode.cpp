@@ -71,7 +71,7 @@ void ClassNode::codegen(CodegenContext &context) {
         int idx = 0;
         for (auto v : typeContext.variables) {
             v.second->value->dump();
-            cClassType->children[v.first] = std::make_pair(idx,v.second->type);
+            cClassType->children[v.first] = std::make_pair(idx++,v.second->type);
             types.push_back(v.second->value->getType());
         }
         classType->setBody(types);
@@ -118,6 +118,7 @@ void ClassNode::codegen(CodegenContext &context) {
 
     ::FunctionType *CFT = new ::FunctionType(cClassType);
     context.addValue(name, new CodegenValue(CFT,F_new));
+    context.addType(name, cClassType);
 
 }
 
