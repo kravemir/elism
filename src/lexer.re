@@ -81,6 +81,11 @@ SKIP_WS:;
         "."  { printf ("    symbol: (\n"); return TOKEN_DOT; }
         ","  { printf ("    symbol: (\n"); return TOKEN_COMMA; }
 
+        "=="  { printf ("    symbol: (\n"); return TOKEN_EQUALS; }
+        "<"  { printf ("    symbol: (\n"); return TOKEN_LT; }
+        ">"  { printf ("    symbol: (\n"); return TOKEN_GT; }
+        "<="  { printf ("    symbol: (\n"); return TOKEN_LE; }
+        ">="  { printf ("    symbol: (\n"); return TOKEN_GE; }
 
         "("  { printf ("    symbol: (\n"); return TOKEN_LPAREN; }
         ")"  { printf ("    symbol: )\n"); return TOKEN_RPAREN; }

@@ -155,7 +155,26 @@ statement(S) ::= expr(TARGET) ASSIGN expr(VALUE). {
 }
 
 %type expr { ExprNode* }
-expr(E) ::= add_expr(E_). { E = E_; }
+expr(E) ::= comparison(E_). { E = E_; }
+
+%type comparison { ExprNode* }
+comparison(E) ::= add_expr(E_). { E = E_; }
+
+comparison(E) ::= comparison(E1) EQUALS add_expr(E2). {
+    E = new BinaryOperationExprNode(TOKEN_EQUALS, E1, E2);
+}
+comparison(E) ::= comparison(E1) LT add_expr(E2). {
+    E = new BinaryOperationExprNode(TOKEN_LT, E1, E2);
+}
+comparison(E) ::= comparison(E1) GT add_expr(E2). {
+    E = new BinaryOperationExprNode(TOKEN_GT, E1, E2);
+}
+comparison(E) ::= comparison(E1) LE add_expr(E2). {
+    E = new BinaryOperationExprNode(TOKEN_LE, E1, E2);
+}
+comparison(E) ::= comparison(E1) GE add_expr(E2). {
+    E = new BinaryOperationExprNode(TOKEN_GE, E1, E2);
+}
 
 %type add_expr { ExprNode* }
 add_expr(E) ::= add_expr(E1) PLUS mult_expr(E2). {

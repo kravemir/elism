@@ -5,6 +5,8 @@
 #include <codegen/IntType.h>
 #include "BinaryOperationExprNode.h"
 
+#include "parser.h"
+
 using namespace llvm;
 
 BinaryOperationExprNode::BinaryOperationExprNode(const char OP, ExprNode *const e1, ExprNode *const e2) : OP(OP), e1(e1), e2(e2) {}
@@ -37,6 +39,21 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context, const l
                 break;
             case '/':
                 res = context.builder.CreateSDiv(v1, v2, Name);
+                break;
+            case TOKEN_EQUALS:
+                res = context.builder.CreateICmpEQ(v1, v2, Name);
+                break;
+            case TOKEN_LT:
+                res = context.builder.CreateICmpSLT(v1, v2, Name);
+                break;
+            case TOKEN_GT:
+                res = context.builder.CreateICmpSGT(v1, v2, Name);
+                break;
+            case TOKEN_LE:
+                res = context.builder.CreateICmpSLE(v1, v2, Name);
+                break;
+            case TOKEN_GE:
+                res = context.builder.CreateICmpSGE(v1, v2, Name);
                 break;
             default:
                 assert(0);
