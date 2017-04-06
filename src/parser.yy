@@ -154,6 +154,10 @@ statement(S) ::= expr(TARGET) ASSIGN expr(VALUE). {
     S = new AssignStatementNode(TARGET,VALUE);
 }
 
+statement(S) ::= expr(E). {
+    S = new ExprStatementNode(E);
+}
+
 %type expr { ExprNode* }
 expr(E) ::= comparison(E_). { E = E_; }
 

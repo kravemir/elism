@@ -12,23 +12,22 @@ fn main() -> i32 {
     var v = x12.x;
     v = v * 2 + x12.x;
     x12.y = v;
-    let str = "AAAA";
-    let a = printf("x12.y: %d\n", x12.y);
+    printf("x12.y: %d\n", x12.y);
 
     let str = "AAAA";
-    let b = printf("str: %s\n", str);
+    printf("str: %s\n", str);
 
     let array = [ 1, 2, 3, 4, 5 ];
-    let c = printf("array: [ %d, %d, %d, %d, %d ]\n", array[0], array[1], array[2], array[3], array[4]);
+    printf("array: [ %d, %d, %d, %d, %d ]\n", array[0], array[1], array[2], array[3], array[4]);
 
     let a2 = [ 0; 5 ];
     a2[3] = 333;
     let d = printf("a2: [ %d, %d, %d, %d, %d ]\n", a2[0], a2[1], a2[2], a2[3], a2[4]);
 
-    let e1 = printf("1<1: %d,   1<2: %d,   2<1: %d\n", 1<1, 1<2, 2<1);
-    let e2 = printf("1>1: %d,   1>2: %d,   2>1: %d\n", 1>1, 1>2, 2>1);
-    let e3 = printf("1<=1: %d,  1<=2: %d,  2<=1: %d\n", 1<=1, 1<=2, 2<=1);
-    let e4 = printf("1>=1: %d,  1>=2: %d,  2>=1: %d\n", 1>=1, 1>=2, 2>=1);
+    printf("1<1: %d,   1<2: %d,   2<1: %d\n", 1<1, 1<2, 2<1);
+    printf("1>1: %d,   1>2: %d,   2>1: %d\n", 1>1, 1>2, 2>1);
+    printf("1<=1: %d,  1<=2: %d,  2<=1: %d\n", 1<=1, 1<=2, 2<=1);
+    printf("1>=1: %d,  1>=2: %d,  2>=1: %d\n", 1>=1, 1>=2, 2>=1);
 
     return x12.y;
 }

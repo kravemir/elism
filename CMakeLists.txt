@@ -70,6 +70,8 @@ set(SOURCES
         src/ast/statements/VarStatementNode.cpp
         src/ast/statements/AssignStatementNode.h
         src/ast/statements/AssignStatementNode.cpp
+        src/ast/statements/ExprStatementNode.h
+        src/ast/statements/ExprStatementNode.cpp
 
         src/ast/declarations/FunctionNode.h
         src/ast/declarations/FunctionNode.cpp

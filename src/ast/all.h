@@ -22,6 +22,7 @@
 #include "statements/LetStatementNode.h"
 #include "statements/ReturnStatementNode.h"
 #include "statements/VarStatementNode.h"
+#include "statements/ExprStatementNode.h"
 
 #include "declarations/FunctionNode.h"
 #include "declarations/ClassNode.h"
