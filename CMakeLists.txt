@@ -72,6 +72,10 @@ set(SOURCES
         src/ast/statements/AssignStatementNode.cpp
         src/ast/statements/ExprStatementNode.h
         src/ast/statements/ExprStatementNode.cpp
+        src/ast/statements/BlockStatementNode.h
+        src/ast/statements/BlockStatementNode.cpp
+        src/ast/statements/IfStatementNode.h
+        src/ast/statements/IfStatementNode.cpp
 
         src/ast/declarations/FunctionNode.h
         src/ast/declarations/FunctionNode.cpp

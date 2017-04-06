@@ -62,6 +62,7 @@ SKIP_WS:;
         "let"       { printf ("   keyword: ket\n"); return TOKEN_LET; }
         "var"       { printf ("   keyword: var\n"); return TOKEN_VAR; }
         "class"     { printf ("   keyword: class\n"); return TOKEN_CLASS; }
+        "if"        { printf ("   keyword: if\n"); return TOKEN_IF; }
 
         [a-zA-Z][a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);

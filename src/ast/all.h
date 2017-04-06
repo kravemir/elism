@@ -23,6 +23,8 @@
 #include "statements/ReturnStatementNode.h"
 #include "statements/VarStatementNode.h"
 #include "statements/ExprStatementNode.h"
+#include "statements/BlockStatementNode.h"
+#include "statements/IfStatementNode.h"
 
 #include "declarations/FunctionNode.h"
 #include "declarations/ClassNode.h"

@@ -128,34 +128,42 @@ statement_block(SB) ::= LBRACE statement_list(SL) RBRACE. {
 }
 
 %type statement_list { std::vector<StatementNode*>* }
-statement_list(SL) ::= statement_list(SL_old) statement(S) SEMICOLON. {
+statement_list(SL) ::= statement_list(SL_old) statement(S). {
     SL_old->push_back(S);
     SL = SL_old;
 }
 
-statement_list(SL) ::= statement(S) SEMICOLON. {
+statement_list(SL) ::= statement(S). {
     SL = new std::vector<StatementNode*>(1,S);
 }
 
 %type statement { StatementNode* }
-statement(S) ::= RETURN expr(E). {
+statement(S) ::= RETURN expr(E) SEMICOLON. {
     S = new ReturnStatementNode(E);
 }
 
-statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE). {
+statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
     S = new LetStatementNode(tokenToString(NAME),VALUE);
 }
 
-statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE). {
+statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
     S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
 
-statement(S) ::= expr(TARGET) ASSIGN expr(VALUE). {
+statement(S) ::= expr(TARGET) ASSIGN expr(VALUE) SEMICOLON. {
     S = new AssignStatementNode(TARGET,VALUE);
 }
 
-statement(S) ::= expr(E). {
+statement(S) ::= expr(E) SEMICOLON. {
     S = new ExprStatementNode(E);
+}
+
+statement(S) ::= IF LPAREN expr(E) RPAREN statement(S_). {
+    S = new IfStatementNode(E, S_);
+}
+
+statement(S) ::= statement_block(SB). {
+    S = new BlockStatementNode(*SB);
 }
 
 %type expr { ExprNode* }
