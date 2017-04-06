@@ -3,10 +3,36 @@ fn main () -> i32 {
     let values =  [ 3, 1, 4, 2, 1 ];
     let maxWeight = 12;
 
-    var m_current = [ 0; values.length ];
-    var m_previous = [ 0; values.length ];
+    var m_current = [ 0; maxWeight + 1 ];
+    var m_previous = [ 0; maxWeight + 1 ];
+    var m_tmp = [ 0; maxWeight + 1 ];
 
+    printf("Max weight: %d\n", maxWeight);
     printf("Number of items: %d\n", values.length);
+
+    var item = 0;
+    while( item < values.length ) {
+        var w = 0;
+        while( w <= maxWeight ) {
+            m_current[w] = m_previous[w];
+            if( weights[item] <= w ) {
+                if(m_current[w] < m_previous[w-weights[item]] + values[item])
+                    m_current[w] = m_previous[w-weights[item]] + values[item];
+            }
+            m_tmp = m_current;
+            m_current = m_previous;
+            m_previous = m_tmp;
+            w = w+1;
+        }
+        item = item + 1;
+    }
+
+    var w = 0;
+    while( w <= maxWeight ) {
+        printf("last results %d: %d\n", w, m_previous[w]);
+        w = w+1;
+    }
+
 
     return 0;
 }

@@ -14,8 +14,9 @@ std::string ConstIntExprNode::toString() const {
 }
 
 CodegenValue * ConstIntExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
+    // TODO: support multiple sizes
     return new CodegenValue(
-            IntType::get32(context),
-            ConstantInt::get(context.llvmContext, APInt((unsigned) 32, (uint64_t) value))
+            IntType::get64(context),
+            ConstantInt::get(context.llvmContext, APInt((unsigned) 64, (uint64_t) value))
     );
 }
