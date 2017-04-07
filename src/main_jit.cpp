@@ -82,9 +82,6 @@ int main(int argc, char **argv)
     Parse(pParser, 0, yylval, &p);
     ParseFree(pParser, free);
 
-    Printer printer;
-    p.print(printer);
-
     // free resources
     delete[] buffer;
 

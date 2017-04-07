@@ -40,7 +40,6 @@ void ClassNode::codegen(CodegenContext &context) {
         std::vector<Type *> types;
         int idx = 0;
         for (auto v : typeContext.variables) {
-            v.second->value->dump();
             cClassType->children[v.first] = std::make_pair(idx++,v.second->type);
             types.push_back(v.second->value->getType());
         }
@@ -60,8 +59,6 @@ void ClassNode::codegen(CodegenContext &context) {
         }
 
         context.builder.CreateRetVoid();
-        classType->dump();
-        F_init->dump();
     }
 
     for (StatementNode *stmt : statements) {
@@ -87,7 +84,6 @@ void ClassNode::codegen(CodegenContext &context) {
         context.builder.Insert(Malloc);
         context.builder.CreateCall(F_init, {Malloc});
         context.builder.CreateRet(Malloc);
-        F_new->dump();
     }
 
     ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType);
@@ -137,9 +133,6 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
                             PointerType::get(it->second->type->storeType,0)
                     }
             );
-            storeType->dump();
-            it->second->type->storeType->dump();
-            lType->dump();
 
             ClassFunctionType* type = new ClassFunctionType(lType, it->second->type->callReturnType);
             Value *val = ConstantStruct::get(lType, {

@@ -20,6 +20,7 @@ const char * make_str(const char *src, int len){
             str[oi++] = src[i];
         }
     }
+    str[oi] = 0;
     return str;
 }
 
@@ -42,6 +43,8 @@ SKIP_WS:;
         WS = " "|"\n";
 
         WS { goto SKIP_WS; }
+        "//" [^\n]* "\n" { goto SKIP_WS; }
+
         bin { printf ("       bin: %.*s\n", (int)(YYCURSOR - tok), tok); return TOKEN_NUMBER; }
         dec {
             printf ("       dec: %.*s\n", (int)(YYCURSOR - tok), tok);

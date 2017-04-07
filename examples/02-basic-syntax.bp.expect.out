@@ -1,0 +1,6 @@
+Let inferred: 10001, Test string 1
+Let explicit: 10002, Test string 2
+Var inferred: 10003, Test string 3
+Var explicit: 10004, Test string 4
+Var inferred, change: 20003, String test 3
+Var explicit, change: 20004, String test 4

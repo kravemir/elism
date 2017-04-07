@@ -1,0 +1,40 @@
+fn main() -> i32
+{
+    // VALUES: let //
+
+    // value declarations with inferred types
+    let li_int = 10001;
+    let li_string = "Test string 1";
+
+    // value declarations with explicit types
+    let le_int : i32 = 10002;
+    let le_string : string = "Test string 2";
+
+    printf("Let inferred: %d, %s\n", li_int, li_string);
+    printf("Let explicit: %d, %s\n", le_int, le_string);
+
+
+    // VARIABLES: var //
+
+    // value declarations with inferred types
+    var vi_int = 10003;
+    var vi_string = "Test string 3";
+
+    // value declarations with explicit types
+    var ve_int : i32 = 10004;
+    var ve_string : string = "Test string 4";
+
+    printf("Var inferred: %d, %s\n", vi_int, vi_string);
+    printf("Var explicit: %d, %s\n", ve_int, ve_string);
+
+    // change variables
+    vi_int = 20003;
+    vi_string = "String test 3";
+    ve_int = 20004;
+    ve_string = "String test 4";
+
+    printf("Var inferred, change: %d, %s\n", vi_int, vi_string);
+    printf("Var explicit, change: %d, %s\n", ve_int, ve_string);
+
+    return 0;
+}

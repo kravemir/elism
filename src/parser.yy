@@ -150,7 +150,15 @@ statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
     S = new LetStatementNode(tokenToString(NAME),VALUE);
 }
 
+statement(S) ::= LET IDENTIFIER(NAME) COLON type_def ASSIGN expr(VALUE) SEMICOLON. {
+    S = new LetStatementNode(tokenToString(NAME),VALUE);
+}
+
 statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
+    S = new VarStatementNode(tokenToString(NAME),0,VALUE);
+}
+
+statement(S) ::= VAR IDENTIFIER(NAME) COLON type_def ASSIGN expr(VALUE) SEMICOLON. {
     S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
 

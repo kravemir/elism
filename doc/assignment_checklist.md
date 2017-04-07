@@ -9,8 +9,8 @@ Language functional requirements
 Supported features of structured programming:
 
 - [ ] data types:
-    - [ ] integer numbers
-    - [ ] strings
+    - [x] integer numbers
+    - [x] strings
     - [ ] arrays
 - [ ] expressions:
     - [ ] arithmetical operations: `+`, `-`, `*`, `/`
