@@ -1,11 +1,20 @@
-class rangeCls {
-    var start = 0;
+class rangeIterator {
+    var current = 0;
     var end  = 0;
+
+    fn next() -> i32 {
+        current = current + 1;
+        return current < end;
+    }
+
+    fn current() -> i32 {
+        return current;
+    }
 }
 
-fn range (start: i64, end: i64) -> rangeCls {
-    var r = rangeCls();
-    r.start = start;
+fn range (start: i64, end: i64) -> rangeIterator {
+    var r = rangeIterator();
+    r.current = start;
     r.end = end;
     return r;
 }
@@ -46,7 +55,7 @@ fn main () -> i32 {
     }
 
     var r = range(0,10);
-    printf("r.start: %d, r.end: %d\n", r.start, r.end);
+    printf("r.current: %d, r.end: %d\n", r.current, r.end);
 
     return 0;
 }

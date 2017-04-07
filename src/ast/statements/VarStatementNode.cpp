@@ -17,6 +17,10 @@ VarStatementNode::VarStatementNode(const std::string &name,
     assert(expr);
 }
 
+void VarStatementNode::codegenAsClassStatement(ClassTypeContext &context) {
+    // TODO
+}
+
 void VarStatementNode::print(Printer &printer) const {
     printer.print("var " + name + " = " + expr->toString() + ";" );
 }

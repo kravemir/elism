@@ -9,6 +9,7 @@
 #include <CodegenContext.h>
 #include "ast/ExprNode.h"
 
+class ClassTypeContext;
 struct Printer {
     void print(const std::string &str) {
         if(newline) {
@@ -75,6 +76,7 @@ public:
     virtual ~StatementNode();
 
     virtual void codegen(CodegenContext &context) = 0;
+    virtual void codegenAsClassStatement(ClassTypeContext &context);
 };
 
 StatementNode* createReturnStatementNode(ExprNode *expr);

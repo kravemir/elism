@@ -17,6 +17,8 @@ public:
 
     void codegen(CodegenContext &context) override;
 
+    void codegenAsClassStatement(ClassTypeContext &context) override;
+
 private:
     const std::string name;
     const TypeNode *type;

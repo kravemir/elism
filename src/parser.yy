@@ -65,11 +65,15 @@ class(C) ::= CLASS IDENTIFIER(NAME) LBRACE class_statements(CS) RBRACE. {
     delete CS;
 }
 
-%type class_statements { std::vector<VarStatementNode*>* }
-class_statements(CS) ::= . { CS = new std::vector<VarStatementNode*>(); }
+%type class_statements { std::vector<StatementNode*>* }
+class_statements(CS) ::= . { CS = new std::vector<StatementNode*>(); }
 class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
   CS = CS_;
   CS->push_back(new VarStatementNode(tokenToString(NAME),0,VALUE));
+}
+class_statements(CS) ::= class_statements(CS_) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
+  CS = CS_;
+  CS->push_back(new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
 }
 
 %type function { FunctionNode* }

@@ -8,46 +8,14 @@
 
 using namespace llvm;
 
-ClassNode::ClassNode(const std::string &name, const std::vector<VarStatementNode *> &variables) : name(name), variables(
-        variables) {}
+ClassNode::ClassNode(const std::string &name, const std::vector<StatementNode *> &statements)
+        : name(name),
+          statements(statements)
+{}
 
 void ClassNode::print(Printer &printer) {
     printer.println("TODO");
 }
-
-struct ClassTypeContext: ChildCodegenContext {
-    ClassTypeContext(CodegenContext &parent)
-            : ChildCodegenContext(parent) {}
-
-    void addVariable(std::string name, CodegenValue *value) override {
-        variables.push_back({name,value});
-    }
-
-    std::vector<std::pair<std::string,CodegenValue*>> variables;
-};
-
-struct ClassType: CodegenType {
-    ClassType(Type *const storeType) : CodegenType(storeType) {}
-
-    CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override {
-        auto it = children.find(name);
-        if(it != children.end()) {
-            Value *ptr = ctx.builder.CreateGEP(
-                    value->value,
-                    (std::vector<Value *>) {
-                            Constant::getNullValue(IntegerType::getInt64Ty(ctx.llvmContext)),
-                            ConstantInt::get(ctx.llvmContext, APInt((unsigned) 32, (uint64_t) it->second.first))
-                    },
-                    "child." + name + ".addr"
-            );
-            return new CodegenValue(it->second.second,ctx.builder.CreateLoad(ptr,"child."+name),ptr);
-        }
-        assert(0);
-        return nullptr;
-    }
-
-    std::map<std::string,std::pair<int,CodegenType*>> children;
-};
 
 void ClassNode::codegen(CodegenContext &context) {
     StructType *classType = StructType::create(context.llvmContext,"class." + name + ".Instance");
@@ -57,14 +25,16 @@ void ClassNode::codegen(CodegenContext &context) {
     llvm::FunctionType *FT_init = llvm::FunctionType::get(Type::getVoidTy(context.llvmContext), {classPtrType}, false);
     Function *F_init = Function::Create(FT_init, Function::ExternalLinkage, "class." + name + ".init", context.module);
 
+    ClassTypeContext typeContext(context);
+    typeContext.classType = cClassType;
     {
         // Create a new basic block to start insertion into.
         BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry.initializers", F_init);
         context.builder.SetInsertPoint(BB);
 
-        ClassTypeContext typeContext(context);
-        for (VarStatementNode *var : variables) {
-            var->codegen(typeContext);
+        for (StatementNode *var : statements) {
+            if(dynamic_cast<VarStatementNode*>(var)) // TODO: codegen as class initialzier
+                var->codegen(typeContext);
         }
 
         std::vector<Type *> types;
@@ -92,6 +62,10 @@ void ClassNode::codegen(CodegenContext &context) {
         context.builder.CreateRetVoid();
         classType->dump();
         F_init->dump();
+    }
+
+    for (StatementNode *stmt : statements) {
+        stmt->codegenAsClassStatement(typeContext);
     }
 
 
@@ -122,3 +96,29 @@ void ClassNode::codegen(CodegenContext &context) {
 
 }
 
+struct ClassFunctionType: CodegenType {
+    ClassFunctionType(Type *const storeType, CodegenType *const callReturnType)
+            : CodegenType(storeType, callReturnType)
+    {}
+
+    CodegenValue *
+    doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue *> &args, const Twine &Name) override {
+        return CodegenType::doCall(ctx, value, args, Name);
+    }
+};
+
+CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
+    auto it = children.find(name);
+    if(it != children.end()) {
+        llvm::Value *ptr = ctx.builder.CreateGEP(
+                value->value,
+                (std::vector<llvm::Value *>) {
+                        llvm::Constant::getNullValue(llvm::IntegerType::getInt64Ty(ctx.llvmContext)),
+                        llvm::ConstantInt::get(ctx.llvmContext, llvm::APInt((unsigned) 32, (uint64_t) it->second.first))
+                },
+                "child." + name + ".addr"
+        );
+        return new CodegenValue(it->second.second,ctx.builder.CreateLoad(ptr,"child."+name),ptr);
+    }
+    return nullptr;
+}

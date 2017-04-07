@@ -11,7 +11,7 @@
 #include "ast/TypeNode.h"
 #include "CodegenContext.h"
 
-class FunctionNode {
+class FunctionNode: public StatementNode {
 public:
     FunctionNode(const char *name,
                  TypeNode *returnType,
@@ -19,9 +19,11 @@ public:
                  const std::vector<StatementNode *> &statements);
     virtual ~FunctionNode();
 
-    virtual void print(Printer &printer);
+    virtual void print(Printer &printer) const;
 
     void codegen(CodegenContext &context);
+
+    void codegenAsClassStatement(ClassTypeContext &context) override;
 
 private:
     const char *name;

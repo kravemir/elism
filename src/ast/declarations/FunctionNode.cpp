@@ -2,6 +2,7 @@
  * @author Miroslav Kravec
  */
 #include "FunctionNode.h"
+#include "ClassNode.h"
 
 #include <codegen/FunctionType.h>
 
@@ -16,7 +17,7 @@ FunctionNode::FunctionNode(const char *name, TypeNode *returnType,
           statements(statements)
 {}
 
-void FunctionNode::print(Printer &printer) {
+void FunctionNode::print(Printer &printer) const {
     printer.print("fn ");
     printer.print(name);
     printer.print(" (");
@@ -86,8 +87,12 @@ public:
             return new CodegenValue(it->second.first,builder.CreateLoad(it->second.second,name),it->second.second);
         }
         CodegenValue *value = CodegenContext::getValue(name);
-        if(!value)
+        if(value == nullptr && thisType != nullptr) {
+            value = thisType->getChild(*this, classInstance, name);
+        }
+        if(value == nullptr) {
             return parent.getValue(name);
+        }
         return value;
     }
 
@@ -97,6 +102,8 @@ public:
 
     std::map<std::string,std::pair<CodegenType*,llvm::AllocaInst*>> variables;
     BasicBlock *entryBlock;
+    ClassType *thisType = nullptr;
+    CodegenValue *classInstance = nullptr;
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
@@ -130,4 +137,46 @@ void FunctionNode::codegen(CodegenContext &context) {
 
     F->dump();
     context.addValue(name,new CodegenValue(CFT,F));
+}
+
+
+void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
+    CodegenType *returnType = this->returnType->codegen(context);
+    std::vector<CodegenType*> arg_types;
+    std::vector<llvm::Type*> args_llvmtypes;
+
+    arg_types.push_back(context.classType);
+    args_llvmtypes.push_back(context.classType->storeType);
+
+    for(auto arg : arguments) {
+        CodegenType *argType = arg.second->codegen(context);
+        arg_types.push_back(argType);
+        args_llvmtypes.push_back(argType->storeType);
+    }
+
+    llvm::FunctionType *FT = llvm::FunctionType::get(returnType->storeType, args_llvmtypes, false);
+    Function *F = Function::Create(FT, Function::ExternalLinkage, name, context.module);
+
+    // Create a new basic block to start insertion into.
+    BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
+    context.builder.SetInsertPoint(BB);
+
+    FunctionContext functionContext(context, BB);
+    functionContext.thisType = context.classType;
+    Function::arg_iterator arg = F->arg_begin();
+    functionContext.classInstance = new CodegenValue(context.classType,(Argument*)(arg++));
+
+    for(int i = 0; i < arguments.size(); i++) {
+        arg->setName("arg." + arguments[i].first);
+        functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));
+    }
+    for(StatementNode *stmt : statements) {
+        stmt->codegen(functionContext);
+    }
+
+    ::FunctionType *CFT = new ::FunctionType(returnType);
+
+    F->dump();
+    context.addValue(name,new CodegenValue(CFT,F));
+    context.functions.push_back({name,new CodegenValue(CFT,F)});
 }
