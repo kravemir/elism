@@ -1,0 +1,38 @@
+// TODO: move to stdlib
+class rangeIterator {
+    var i = 0;
+    var end  = 0;
+
+    fn hasNext() -> i32 {
+        return i < end;
+    }
+
+    fn next() -> i32 {
+        var ii = i;
+        i = i+1;
+        return ii;
+    }
+}
+
+// TODO: move to stdlib
+fn range (start: i64, end: i64) -> rangeIterator {
+    var r = rangeIterator();
+    r.i = start;
+    r.end = end;
+    return r;
+}
+
+fn main() -> i32
+{
+    for(i: range(0,10)) {
+        printf("i: %d\n", i);
+    }
+
+    var i2 = 1;
+    while(i2 <= 16) {
+        printf("i2: %d\n", i2);
+        i2 = i2 * 2;
+    }
+
+    return 0;
+}

@@ -19,8 +19,8 @@ Supported features of structured programming:
     - [x] array manipulation: `array[idx] = val`
 - [ ] control structures:
     - [ ] conditions: `if`, `if-else`
-    - [ ] while cycle
-    - [ ] for cycle
+    - [x] while cycle: `while (condition) statement;`
+    - [x] for cycle: `for (i: iterable) statment;`
 - [ ] Other features:
     - [ ] classes, methods, simple inheritance
 
