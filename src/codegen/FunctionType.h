@@ -8,7 +8,7 @@
 #include <CodegenContext.h>
 
 struct FunctionType: CodegenType {
-    FunctionType(CodegenType *const callReturnType) : CodegenType(nullptr, callReturnType) {
+    FunctionType(llvm::Type *ptrType, CodegenType *const callReturnType) : CodegenType(ptrType, callReturnType) {
         assert(callReturnType);
     }
 

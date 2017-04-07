@@ -133,7 +133,7 @@ void FunctionNode::codegen(CodegenContext &context) {
         stmt->codegen(functionContext);
     }
 
-    ::FunctionType *CFT = new ::FunctionType(returnType);
+    ::FunctionType *CFT = new ::FunctionType(FT,returnType);
 
     F->dump();
     context.addValue(name,new CodegenValue(CFT,F));
@@ -174,9 +174,10 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
         stmt->codegen(functionContext);
     }
 
-    ::FunctionType *CFT = new ::FunctionType(returnType);
+    ::FunctionType *CFT = new ::FunctionType(FT,returnType);
 
     F->dump();
     context.addValue(name,new CodegenValue(CFT,F));
     context.functions.push_back({name,new CodegenValue(CFT,F)});
+    context.classType->functions[name] = new CodegenValue(CFT,F);
 }

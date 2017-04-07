@@ -14,6 +14,7 @@ struct ClassType: CodegenType {
     CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
 
     std::map<std::string,std::pair<int,CodegenType*>> children;
+    std::map<std::string,CodegenValue*> functions;
 };
 
 struct ClassTypeContext: ChildCodegenContext {

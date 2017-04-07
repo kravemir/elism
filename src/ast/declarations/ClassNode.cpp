@@ -90,35 +90,66 @@ void ClassNode::codegen(CodegenContext &context) {
         F_new->dump();
     }
 
-    ::FunctionType *CFT = new ::FunctionType(cClassType);
+    ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType);
     context.addValue(name, new CodegenValue(CFT,F_new));
     context.addType(name, cClassType);
 
 }
 
 struct ClassFunctionType: CodegenType {
-    ClassFunctionType(Type *const storeType, CodegenType *const callReturnType)
+    ClassFunctionType(Type * storeType, CodegenType *const callReturnType)
             : CodegenType(storeType, callReturnType)
     {}
 
-    CodegenValue *
-    doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue *> &args, const Twine &Name) override {
-        return CodegenType::doCall(ctx, value, args, Name);
+    CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue *> &args, const Twine &Name) override {
+        std::vector<llvm::Value*> values;
+        values.push_back(ctx.builder.CreateExtractValue(value->value,{0}));
+        for(CodegenValue *v : args)
+            values.push_back(v->value);
+        return new CodegenValue(callReturnType,ctx.builder.CreateCall(ctx.builder.CreateExtractValue(value->value,{1}),values,Name));
     }
 };
 
 CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
-    auto it = children.find(name);
-    if(it != children.end()) {
-        llvm::Value *ptr = ctx.builder.CreateGEP(
-                value->value,
-                (std::vector<llvm::Value *>) {
-                        llvm::Constant::getNullValue(llvm::IntegerType::getInt64Ty(ctx.llvmContext)),
-                        llvm::ConstantInt::get(ctx.llvmContext, llvm::APInt((unsigned) 32, (uint64_t) it->second.first))
-                },
-                "child." + name + ".addr"
-        );
-        return new CodegenValue(it->second.second,ctx.builder.CreateLoad(ptr,"child."+name),ptr);
+    {
+        auto it = children.find(name);
+        if (it != children.end()) {
+            llvm::Value *ptr = ctx.builder.CreateGEP(
+                    value->value,
+                    (std::vector<llvm::Value *>) {
+                            llvm::Constant::getNullValue(llvm::IntegerType::getInt64Ty(ctx.llvmContext)),
+                            llvm::ConstantInt::get(ctx.llvmContext,
+                                                   llvm::APInt((unsigned) 32, (uint64_t) it->second.first))
+                    },
+                    "child." + name + ".addr"
+            );
+            return new CodegenValue(it->second.second, ctx.builder.CreateLoad(ptr, "child." + name), ptr);
+        }
+    }
+    {
+        auto it = functions.find(name);
+        if(it != functions.end()) {
+            llvm::StructType* lType = StructType::get(
+                    ctx.llvmContext,
+                    {
+                            storeType,
+                            PointerType::get(it->second->type->storeType,0)
+                    }
+            );
+            storeType->dump();
+            it->second->type->storeType->dump();
+            lType->dump();
+
+            ClassFunctionType* type = new ClassFunctionType(lType, it->second->type->callReturnType);
+            Value *val = ConstantStruct::get(lType, {
+                    Constant::getNullValue(storeType),
+                    Constant::getNullValue(PointerType::get(it->second->type->storeType,0)),
+            });
+            val = ctx.builder.CreateInsertValue(val, value->value, {0});
+            val = ctx.builder.CreateInsertValue(val, it->second->value, {1});
+
+            return new CodegenValue(type, val);
+        }
     }
     return nullptr;
 }

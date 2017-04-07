@@ -47,7 +47,7 @@ static void register_printf(CodegenContext &ctx) {
             ctx.module
     );
     func->setCallingConv(llvm::CallingConv::C);
-    ctx.addValue("printf", new CodegenValue(new ::FunctionType(IntType::get32(ctx)), func));
+    ctx.addValue("printf", new CodegenValue(new ::FunctionType(printf_type,IntType::get32(ctx)), func));
 }
 
 int main(int argc, char **argv)
