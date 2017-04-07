@@ -3,15 +3,17 @@ fn main() -> i32
     // VALUES: let //
 
     // value declarations with inferred types
-    let li_int = 10001;
+    let li_int    = 10001;
     let li_string = "Test string 1";
+    let li_array  = [ 11, 12, 13 ];
 
     // value declarations with explicit types
-    let le_int : i32 = 10002;
+    let le_int    : i32    = 10002;
     let le_string : string = "Test string 2";
+    let le_array  : i32[]  = [ 21, 22, 23 ];
 
-    printf("Let inferred: %d, %s\n", li_int, li_string);
-    printf("Let explicit: %d, %s\n", le_int, le_string);
+    printf("Let inferred: %d, %s, %d, %d, %d\n", li_int, li_string, li_array[0], li_array[1], li_array[2]);
+    printf("Let explicit: %d, %s, %d, %d, %d\n", le_int, le_string, le_array[0], le_array[1], le_array[2]);
 
 
     // VARIABLES: var //
@@ -19,22 +21,26 @@ fn main() -> i32
     // value declarations with inferred types
     var vi_int = 10003;
     var vi_string = "Test string 3";
+    var vi_array  = [ 31, 32, 33 ];
 
     // value declarations with explicit types
     var ve_int : i32 = 10004;
     var ve_string : string = "Test string 4";
+    var ve_array  : i32[]  = [ 41, 42, 43 ];
 
-    printf("Var inferred: %d, %s\n", vi_int, vi_string);
-    printf("Var explicit: %d, %s\n", ve_int, ve_string);
+    printf("Var inferred: %d, %s, %d, %d, %d\n", vi_int, vi_string, vi_array[0], vi_array[1], vi_array[2]);
+    printf("Var explicit: %d, %s, %d, %d, %d\n", ve_int, ve_string, ve_array[0], ve_array[1], ve_array[2]);
 
     // change variables
     vi_int = 20003;
     vi_string = "String test 3";
     ve_int = 20004;
     ve_string = "String test 4";
+    ve_array = vi_array;
+    ve_array[1] = 52;
 
-    printf("Var inferred, change: %d, %s\n", vi_int, vi_string);
-    printf("Var explicit, change: %d, %s\n", ve_int, ve_string);
+    printf("Var inferred, change: %d, %s, %d, %d, %d\n", vi_int, vi_string, vi_array[0], vi_array[1], vi_array[2]);
+    printf("Var explicit, change: %d, %s, %d, %d, %d\n", ve_int, ve_string, ve_array[0], ve_array[1], ve_array[2]);
 
     return 0;
 }

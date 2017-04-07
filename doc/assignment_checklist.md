@@ -8,12 +8,15 @@ Language functional requirements
 
 Supported features of structured programming:
 
-- [ ] data types:
+- [ ] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):
     - [x] integer numbers
     - [x] strings
-    - [ ] arrays
+    - [ ] arrays reference
 - [ ] expressions:
     - [ ] arithmetical operations: `+`, `-`, `*`, `/`
+    - [x] array manipulation: `array[idx]`, `array.length`
+- [ ] statements:
+    - [x] array manipulation: `array[idx] = val`
 - [ ] control structures:
     - [ ] conditions: `if`, `if-else`
     - [ ] while cycle
