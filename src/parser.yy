@@ -166,6 +166,10 @@ statement(S) ::= WHILE LPAREN expr(E) RPAREN statement(S_). {
     S = new WhileStatementNode(E,S_);
 }
 
+statement(S) ::= FOR LPAREN IDENTIFIER(NAME) COLON expr(E) RPAREN statement(S_). {
+    S = new ForStatementNode(tokenToString(NAME),E,S_);
+}
+
 statement(S) ::= IF LPAREN expr(E) RPAREN statement(S_). {
     S = new IfStatementNode(E, S_);
 }

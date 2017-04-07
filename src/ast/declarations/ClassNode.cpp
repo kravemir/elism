@@ -101,7 +101,8 @@ struct ClassFunctionType: CodegenType {
             : CodegenType(storeType, callReturnType)
     {}
 
-    CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue *> &args, const Twine &Name) override {
+    CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
+                          const Twine &Name) override {
         std::vector<llvm::Value*> values;
         values.push_back(ctx.builder.CreateExtractValue(value->value,{0}));
         for(CodegenValue *v : args)

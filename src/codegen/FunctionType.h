@@ -12,7 +12,8 @@ struct FunctionType: CodegenType {
         assert(callReturnType);
     }
 
-    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue*> &args, const llvm::Twine &Name = "") override {
+    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
+                         const llvm::Twine &Name = "") override {
         std::vector<llvm::Value*> values;
         for(CodegenValue *v : args)
             values.push_back(v->value);

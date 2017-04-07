@@ -43,7 +43,8 @@ public:
     CodegenType(llvm::Type *const storeType);
     CodegenType(llvm::Type *const storeType, CodegenType *const callReturnType);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, std::vector<CodegenValue*> &args, const llvm::Twine &Name = "");
+    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
+                                 const llvm::Twine &Name = "");
     virtual CodegenValue* getChild(CodegenContext &ctx, CodegenValue *value, std::string name);
 
     bool isCallable() const {
@@ -61,7 +62,9 @@ class CodegenValue {
 public:
     CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress = nullptr);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx, std::vector<CodegenValue*> &args, const llvm::Twine &Name = "");
+    virtual CodegenValue* doCall(CodegenContext &ctx,
+                                 const std::vector<CodegenValue *> &args,
+                                 const llvm::Twine &Name = "");
     virtual void doStore(CodegenContext &ctx, CodegenValue *value);
 
     bool isCallable() const {

@@ -98,7 +98,7 @@ set(SOURCES
         # generated C/C++ sources and headers
         ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
-        )
+        src/ast/statements/ForStatementNode.cpp src/ast/statements/ForStatementNode.h)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES})
 
