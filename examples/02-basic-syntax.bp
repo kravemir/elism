@@ -36,6 +36,8 @@ fn main() -> i32
     vi_string = "String test 3";
     ve_int = 20004;
     ve_string = "String test 4";
+
+    // make both variables point to same array, change array element
     ve_array = vi_array;
     ve_array[1] = 52;
 
