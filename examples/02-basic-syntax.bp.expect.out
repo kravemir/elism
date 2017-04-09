@@ -1,3 +1,4 @@
+Arithmetical expression: 12
 Let inferred: 10001, Test string 1, 11, 12, 13
 Let explicit: 10002, Test string 2, 21, 22, 23
 Var inferred: 10003, Test string 3, 31, 32, 33

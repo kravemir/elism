@@ -14,7 +14,7 @@ Supported features of structured programming:
     - [X] arrays reference
     - [ ] void type
 - [ ] expressions:
-    - [ ] arithmetical operations: `+`, `-`, `*`, `/`
+    - [x] arithmetical operations: `+`, `-`, `*`, `/`
     - [x] array manipulation: `array[idx]`, `array.length`
     - [ ] function call: `foo()`
 - [x] statements: (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):

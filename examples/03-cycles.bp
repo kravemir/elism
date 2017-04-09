@@ -5,9 +5,11 @@ fn main() -> i32
     }
 
     var i2 = 1;
+    var e_22n = 2;
     while(i2 <= 16) {
-        printf("i2: %d\n", i2);
+        printf("i2: %d, e_22n: %d\n", i2, e_22n);
         i2 = i2 * 2;
+        e_22n = e_22n * e_22n;
     }
 
     return 0;
