@@ -64,25 +64,10 @@ public:
     {}
 
     AllocaInst* createAlloca(std::string name, CodegenValue *value) override {
-        //printf("Add variable: %s\n",name.c_str());
         IRBuilder<> builder(entryBlock, entryBlock->begin());
         AllocaInst* alloca = builder.CreateAlloca(value->value->getType(), 0, "var." + name);
         this->builder.CreateStore(value->value, alloca);
         return alloca;
-    }
-
-    void addVariable(std::string name, CodegenValue *value) override {
-        AllocaInst* alloca = createAlloca(name,value);
-        variables[name] = std::make_pair(value->type,alloca);
-    }
-
-    void storeValue(std::string name, CodegenValue *value) override {
-        auto it = variables.find(name);
-        if(it != variables.end()) {
-            builder.CreateStore(value->value, it->second.second);
-        } else {
-            assert(0);
-        }
     }
 
     CodegenValue * getValue(std::string name) override {
@@ -105,7 +90,6 @@ public:
         builder.CreateRet(value->value);
     }
 
-    std::map<std::string,std::pair<CodegenType*,llvm::AllocaInst*>> variables;
     BasicBlock *entryBlock;
     ClassType *thisType = nullptr;
     CodegenValue *classInstance = nullptr;

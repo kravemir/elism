@@ -25,7 +25,6 @@ public:
     virtual void addType(std::string name, CodegenType *type);
     virtual llvm::AllocaInst* createAlloca(std::string name, CodegenValue *value);
     virtual void addVariable(std::string name, CodegenValue *value);
-    virtual void storeValue(std::string name, CodegenValue *value);
 
     virtual CodegenValue * getValue(std::string name);
     virtual CodegenType * getType(std::string name);

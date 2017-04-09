@@ -20,10 +20,6 @@ void CodegenContext::addVariable(std::string name, CodegenValue *value) {
     assert(0 && "Current context doesn't support variables");
 }
 
-void CodegenContext::storeValue(std::string name, CodegenValue *value) {
-    assert(0 && "Current context doesn't support variables");
-}
-
 llvm::AllocaInst *CodegenContext::createAlloca(std::string name, CodegenValue *value) {
     assert(0 && "Current context doesn't support allocas");
 }

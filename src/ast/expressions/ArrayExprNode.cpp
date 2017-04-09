@@ -15,40 +15,37 @@ std::string ArrayLiteralExprNode::toString() const {
     return "TODO";
 }
 
-CodegenValue *ArrayLiteralExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
-    std::vector<CodegenValue*> valuesValues;
-    for(ExprNode* e : values) {
-        valuesValues.push_back(e->codegen(context));
-    }
-
-    ::ArrayType *type = ::ArrayType::get(context,valuesValues[0]->type);
+void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value* &Malloc, ::ArrayType *arrayType, Value *size) {
 
     Type* ITy = Type::getInt64PtrTy(context.llvmContext);
-    Constant* AllocSize = ConstantExpr::getSizeOf(valuesValues[0]->type->storeType);
+    Constant* AllocSize = ConstantExpr::getSizeOf(arrayType->elementType->storeType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* Malloc = CallInst::CreateMalloc(
+    Instruction* MallocI = CallInst::CreateMalloc(
             context.builder.GetInsertBlock(),
             ITy,
-            valuesValues[0]->type->storeType,
+            arrayType->elementType->storeType,
             AllocSize,
-            ConstantInt::get(context.llvmContext, APInt(32, valuesValues.size(), false)),
+            size,
             nullptr, ""
     );
-    context.builder.Insert(Malloc);
+    context.builder.Insert(MallocI);
+    Malloc = MallocI;
 
-    AllocSize = ConstantExpr::getSizeOf(type->referenceObjectType);
+    AllocSize = ConstantExpr::getSizeOf(arrayType->referenceObjectType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* arrayObjectMalloc = CallInst::CreateMalloc(
+
+    Instruction* arrayObjectMallocI = CallInst::CreateMalloc(
             context.builder.GetInsertBlock(),
             ITy,
-            type->referenceObjectType,
+            arrayType->referenceObjectType,
             AllocSize,
             nullptr, nullptr, ""
     );
-    context.builder.Insert(arrayObjectMalloc);
+    context.builder.Insert(arrayObjectMallocI);
+    arrayObjectMalloc = arrayObjectMallocI;
 
     context.builder.CreateStore(
-            ConstantInt::get(Type::getInt64Ty(context.llvmContext), valuesValues.size()),
+            size,
             context.builder.CreateGEP(
                     arrayObjectMalloc,
                     {
@@ -69,6 +66,20 @@ CodegenValue *ArrayLiteralExprNode::codegen(CodegenContext &context, const llvm:
                     "array"
             )
     );
+}
+
+CodegenValue *ArrayLiteralExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
+    std::vector<CodegenValue*> valuesValues;
+    for(ExprNode* e : values) {
+        valuesValues.push_back(e->codegen(context));
+    }
+
+    ::ArrayType *type = ::ArrayType::get(context,valuesValues[0]->type);
+
+    // create array object: allocation, fill object size and reference
+    Value* arrayObjectMalloc, *Malloc;
+    createArrayAlloc(context,arrayObjectMalloc,Malloc,type,ConstantInt::get(Type::getInt64Ty(context.llvmContext), valuesValues.size()));
+
     for(int i = 0; i < valuesValues.size(); i++) {
         context.builder.CreateStore(
                 valuesValues[i]->value,
@@ -97,60 +108,9 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
 
     ::ArrayType *type = ::ArrayType::get(context,value->type);
 
-    Type* ITy = Type::getInt64PtrTy(context.llvmContext);
-    Constant* AllocSize = ConstantExpr::getSizeOf(value->type->storeType);
-    AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* Malloc = CallInst::CreateMalloc(
-            context.builder.GetInsertBlock(),
-            ITy,
-            value->type->storeType,
-            AllocSize,
-            count->value,
-            nullptr, ""
-    );
-    context.builder.Insert(Malloc);
-
-    AllocSize = ConstantExpr::getSizeOf(type->referenceObjectType);
-    AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* arrayObjectMalloc = CallInst::CreateMalloc(
-            context.builder.GetInsertBlock(),
-            ITy,
-            type->referenceObjectType,
-            AllocSize,
-            nullptr, nullptr, ""
-    );
-    context.builder.Insert(arrayObjectMalloc);
-
-    context.builder.CreateStore(
-            count->value,
-            context.builder.CreateGEP(
-                    arrayObjectMalloc,
-                    {
-                            ConstantInt::get(Type::getInt64Ty(context.llvmContext), 0),
-                            ConstantInt::get(Type::getInt32Ty(context.llvmContext), 0)
-                    },
-                    "size"
-            )
-    );
-    context.builder.CreateStore(
-            Malloc,
-            context.builder.CreateGEP(
-                    arrayObjectMalloc,
-                    {
-                            ConstantInt::get(Type::getInt64Ty(context.llvmContext), 0),
-                            ConstantInt::get(Type::getInt32Ty(context.llvmContext), 1)
-                    },
-                    "array"
-            )
-    );
-
-
-    context.builder.CreateMemSet(
-            Malloc,
-            value->value,
-            count->value,
-            0
-    );
+    // create array object: allocation, fill object size and reference
+    Value* arrayObjectMalloc, *Malloc;
+    createArrayAlloc(context,arrayObjectMalloc,Malloc,type,count->value);
 
     Function *TheFunction = context.builder.GetInsertBlock()->getParent();
 
@@ -162,7 +122,6 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
     context.createAlloca("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
     context.builder.CreateBr(ConditionBB);
 
-    // TODO: context variable isn't really a variable
     TheFunction->getBasicBlockList().push_back(ConditionBB);
     context.builder.SetInsertPoint(ConditionBB);
     llvm::Value *cond = context.builder.CreateICmpSLT(context.getValue("array.i")->value,count->value);
