@@ -50,6 +50,9 @@ static void register_printf(CodegenContext &ctx) {
     ctx.addValue("printf", new CodegenValue(new ::FunctionType(printf_type,IntType::get32(ctx)), func));
 }
 
+extern char _binary_stdlib_bp_start[];
+extern char _binary_stdlib_bp_end[];
+
 int main(int argc, char **argv)
 {
     LLVMInitializeNativeTarget();
@@ -57,33 +60,60 @@ int main(int argc, char **argv)
     LLVMInitializeNativeAsmParser();
     LLVMLinkInMCJIT();
 
-    long length;
-    char *buffer;
-    const char *buffer_ptr;
-
-    // read whole stdin
-    std::cin.seekg(0, std::ios::end);
-    length = std::cin.tellg();
-    std::cin.seekg(0, std::ios::beg);
-    buffer = new char[length+1];
-    std::cin.read(buffer, length);
-    buffer[length] = 0;
-    buffer_ptr = buffer;
-
-    // perform lexical analysis
-    YYSTYPE yylval = {0,0};
-    void *pParser = ParseAlloc(malloc);
-    int tokenID;
     Program p;
-    while(tokenID = lex(buffer_ptr,dummy_printf,yylval)) {
-        Parse(pParser, tokenID, yylval, &p);
-        yylval.str_value = 0;
-    }
-    Parse(pParser, 0, yylval, &p);
-    ParseFree(pParser, free);
+    {
+        size_t length = _binary_stdlib_bp_end - _binary_stdlib_bp_start;
+        char *buffer;
+        const char *buffer_ptr;
 
-    // free resources
-    delete[] buffer;
+        // read whole stdin
+        buffer = new char[length + 1];
+        memcpy(buffer,_binary_stdlib_bp_start,length);
+        buffer[length] = 0;
+        buffer_ptr = buffer;
+
+        // perform lexical analysis
+        YYSTYPE yylval = {0, 0};
+        void *pParser = ParseAlloc(malloc);
+        int tokenID;
+        while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
+            Parse(pParser, tokenID, yylval, &p);
+            yylval.str_value = 0;
+        }
+        Parse(pParser, 0, yylval, &p);
+        ParseFree(pParser, free);
+
+        // free resources
+        delete[] buffer;
+    }
+    {
+        long length;
+        char *buffer;
+        const char *buffer_ptr;
+
+        // read whole stdin
+        std::cin.seekg(0, std::ios::end);
+        length = std::cin.tellg();
+        std::cin.seekg(0, std::ios::beg);
+        buffer = new char[length + 1];
+        std::cin.read(buffer, length);
+        buffer[length] = 0;
+        buffer_ptr = buffer;
+
+        // perform lexical analysis
+        YYSTYPE yylval = {0, 0};
+        void *pParser = ParseAlloc(malloc);
+        int tokenID;
+        while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
+            Parse(pParser, tokenID, yylval, &p);
+            yylval.str_value = 0;
+        }
+        Parse(pParser, 0, yylval, &p);
+        ParseFree(pParser, free);
+
+        // free resources
+        delete[] buffer;
+    }
 
     LLVMContext llvmContext;
     SMDiagnostic error;

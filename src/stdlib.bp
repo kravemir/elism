@@ -1,0 +1,21 @@
+class rangeIterator {
+    var i = 0;
+    var end  = 0;
+
+    fn hasNext() -> i32 {
+        return i < end;
+    }
+
+    fn next() -> i32 {
+        var ii = i;
+        i = i+1;
+        return ii;
+    }
+}
+
+fn range (start: i64, end: i64) -> rangeIterator {
+    var r = rangeIterator();
+    r.i = start;
+    r.end = end;
+    return r;
+}

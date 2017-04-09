@@ -27,6 +27,19 @@ ADD_CUSTOM_COMMAND(
    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/parser.yy
 )
 
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/stdlib.o
+    COMMAND ld -r -b binary -o ${CMAKE_CURRENT_BINARY_DIR}/stdlib.o stdlib.bp
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/stdlib.bp
+)
+SET_SOURCE_FILES_PROPERTIES(
+    ${CMAKE_CURRENT_BINARY_DIR}/stdlib.o
+    PROPERTIES
+    EXTERNAL_OBJECT true
+    GENERATED true
+)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -100,7 +113,7 @@ set(SOURCES
         ${CMAKE_CURRENT_BINARY_DIR}/parser.h
         src/ast/statements/ForStatementNode.cpp src/ast/statements/ForStatementNode.h)
 
-ADD_LIBRARY(shared_lib STATIC ${SOURCES})
+ADD_LIBRARY(shared_lib STATIC ${SOURCES} stdlib.o)
 
 ADD_EXECUTABLE(bp_lexer src/main.cpp)
 ADD_EXECUTABLE(bp_parser src/main_parser.cpp)
