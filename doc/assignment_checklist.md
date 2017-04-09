@@ -8,10 +8,11 @@ Language functional requirements
 
 Supported features of structured programming:
 
-- [x] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):
+- [ ] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):
     - [x] integer numbers
     - [x] strings
     - [X] arrays reference
+    - [ ] void type
 - [ ] expressions:
     - [ ] arithmetical operations: `+`, `-`, `*`, `/`
     - [x] array manipulation: `array[idx]`, `array.length`
@@ -24,9 +25,9 @@ Supported features of structured programming:
     - [x] while cycle: `while (condition) statement;`
     - [x] for cycle: `for (i: iterable) statment;`
 - [ ] class declarations:
-    - [ ] class type declaration: `class Name { ... }`
+    - [x] class type declaration: `class Name { ... }`
     - [ ] members/variables: `class Name { var X : i32; var Y = 123; ... }`
-    - [ ] methods: `class Name { fn foo() { ... } }`
+    - [x] methods: `class Name { fn foo() -> type { ... } }`
     - [ ] simple inheritance: `TODO`
 - [ ] class expressions:
     - [ ] variables: `TODO`

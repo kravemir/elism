@@ -1,0 +1,16 @@
+class Foo {
+    var n1 = 1001;
+    var str1 = "str1";
+
+    fn printSelf() -> i32 {
+        printf("self: %d, %s\n", n1, str1);
+        return 1;
+    }
+
+}
+
+fn main () -> i32 {
+    var foo = Foo();
+    foo.printSelf();
+    return 42;
+}
