@@ -12,6 +12,9 @@ std::string NameExprNode::toString() const {
 
 CodegenValue * NameExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     CodegenValue *value = context.getValue(name); // todo: Name
-    assert(value);
+    if(!value) {
+        fprintf(stderr, "Name %s not resolved\n", name.c_str());
+        assert(0);
+    }
     return value;
 }

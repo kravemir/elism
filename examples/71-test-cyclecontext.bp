@@ -1,0 +1,24 @@
+fn main() -> i32
+{
+    var name = "A";
+
+    for(i: range(1,4)) {
+        var name = "Inner A";
+        printf("%s: %d\n", name, i);
+    }
+
+    printf("After first cycle: %s\n", name);
+
+    var i2 = 1;
+    name = "B";
+    while(i2 <= 16) {
+        var name = "Inner B";
+        printf("%s: %d\n", name, i2);
+
+        i2 = i2 * 2;
+    }
+
+    printf("After second cycle: %s\n", name);
+
+    return 0;
+}

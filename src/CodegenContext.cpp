@@ -24,6 +24,9 @@ void CodegenContext::storeValue(std::string name, CodegenValue *value) {
     assert(0 && "Current context doesn't support variables");
 }
 
+llvm::AllocaInst *CodegenContext::createAlloca(std::string name, CodegenValue *value) {
+    assert(0 && "Current context doesn't support allocas");
+}
 
 void CodegenContext::addValue(std::string name, CodegenValue *value) {
     //printf("Add %p: %s\n",this,name.c_str());
@@ -105,4 +108,25 @@ void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
 ChildCodegenContext::ChildCodegenContext(CodegenContext &parent)
         : CodegenContext(parent.llvmContext, parent.module, parent.builder),
           parent(parent) {
+}
+
+void ChildCodegenContext::addVariable(std::string name, CodegenValue *value) {
+    llvm::AllocaInst* alloca = createAlloca(name,value);
+    variables[name] = std::make_pair(value->type,alloca);
+}
+
+CodegenValue *ChildCodegenContext::getValue(std::string name) {
+    auto it = variables.find(name);
+    if(it != variables.end()) {
+        return new CodegenValue(it->second.first,builder.CreateLoad(it->second.second,name),it->second.second);
+    }
+    CodegenValue *value = CodegenContext::getValue(name);
+    if(value == nullptr) {
+        return parent.getValue(name);
+    }
+    return value;
+}
+
+llvm::AllocaInst *ChildCodegenContext::createAlloca(std::string name, CodegenValue *value) {
+    return parent.createAlloca(name,value);
 }

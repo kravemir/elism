@@ -26,16 +26,19 @@ void ForStatementNode::codegen(CodegenContext &context) {
 
     TheFunction->getBasicBlockList().push_back(ConditionBB);
     context.builder.SetInsertPoint(ConditionBB);
-    CodegenValue *condCall = iterator->type->getChild(context,iterator,"hasNext");
-    CodegenValue *cond = condCall->doCall(context,{});
+    CodegenValue *condCall = iterator->type->getChild(context, iterator, "hasNext");
+    CodegenValue *cond = condCall->doCall(context, {});
     context.builder.CreateCondBr(cond->value, ContentBB, ContinueBB);
 
     TheFunction->getBasicBlockList().push_back(ContentBB);
     context.builder.SetInsertPoint(ContentBB);
-    CodegenValue *valueCall = iterator->type->getChild(context,iterator,"next");
-    CodegenValue *value = valueCall->doCall(context,{});
-    context.addValue(name, value);
-    statement->codegen(context);
+    {
+        ChildCodegenContext forContext(context);
+        CodegenValue *valueCall = iterator->type->getChild(forContext, iterator, "next");
+        CodegenValue *value = valueCall->doCall(forContext, {});
+        context.addValue(name, value);
+        statement->codegen(forContext);
+    }
     context.builder.CreateBr(ConditionBB);
 
     TheFunction->getBasicBlockList().push_back(ContinueBB);

@@ -1,0 +1,10 @@
+Inner A: 1
+Inner A: 2
+Inner A: 3
+After first cycle: A
+Inner B: 1
+Inner B: 2
+Inner B: 4
+Inner B: 8
+Inner B: 16
+After second cycle: B

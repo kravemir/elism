@@ -23,6 +23,7 @@ public:
     virtual void codegenReturn(CodegenValue *value);
     virtual void addValue(std::string name, CodegenValue *value);
     virtual void addType(std::string name, CodegenType *type);
+    virtual llvm::AllocaInst* createAlloca(std::string name, CodegenValue *value);
     virtual void addVariable(std::string name, CodegenValue *value);
     virtual void storeValue(std::string name, CodegenValue *value);
 
@@ -81,8 +82,15 @@ class ChildCodegenContext: public CodegenContext {
 public:
     ChildCodegenContext(CodegenContext &parent);
 
+    CodegenValue *getValue(std::string name) override;
+    llvm::AllocaInst *createAlloca(std::string name, CodegenValue *value) override;
+
+    void addVariable(std::string name, CodegenValue *value) override;
+
+
 public:
     CodegenContext &parent;
+    std::map<std::string,std::pair<CodegenType*,llvm::AllocaInst*>> variables;
 };
 
 

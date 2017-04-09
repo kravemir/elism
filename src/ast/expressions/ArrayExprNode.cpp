@@ -159,7 +159,7 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
     BasicBlock *ContentBB = BasicBlock::Create(context.llvmContext, "array.content");
     BasicBlock *ContinueBB = BasicBlock::Create(context.llvmContext, "array.continue");
 
-    context.addVariable("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
+    context.createAlloca("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
     context.builder.CreateBr(ConditionBB);
 
     // TODO: context variable isn't really a variable

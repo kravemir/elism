@@ -63,12 +63,17 @@ public:
               entryBlock(entryBlock)
     {}
 
-    void addVariable(std::string name, CodegenValue *value) override {
+    AllocaInst* createAlloca(std::string name, CodegenValue *value) override {
         //printf("Add variable: %s\n",name.c_str());
         IRBuilder<> builder(entryBlock, entryBlock->begin());
         AllocaInst* alloca = builder.CreateAlloca(value->value->getType(), 0, "var." + name);
-        variables[name] = std::make_pair(value->type,alloca);
         this->builder.CreateStore(value->value, alloca);
+        return alloca;
+    }
+
+    void addVariable(std::string name, CodegenValue *value) override {
+        AllocaInst* alloca = createAlloca(name,value);
+        variables[name] = std::make_pair(value->type,alloca);
     }
 
     void storeValue(std::string name, CodegenValue *value) override {

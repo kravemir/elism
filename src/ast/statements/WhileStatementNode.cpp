@@ -31,7 +31,10 @@ void WhileStatementNode::codegen(CodegenContext &context) {
 
     TheFunction->getBasicBlockList().push_back(ContentBB);
     context.builder.SetInsertPoint(ContentBB);
-    statement->codegen(context);
+    {
+        ChildCodegenContext cycleContext(context);
+        statement->codegen(cycleContext);
+    }
     context.builder.CreateBr(ConditionBB);
 
     TheFunction->getBasicBlockList().push_back(ContinueBB);

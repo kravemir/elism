@@ -35,4 +35,6 @@ Supported features of region based memory management:
 Language quality requirements
 -----------------------------
 
-N/A
+N/A:
+
+- [ ] values and variables of inner scopes aren't propagated to parrent scope
