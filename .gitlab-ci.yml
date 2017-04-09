@@ -14,11 +14,9 @@ build:
     - sh -c "cd build; make;"
   artifacts:
     paths:
-      - build/bp_lexer
-      - build/bp_parser
+      - build/bp_jit
 
 test:
   stage: test
   script:
-    - bash scripts/tests/test_lexer.sh
-    - bash scripts/tests/test_parser.sh
+    - bash scripts/tests/test_jit.sh
