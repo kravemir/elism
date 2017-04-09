@@ -53,43 +53,36 @@ static void register_printf(CodegenContext &ctx) {
 extern char _binary_stdlib_bp_start[];
 extern char _binary_stdlib_bp_end[];
 
-int main(int argc, char **argv)
-{
-    LLVMInitializeNativeTarget();
-    LLVMInitializeNativeAsmPrinter();
-    LLVMInitializeNativeAsmParser();
-    LLVMLinkInMCJIT();
+void parse(const char *buffer_ptr, Program &p) {
+    // perform lexical analysis
+    YYSTYPE yylval = {0, 0};
+    void *pParser = ParseAlloc(malloc);
+    int tokenID;
+    while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
+        Parse(pParser, tokenID, yylval, &p);
+        yylval.str_value = 0;
+    }
+    Parse(pParser, 0, yylval, &p);
+    ParseFree(pParser, free);
+}
 
-    Program p;
+void parseInput(Program &p) {
+    char *buffer;
     {
         size_t length = _binary_stdlib_bp_end - _binary_stdlib_bp_start;
-        char *buffer;
-        const char *buffer_ptr;
 
-        // read whole stdin
+        // read whole stdlib
         buffer = new char[length + 1];
         memcpy(buffer,_binary_stdlib_bp_start,length);
         buffer[length] = 0;
-        buffer_ptr = buffer;
 
-        // perform lexical analysis
-        YYSTYPE yylval = {0, 0};
-        void *pParser = ParseAlloc(malloc);
-        int tokenID;
-        while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
-            Parse(pParser, tokenID, yylval, &p);
-            yylval.str_value = 0;
-        }
-        Parse(pParser, 0, yylval, &p);
-        ParseFree(pParser, free);
+        parse(buffer,p);
 
         // free resources
         delete[] buffer;
     }
     {
         long length;
-        char *buffer;
-        const char *buffer_ptr;
 
         // read whole stdin
         std::cin.seekg(0, std::ios::end);
@@ -98,22 +91,19 @@ int main(int argc, char **argv)
         buffer = new char[length + 1];
         std::cin.read(buffer, length);
         buffer[length] = 0;
-        buffer_ptr = buffer;
 
-        // perform lexical analysis
-        YYSTYPE yylval = {0, 0};
-        void *pParser = ParseAlloc(malloc);
-        int tokenID;
-        while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
-            Parse(pParser, tokenID, yylval, &p);
-            yylval.str_value = 0;
-        }
-        Parse(pParser, 0, yylval, &p);
-        ParseFree(pParser, free);
+        parse(buffer,p);
 
         // free resources
         delete[] buffer;
     }
+}
+
+int runJit(Program &p) {
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    LLVMLinkInMCJIT();
 
     LLVMContext llvmContext;
     SMDiagnostic error;
@@ -155,7 +145,11 @@ int main(int argc, char **argv)
     // Cast it to the right type (takes no arguments, returns a double) so we
     // can call it as a native function.
     int (*FP)() = (int (*)())(intptr_t)FPtr;
-    int result = FP();
+    return FP();
+}
 
-    return result;
+int main(int argc, char **argv) {
+    Program p;
+    parseInput(p);
+    return runJit(p);
 }
