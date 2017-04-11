@@ -9,12 +9,15 @@
 #include "CodegenContext.h"
 
 struct ClassType: CodegenType {
-    ClassType(llvm::Type *const storeType) : CodegenType(storeType) {}
+    ClassType(llvm::Type *const storeType, ClassType *super) : CodegenType(storeType), super(super) {}
 
     CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
 
+    ClassType* super;
     std::map<std::string,std::pair<int,CodegenType*>> children;
     std::map<std::string,CodegenValue*> functions;
+
+    llvm::Function *initF;
 };
 
 struct ClassTypeContext: ChildCodegenContext {
@@ -33,13 +36,15 @@ struct ClassTypeContext: ChildCodegenContext {
 class ClassNode {
 public:
     ClassNode(const std::string &name, const std::vector<StatementNode *> &statements);
+    ClassNode(const std::string &name, const std::string &super, const std::vector<StatementNode *> &statements);
     ~ClassNode();
 
     virtual void print(Printer &printer);
     void codegen(CodegenContext &context);
 
 private:
-    std::string name;
+    std::string name, super;
+    bool hasSuper;
     std::vector<StatementNode*> statements;
 };
 

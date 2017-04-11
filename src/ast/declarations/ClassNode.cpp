@@ -11,6 +11,14 @@ using namespace llvm;
 
 ClassNode::ClassNode(const std::string &name, const std::vector<StatementNode *> &statements)
         : name(name),
+          hasSuper(false),
+          statements(statements)
+{}
+
+ClassNode::ClassNode(const std::string &name, const std::string &super, const std::vector<StatementNode *> &statements)
+        : name(name),
+          super(super),
+          hasSuper(true),
           statements(statements)
 {}
 
@@ -19,12 +27,19 @@ void ClassNode::print(Printer &printer) {
 }
 
 void ClassNode::codegen(CodegenContext &context) {
+    ClassType *super = nullptr;
+    if(hasSuper) {
+        super = dynamic_cast<ClassType*>(context.getType(this->super));
+        assert(super);
+    }
+
     StructType *classType = StructType::create(context.llvmContext,"class." + name + ".Instance");
     Type *classPtrType = PointerType::get(classType,0);
-    ClassType *cClassType = new ClassType(classPtrType);
+    ClassType *cClassType = new ClassType(classPtrType,super);
 
     llvm::FunctionType *FT_init = llvm::FunctionType::get(Type::getVoidTy(context.llvmContext), {classPtrType}, false);
     Function *F_init = Function::Create(FT_init, Function::ExternalLinkage, "class." + name + ".init", context.module);
+    cClassType->initF = F_init;
 
     ClassTypeContext typeContext(context);
     typeContext.classType = cClassType;
@@ -38,15 +53,22 @@ void ClassNode::codegen(CodegenContext &context) {
                 var->codegen(typeContext);
         }
 
+
         std::vector<Type *> types;
-        int idx = 0;
+        int idx = super ? 1 : 0;
+        if(super){
+            types.push_back(super->storeType->getPointerElementType());
+        }
         for (auto v : typeContext.variables) {
             cClassType->children[v.first] = std::make_pair(idx++,v.second->type);
             types.push_back(v.second->value->getType());
         }
+        if(super) {
+            typeContext.builder.CreateCall(super->initF, {(Argument*)F_init->arg_begin()});
+        }
         classType->setBody(types);
 
-        idx = 0;
+        idx = super ? 1 : 0;
         for (auto v : typeContext.variables) {
             Value *ptr = typeContext.builder.CreateGEP(
                     (Argument *) (F_init->arg_begin()),
@@ -116,41 +138,53 @@ struct ClassFunctionType: CodegenType {
 };
 
 CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
-    {
-        auto it = children.find(name);
-        if (it != children.end()) {
-            llvm::Value *ptr = ctx.builder.CreateGEP(
-                    value->value,
-                    (std::vector<llvm::Value *>) {
-                            llvm::Constant::getNullValue(llvm::IntegerType::getInt64Ty(ctx.llvmContext)),
-                            llvm::ConstantInt::get(ctx.llvmContext,
-                                                   llvm::APInt((unsigned) 32, (uint64_t) it->second.first))
-                    },
-                    "child." + name + ".addr"
-            );
-            return new CodegenValue(it->second.second, ctx.builder.CreateLoad(ptr, "child." + name), ptr);
+    llvm::Value *valThis = value->value;
+
+    ClassType *clst = this;
+    while(clst) {
+        {
+            auto it = clst->children.find(name);
+            if (it != clst->children.end()) {
+                llvm::Value *ptr = ctx.builder.CreateGEP(
+                        valThis,
+                        (std::vector<llvm::Value *>) {
+                                llvm::Constant::getNullValue(llvm::IntegerType::getInt64Ty(ctx.llvmContext)),
+                                llvm::ConstantInt::get(ctx.llvmContext,
+                                                       llvm::APInt((unsigned) 32, (uint64_t) it->second.first))
+                        },
+                        "child." + name + ".addr"
+                );
+                return new CodegenValue(it->second.second, ctx.builder.CreateLoad(ptr, "child." + name), ptr);
+            }
         }
-    }
-    {
-        auto it = functions.find(name);
-        if(it != functions.end()) {
-            llvm::StructType* lType = StructType::get(
-                    ctx.llvmContext,
-                    {
-                            storeType,
-                            PointerType::get(it->second->type->storeType,0)
-                    }
-            );
+        {
+            auto it = clst->functions.find(name);
+            if (it != clst->functions.end()) {
+                llvm::StructType *lType = StructType::get(
+                        ctx.llvmContext,
+                        {
+                                storeType,
+                                PointerType::get(it->second->type->storeType, 0)
+                        }
+                );
 
-            ClassFunctionType* type = new ClassFunctionType(lType, it->second->type->callReturnType);
-            Value *val = ConstantStruct::get(lType, {
-                    Constant::getNullValue(storeType),
-                    Constant::getNullValue(PointerType::get(it->second->type->storeType,0)),
+                ClassFunctionType *type = new ClassFunctionType(lType, it->second->type->callReturnType);
+                Value *val = ConstantStruct::get(lType, {
+                        Constant::getNullValue(storeType),
+                        Constant::getNullValue(PointerType::get(it->second->type->storeType, 0)),
+                });
+                val = ctx.builder.CreateInsertValue(val, valThis, {0});
+                val = ctx.builder.CreateInsertValue(val, it->second->value, {1});
+
+                return new CodegenValue(type, val);
+            }
+        }
+        clst = clst->super;
+        if(clst) {
+            valThis = ctx.builder.CreateGEP(valThis, {
+                    ConstantInt::getNullValue(Type::getInt64Ty(ctx.llvmContext)),
+                    ConstantInt::getNullValue(Type::getInt32Ty(ctx.llvmContext))
             });
-            val = ctx.builder.CreateInsertValue(val, value->value, {0});
-            val = ctx.builder.CreateInsertValue(val, it->second->value, {1});
-
-            return new CodegenValue(type, val);
         }
     }
     return nullptr;

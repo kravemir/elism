@@ -70,6 +70,9 @@ top_level_node ::= class(C). {
 class(C) ::= CLASS IDENTIFIER(NAME) LBRACE class_statements(CS) RBRACE. {
     C = new ClassNode(tokenToString(NAME),moveDelete(CS));
 }
+class(C) ::= CLASS IDENTIFIER(NAME) COLON IDENTIFIER(SUPER) LBRACE class_statements(CS) RBRACE. {
+    C = new ClassNode(tokenToString(NAME),tokenToString(SUPER),moveDelete(CS));
+}
 
 %type class_statements { std::vector<StatementNode*>* }
 class_statements(CS) ::= . { CS = new std::vector<StatementNode*>(); }
