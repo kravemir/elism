@@ -5,6 +5,7 @@
 #include "ClassNode.h"
 
 #include <codegen/FunctionType.h>
+#include <codegen/VoidType.h>
 
 using namespace llvm;
 
@@ -121,6 +122,8 @@ void FunctionNode::codegen(CodegenContext &context) {
     for(StatementNode *stmt : statements) {
         stmt->codegen(functionContext);
     }
+    if(dynamic_cast<VoidType*>(returnType))
+        context.builder.CreateRetVoid();
 
     ::FunctionType *CFT = new ::FunctionType(FT,returnType);
 
@@ -161,6 +164,8 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
     for(StatementNode *stmt : statements) {
         stmt->codegen(functionContext);
     }
+    if(dynamic_cast<VoidType*>(returnType))
+        context.builder.CreateRetVoid();
 
     ::FunctionType *CFT = new ::FunctionType(FT,returnType);
 

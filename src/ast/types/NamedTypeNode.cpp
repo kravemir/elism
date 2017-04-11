@@ -6,6 +6,7 @@
 
 #include <CodegenContext.h>
 #include <codegen/IntType.h>
+#include <codegen/VoidType.h>
 #include "NamedTypeNode.h"
 
 NamedTypeNode::NamedTypeNode(const std::string &name) : name(name) {}
@@ -19,6 +20,8 @@ CodegenType* NamedTypeNode::codegen(CodegenContext &context) {
         return IntType::get32(context);
     } else if ("i64" == name) {
         return IntType::get64(context);
+    } else if ("void" == name) {
+        return VoidType::get(context);
     }
     CodegenType *type = context.getType(name);
     assert(type);

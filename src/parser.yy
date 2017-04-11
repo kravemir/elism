@@ -79,6 +79,10 @@ class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) COLON type_d
   CS = CS_;
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
+class_statements(CS) ::= class_statements(CS_) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
+  CS = CS_;
+  CS->push_back(new FunctionNode(NAME.str_value,new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB)));
+}
 class_statements(CS) ::= class_statements(CS_) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
   CS = CS_;
   CS->push_back(new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
@@ -92,7 +96,7 @@ function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) 
 }
 
 function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-    F = new FunctionNode(NAME.str_value,0,std::move(*ARGS),std::move(*SB));
+    F = new FunctionNode(NAME.str_value,new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB));
     delete SB;
     delete ARGS;
 }
