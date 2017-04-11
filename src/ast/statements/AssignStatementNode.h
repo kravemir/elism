@@ -12,6 +12,8 @@ class AssignStatementNode: public StatementNode {
 public:
     AssignStatementNode(ExprNode *const targetExpr, ExprNode *const valueExpr);
 
+    ~AssignStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

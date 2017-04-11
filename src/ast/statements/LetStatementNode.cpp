@@ -21,3 +21,7 @@ void LetStatementNode::codegen(CodegenContext &context) {
     CodegenValue* value = expr->codegen(context, name);
     context.addValue(name,value);
 }
+
+LetStatementNode::~LetStatementNode() {
+    delete expr;
+}

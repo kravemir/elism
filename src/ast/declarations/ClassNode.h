@@ -33,6 +33,7 @@ struct ClassTypeContext: ChildCodegenContext {
 class ClassNode {
 public:
     ClassNode(const std::string &name, const std::vector<StatementNode *> &statements);
+    ~ClassNode();
 
     virtual void print(Printer &printer);
     void codegen(CodegenContext &context);

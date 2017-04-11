@@ -14,3 +14,8 @@ void BlockStatementNode::codegen(CodegenContext &context) {
     for(StatementNode* node : statements)
         node->codegen(context);
 }
+
+BlockStatementNode::~BlockStatementNode() {
+    for(StatementNode *s : statements)
+        delete s;
+}

@@ -12,6 +12,8 @@ class BlockStatementNode: public StatementNode {
 public:
     BlockStatementNode(const std::vector<StatementNode *> &statements);
 
+    ~BlockStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

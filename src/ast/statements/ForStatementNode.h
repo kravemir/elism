@@ -12,6 +12,8 @@ class ForStatementNode: public StatementNode {
 public:
     ForStatementNode(const std::string &name, ExprNode *expr, StatementNode *statement);
 
+    ~ForStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

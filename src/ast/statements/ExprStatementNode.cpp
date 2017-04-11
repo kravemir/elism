@@ -13,3 +13,7 @@ void ExprStatementNode::print(Printer &printer) const {
 void ExprStatementNode::codegen(CodegenContext &context) {
     expr->codegen(context);
 }
+
+ExprStatementNode::~ExprStatementNode() {
+    delete expr;
+}

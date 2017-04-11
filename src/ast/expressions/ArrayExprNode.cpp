@@ -5,7 +5,7 @@
 #include "ArrayExprNode.h"
 
 #include <codegen/ArrayType.h>
-#include <codegen/IntType.h>
+#include <llvm/IR/Module.h>
 
 using namespace llvm;
 
@@ -26,7 +26,8 @@ void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value*
             arrayType->elementType->storeType,
             AllocSize,
             size,
-            nullptr, ""
+            context.module->getFunction("heapAlloc"),
+            ""
     );
     context.builder.Insert(MallocI);
     Malloc = MallocI;
@@ -39,7 +40,9 @@ void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value*
             ITy,
             arrayType->referenceObjectType,
             AllocSize,
-            nullptr, nullptr, ""
+            nullptr,
+            context.module->getFunction("heapAlloc"),
+            ""
     );
     context.builder.Insert(arrayObjectMallocI);
     arrayObjectMalloc = arrayObjectMallocI;

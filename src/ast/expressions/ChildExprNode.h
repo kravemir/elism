@@ -12,6 +12,8 @@ class ChildExprNode: public ExprNode {
 public:
     ChildExprNode(ExprNode *base, const std::string &childName);
 
+    ~ChildExprNode() override;
+
 private:
     std::string toString() const override;
 

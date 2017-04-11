@@ -12,6 +12,8 @@ class ExprStatementNode: public StatementNode {
 public:
     ExprStatementNode(ExprNode *expr);
 
+    ~ExprStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

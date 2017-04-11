@@ -13,7 +13,6 @@ std::string StringExprNode::toString() const {
 }
 
 CodegenValue *StringExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
-    Constant *zero = Constant::getNullValue(IntegerType::getInt32Ty(context.llvmContext));
     Constant *format_const = ConstantDataArray::getString(context.llvmContext, value.c_str() );
     Type* ltype = ArrayType::get(IntegerType::get(context.llvmContext, 8), value.size() + 1);
     GlobalVariable *var = new GlobalVariable(

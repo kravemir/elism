@@ -18,3 +18,7 @@ CodegenValue * CallExprNode::codegen(CodegenContext &context, const llvm::Twine 
     }
     return callee->doCall(context, argsv, Name);
 }
+
+CallExprNode::~CallExprNode() {
+    delete expr;
+}

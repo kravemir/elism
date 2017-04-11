@@ -99,6 +99,32 @@ void parseInput(Program &p) {
     }
 }
 
+static std::vector<void*> heapAllocatedStuff;
+
+extern "C" {
+    void *heapAlloc(size_t size) {
+        void *a = malloc(size);
+        heapAllocatedStuff.push_back(a);
+        return a;
+    }
+}
+
+static void register_heapAlloc(CodegenContext &ctx) {
+    llvm::FunctionType* heapAlloc_type = llvm::FunctionType::get(
+            llvm::Type::getInt8PtrTy(ctx.llvmContext),
+            { llvm::Type::getInt8PtrTy(ctx.llvmContext) },
+            true
+    );
+
+    llvm::Function *func = llvm::Function::Create(
+            heapAlloc_type,
+            llvm::Function::ExternalLinkage,
+            llvm::Twine("heapAlloc"),
+            ctx.module
+    );
+    func->setCallingConv(llvm::CallingConv::C);
+}
+
 int runJit(Program &p) {
     LLVMInitializeNativeTarget();
     LLVMInitializeNativeAsmPrinter();
@@ -132,6 +158,7 @@ int runJit(Program &p) {
         IRBuilder<> Builder(llvmContext);
         CodegenContext ctx(llvmContext, TheModule, Builder);
         register_printf(ctx);
+        register_heapAlloc(ctx);
         p.codegen(ctx);
     }
 
@@ -145,7 +172,14 @@ int runJit(Program &p) {
     // Cast it to the right type (takes no arguments, returns a double) so we
     // can call it as a native function.
     int (*FP)() = (int (*)())(intptr_t)FPtr;
-    return FP();
+    int result = FP();
+
+    heapAlloc(1);
+    for(void *a : heapAllocatedStuff) {
+        free(a);
+    }
+
+    return result;
 }
 
 int main(int argc, char **argv) {

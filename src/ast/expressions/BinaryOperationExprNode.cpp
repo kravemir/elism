@@ -64,3 +64,8 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context, const l
     assert(0 && "No suitable operator found");
     return nullptr;
 }
+
+BinaryOperationExprNode::~BinaryOperationExprNode() {
+    delete e1;
+    delete e2;
+}

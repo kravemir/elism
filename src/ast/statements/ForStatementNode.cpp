@@ -44,3 +44,8 @@ void ForStatementNode::codegen(CodegenContext &context) {
     TheFunction->getBasicBlockList().push_back(ContinueBB);
     context.builder.SetInsertPoint(ContinueBB);
 }
+
+ForStatementNode::~ForStatementNode() {
+    delete expr;
+    delete statement;
+}

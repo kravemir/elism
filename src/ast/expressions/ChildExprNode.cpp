@@ -14,3 +14,7 @@ CodegenValue *ChildExprNode::codegen(CodegenContext &context, const llvm::Twine 
     CodegenValue *base = this->base->codegen(context);
     return base->type->getChild(context,base,childName); // todo: Name
 }
+
+ChildExprNode::~ChildExprNode() {
+    delete base;
+}

@@ -12,6 +12,8 @@ class LetStatementNode: public StatementNode {
 public:
     LetStatementNode(const std::string &name, ExprNode *const expr);
 
+    ~LetStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

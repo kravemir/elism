@@ -10,6 +10,8 @@ class IfStatementNode: public StatementNode {
 public:
     IfStatementNode(ExprNode *conditionExpr, StatementNode *then, StatementNode *el);
 
+    ~IfStatementNode() override;
+
     void print(Printer &printer) const override;
 
     void codegen(CodegenContext &context) override;

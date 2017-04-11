@@ -5,6 +5,7 @@
 #include "ClassNode.h"
 
 #include <codegen/FunctionType.h>
+#include <llvm/IR/Module.h>
 
 using namespace llvm;
 
@@ -79,7 +80,9 @@ void ClassNode::codegen(CodegenContext &context) {
         AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
         Instruction* Malloc = CallInst::CreateMalloc(context.builder.GetInsertBlock(),
                                                      ITy, classType, AllocSize,
-                                                     nullptr, nullptr, name + ".instance");
+                                                     nullptr,
+                                                     context.module->getFunction("heapAlloc"),
+                                                     name + ".instance");
 
         context.builder.Insert(Malloc);
         context.builder.CreateCall(F_init, {Malloc});
@@ -90,6 +93,11 @@ void ClassNode::codegen(CodegenContext &context) {
     context.addValue(name, new CodegenValue(CFT,F_new));
     context.addType(name, cClassType);
 
+}
+
+ClassNode::~ClassNode() {
+    for(StatementNode *s : statements)
+        delete s;
 }
 
 struct ClassFunctionType: CodegenType {

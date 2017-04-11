@@ -22,6 +22,9 @@ void Program::print(Printer &printer) {
 }
 
 Program::~Program() {
+    for(ClassNode *cls : classes) {
+        delete cls;
+    }
     for(FunctionNode *fn : functions) {
         delete fn;
     }

@@ -12,6 +12,8 @@ class BinaryOperationExprNode: public ExprNode {
 public:
     BinaryOperationExprNode(const char OP, ExprNode *const e1, ExprNode *const e2);
 
+    ~BinaryOperationExprNode() override;
+
     std::string toString() const override;
 
     CodegenValue * codegen(CodegenContext &context, const llvm::Twine &Name = "") override;

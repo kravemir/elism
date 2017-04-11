@@ -20,3 +20,10 @@ void AssignStatementNode::codegen(CodegenContext &context) {
     CodegenValue* value = valueExpr->codegen(context);
     target->doStore(context,value);
 }
+
+AssignStatementNode::~AssignStatementNode() {
+    if(targetExpr)
+        delete targetExpr;
+    if(valueExpr)
+        delete valueExpr;
+}

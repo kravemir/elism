@@ -49,3 +49,9 @@ void IfStatementNode::codegen(CodegenContext &context) {
     context.builder.SetInsertPoint(ContinueBB);
     TheFunction->getBasicBlockList().push_back(ContinueBB);
 }
+
+IfStatementNode::~IfStatementNode() {
+    delete conditionExpr;
+    delete then;
+    if(el) delete el;
+}

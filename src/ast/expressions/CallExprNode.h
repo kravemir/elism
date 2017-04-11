@@ -12,6 +12,8 @@ class CallExprNode: public ExprNode {
 public:
     CallExprNode(ExprNode *expr, std::vector<ExprNode*> args);
 
+    ~CallExprNode() override;
+
     std::string toString() const override;
 
     CodegenValue * codegen(CodegenContext &context, const llvm::Twine &Name = "") override;
