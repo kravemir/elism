@@ -16,5 +16,8 @@ class Foo {
 fn main () -> i32 {
     var foo = Foo();
     foo.printSelf();
+
+    printf("foo.n1: %d, foo.str1: %s\n", foo.n1, foo.str1);
+
     return 42;
 }

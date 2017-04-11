@@ -8,7 +8,7 @@ Language functional requirements
 
 Supported features of structured programming:
 
-- [ ] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):
+- [ ] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
     - [x] integer numbers
     - [x] strings
     - [X] arrays reference
@@ -17,21 +17,21 @@ Supported features of structured programming:
     - [x] arithmetical operations: `+`, `-`, `*`, `/`
     - [x] array manipulation: `array[idx]`, `array.length`
     - [ ] function call: `foo()`
-- [x] statements: (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp)):
+- [x] statements: (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
     - [x] assignment: `name = expr;`
     - [x] array element assignment: `array[idx] = val;`
 - [ ] control structures:
     - [ ] conditions: `if`, `if-else`
     - [x] while cycle: `while (condition) statement;`
     - [x] for cycle: `for (i: iterable) statment;`
-- [ ] class declarations: (covered in: [04-classes.bp](/examples/04-classes.bp)):
+- [ ] class declarations: (covered in: [04-classes.bp](/examples/04-classes.bp))
     - [x] class type declaration: `class Name { ... }`
     - [x] members/variables: `class Name { var X : i32; var Y = 123; ... }`
     - [x] methods: `class Name { fn foo() -> type { ... } }`
     - [ ] simple inheritance: `TODO`
-- [ ] class expressions:
-    - [ ] variables: `TODO`
-    - [ ] method call: `obj.method()`
+- [x] class reference expressions: (covered in: [04-classes.bp](/examples/04-classes.bp))
+    - [x] variables: `obj.x`
+    - [x] method call: `obj.method()`
 
 Supported features of region based memory management:
 
