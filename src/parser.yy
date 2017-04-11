@@ -67,24 +67,19 @@ class(C) ::= CLASS IDENTIFIER(NAME) LBRACE class_statements(CS) RBRACE. {
 
 %type class_statements { std::vector<StatementNode*>* }
 class_statements(CS) ::= . { CS = new std::vector<StatementNode*>(); }
-class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
-  CS = CS_;
+class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
   CS->push_back(new VarStatementNode(tokenToString(NAME),0,VALUE));
 }
-class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) COLON type_def(TYPE) SEMICOLON. {
-  CS = CS_;
+class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_def(TYPE) SEMICOLON. {
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,0));
 }
-class_statements(CS) ::= class_statements(CS_) VAR IDENTIFIER(NAME) COLON type_def(TYPE) ASSIGN expr(VALUE) SEMICOLON. {
-  CS = CS_;
+class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_def(TYPE) ASSIGN expr(VALUE) SEMICOLON. {
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
-class_statements(CS) ::= class_statements(CS_) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-  CS = CS_;
+class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
   CS->push_back(new FunctionNode(NAME.str_value,new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB)));
 }
-class_statements(CS) ::= class_statements(CS_) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-  CS = CS_;
+class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
   CS->push_back(new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
 }
 
@@ -126,8 +121,7 @@ arg_list(AL) ::= arg_def(AD) . {
     AL->push_back(std::move(*AD));
     delete AD;
 }
-arg_list(AL) ::= arg_list(AL_) COMMA arg_def(AD). {
-    AL = AL_;
+arg_list(AL) ::= arg_list(AL) COMMA arg_def(AD). {
     AL->push_back(std::move(*AD));
     delete AD;
 }
@@ -144,11 +138,9 @@ statement_block(SB) ::= LBRACE statement_list(SL) RBRACE. {
 }
 
 %type statement_list { std::vector<StatementNode*>* }
-statement_list(SL) ::= statement_list(SL_old) statement(S). {
-    SL_old->push_back(S);
-    SL = SL_old;
+statement_list(SL) ::= statement_list(SL) statement(S). {
+    SL->push_back(S);
 }
-
 statement_list(SL) ::= statement(S). {
     SL = new std::vector<StatementNode*>(1,S);
 }
@@ -157,35 +149,27 @@ statement_list(SL) ::= statement(S). {
 statement(S) ::= RETURN expr(E) SEMICOLON. {
     S = new ReturnStatementNode(E);
 }
-
 statement(S) ::= LET IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
     S = new LetStatementNode(tokenToString(NAME),VALUE);
 }
-
 statement(S) ::= LET IDENTIFIER(NAME) COLON type_def ASSIGN expr(VALUE) SEMICOLON. {
     S = new LetStatementNode(tokenToString(NAME),VALUE);
 }
-
 statement(S) ::= VAR IDENTIFIER(NAME) ASSIGN expr(VALUE) SEMICOLON. {
     S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
-
 statement(S) ::= VAR IDENTIFIER(NAME) COLON type_def ASSIGN expr(VALUE) SEMICOLON. {
     S = new VarStatementNode(tokenToString(NAME),0,VALUE);
 }
-
 statement(S) ::= expr(TARGET) ASSIGN expr(VALUE) SEMICOLON. {
     S = new AssignStatementNode(TARGET,VALUE);
 }
-
 statement(S) ::= expr(E) SEMICOLON. {
     S = new ExprStatementNode(E);
 }
-
 statement(S) ::= WHILE LPAREN expr(E) RPAREN statement(S_). {
     S = new WhileStatementNode(E,S_);
 }
-
 statement(S) ::= FOR LPAREN IDENTIFIER(NAME) COLON expr(E) RPAREN statement(S_). {
     S = new ForStatementNode(tokenToString(NAME),E,S_);
 }
@@ -204,11 +188,10 @@ statement(S) ::= statement_block(SB). {
 }
 
 %type expr { ExprNode* }
-expr(E) ::= comparison(E_). { E = E_; }
+expr(E) ::= comparison(E).
 
 %type comparison { ExprNode* }
-comparison(E) ::= add_expr(E_). { E = E_; }
-
+comparison(E) ::= add_expr(E).
 comparison(E) ::= comparison(E1) EQUALS add_expr(E2). {
     E = new BinaryOperationExprNode(TOKEN_EQUALS, E1, E2);
 }
@@ -226,40 +209,34 @@ comparison(E) ::= comparison(E1) GE add_expr(E2). {
 }
 
 %type add_expr { ExprNode* }
+add_expr(E) ::= mult_expr(E).
 add_expr(E) ::= add_expr(E1) PLUS mult_expr(E2). {
     E = new BinaryOperationExprNode('+', E1,E2);
 }
 add_expr(E) ::= add_expr(E1) MINUS mult_expr(E2). {
     E = new BinaryOperationExprNode('-', E1,E2);
 }
-add_expr(E) ::= mult_expr(E1). { E = E1; }
 
 %type mult_expr { ExprNode* }
+mult_expr(E) ::= atom_expr(E).
 mult_expr(E) ::= mult_expr(E1) MULTIPLY atom_expr(E2). {
     E = new BinaryOperationExprNode('*', E1,E2);
 }
 mult_expr(E) ::= mult_expr(E1) DIVIDE atom_expr(E2). {
     E = new BinaryOperationExprNode('/', E1,E2);
 }
-mult_expr(E) ::= atom_expr(E1). { E = E1; }
 
 %type atom_expr { ExprNode* }
-atom_expr(AE) ::= atom(A). {
-    AE = A;
-}
-
+atom_expr(A) ::= atom(A).
 atom_expr(AE) ::= atom_expr(AE_) LPAREN call_args(CA) RPAREN. {
     AE = new CallExprNode(AE_, *CA);
 }
-
 atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
     AE = new CallExprNode(AE_, {});
 }
-
 atom_expr(AE) ::= atom_expr(AE_) LBRACKET expr(IDX) RBRACKET. {
     AE = new ArrayElementExprNode(AE_, IDX);
 }
-
 atom_expr(AE) ::= atom_expr(AE_) DOT IDENTIFIER(CHILD_NAME). {
     AE = new ChildExprNode(AE_, tokenToString(CHILD_NAME));
 }
@@ -290,7 +267,6 @@ call_args(CA) ::= expr(E). {
     CA->push_back(E);
 }
 
-call_args(CA) ::= call_args(CA_) COMMA expr(E). {
-    CA = CA_;
+call_args(CA) ::= call_args(CA) COMMA expr(E). {
     CA->push_back(E);
 }
