@@ -20,8 +20,8 @@ Supported features of structured programming:
 - [x] statements: (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
     - [x] assignment: `name = expr;`
     - [x] array element assignment: `array[idx] = val;`
-- [ ] control structures:
-    - [ ] conditions: `if`, `if-else`
+- [x] control structures: (covered in: [03-cycles.bp](/examples/03-cycles.bp))
+    - [x] conditions: `if`, `if-else`
     - [x] while cycle: `while (condition) statement;`
     - [x] for cycle: `for (i: iterable) statment;`
 - [ ] class declarations: (covered in: [04-classes.bp](/examples/04-classes.bp))

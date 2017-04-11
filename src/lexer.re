@@ -66,6 +66,7 @@ SKIP_WS:;
         "var"       { printf ("   keyword: var\n"); return TOKEN_VAR; }
         "class"     { printf ("   keyword: class\n"); return TOKEN_CLASS; }
         "if"        { printf ("   keyword: if\n"); return TOKEN_IF; }
+        "else"        { printf ("   keyword: if\n"); return TOKEN_ELSE; }
         "while"        { printf ("   keyword: if\n"); return TOKEN_WHILE; }
         "for"        { printf ("   keyword: if\n"); return TOKEN_FOR; }
 

@@ -8,7 +8,7 @@
 
 class IfStatementNode: public StatementNode {
 public:
-    IfStatementNode(ExprNode *conditionExpr, StatementNode *statement);
+    IfStatementNode(ExprNode *conditionExpr, StatementNode *then, StatementNode *el);
 
     void print(Printer &printer) const override;
 
@@ -16,7 +16,7 @@ public:
 
 private:
     ExprNode *conditionExpr;
-    StatementNode *statement;
+    StatementNode *then, *el;
 };
 
 

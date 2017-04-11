@@ -186,10 +186,15 @@ statement(S) ::= FOR LPAREN IDENTIFIER(NAME) COLON expr(E) RPAREN statement(S_).
     S = new ForStatementNode(tokenToString(NAME),E,S_);
 }
 
-statement(S) ::= IF LPAREN expr(E) RPAREN statement(S_). {
-    S = new IfStatementNode(E, S_);
-}
+%nonassoc IF.
+%nonassoc ELSE.
 
+statement(S) ::= IF LPAREN expr(E) RPAREN statement(S1) ELSE statement(S2). {
+    S = new IfStatementNode(E, S1, S2);
+}
+statement(S) ::= IF LPAREN expr(E) RPAREN statement(S_). {
+    S = new IfStatementNode(E, S_, nullptr);
+}
 statement(S) ::= statement_block(SB). {
     S = new BlockStatementNode(*SB);
 }

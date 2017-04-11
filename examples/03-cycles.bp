@@ -1,7 +1,10 @@
 fn main() -> i32
 {
     for(i: range(0,10)) {
-        printf("i: %d\n", i);
+        if( i < 5 )
+            printf("i: %d < 5\n", i);
+        else
+            printf("i: %d >= 5\n", i);
     }
 
     var i2 = 1;
