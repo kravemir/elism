@@ -25,6 +25,13 @@ std::string tokenToString(YYSTYPE &yystype) {
     return "";
 }
 
+template<typename T>
+T moveDelete(T* val) {
+    T v = std::move(*val);
+    delete val;
+    return v;
+}
+
 }
 
 %token_destructor {
@@ -61,8 +68,7 @@ top_level_node ::= class(C). {
 
 %type class { ClassNode* }
 class(C) ::= CLASS IDENTIFIER(NAME) LBRACE class_statements(CS) RBRACE. {
-    C = new ClassNode(NAME.str_value,std::move(*CS));
-    delete CS;
+    C = new ClassNode(tokenToString(NAME),moveDelete(CS));
 }
 
 %type class_statements { std::vector<StatementNode*>* }
@@ -77,23 +83,19 @@ class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_de
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-  CS->push_back(new FunctionNode(NAME.str_value,new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB)));
+  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB)));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-  CS->push_back(new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
+  CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
 }
 
 %type function { FunctionNode* }
 function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-    F = new FunctionNode(NAME.str_value,RETURN_TYPE,std::move(*ARGS),std::move(*SB));
-    delete SB;
-    delete ARGS;
+    F = new FunctionNode(tokenToString(NAME),RETURN_TYPE,moveDelete(ARGS),moveDelete(SB));
 }
 
 function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-    F = new FunctionNode(NAME.str_value,new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB));
-    delete SB;
-    delete ARGS;
+    F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),moveDelete(ARGS),moveDelete(SB));
 }
 
 %type fn_arg_def { std::vector<std::pair<std::string,TypeNode*>>* }
@@ -111,25 +113,21 @@ type_def(TD) ::= type_def(TD_) LBRACKET RBRACKET. {
 }
 
 type_def(TD) ::= IDENTIFIER(id). {
-    TD = new NamedTypeNode(id.str_value);
-    delete[] id.str_value;
+    TD = new NamedTypeNode(tokenToString(id));
 }
 
 %type arg_list { std::vector<std::pair<std::string,TypeNode*>>* }
 arg_list(AL) ::= arg_def(AD) . {
     AL = new std::vector<std::pair<std::string,TypeNode*>>();
-    AL->push_back(std::move(*AD));
-    delete AD;
+    AL->push_back(moveDelete(AD));
 }
 arg_list(AL) ::= arg_list(AL) COMMA arg_def(AD). {
-    AL->push_back(std::move(*AD));
-    delete AD;
+    AL->push_back(moveDelete(AD));
 }
 
 %type arg_def { std::pair<std::string,TypeNode*>* }
 arg_def(AD) ::= IDENTIFIER(NAME) COLON type_def(TD). {
-    AD = new std::pair<std::string,TypeNode*>(std::string(NAME.str_value),TD);
-    delete[] NAME.str_value;
+    AD = new std::pair<std::string,TypeNode*>(tokenToString(NAME),TD);
 }
 
 %type statement_block { std::vector<StatementNode*>* }

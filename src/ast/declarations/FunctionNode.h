@@ -13,7 +13,7 @@
 
 class FunctionNode: public StatementNode {
 public:
-    FunctionNode(const char *name,
+    FunctionNode(const std::string &name,
                  TypeNode *returnType,
                  const std::vector<std::pair<std::string,TypeNode*>> arguments,
                  const std::vector<StatementNode *> &statements);
@@ -26,7 +26,7 @@ public:
     void codegenAsClassStatement(ClassTypeContext &context) override;
 
 private:
-    const char *name;
+    std::string name;
     TypeNode *returnType;
     std::vector<std::pair<std::string, TypeNode *>> arguments;
     std::vector<StatementNode*> statements;

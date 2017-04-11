@@ -9,7 +9,8 @@
 
 using namespace llvm;
 
-FunctionNode::FunctionNode(const char *name, TypeNode *returnType,
+FunctionNode::FunctionNode(const std::string &name,
+                           TypeNode *returnType,
                            const std::vector<std::pair<std::string, TypeNode *>> arguments,
                            const std::vector<StatementNode *> &statements)
         : name(name),
@@ -46,7 +47,6 @@ void FunctionNode::print(Printer &printer) const {
 }
 
 FunctionNode::~FunctionNode() {
-    delete[] name;
     if(returnType)
         delete returnType;
     for(auto arg : arguments) {
