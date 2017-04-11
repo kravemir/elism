@@ -1,9 +1,13 @@
 class Foo {
-    var n1 = 1001;
-    var str1 = "str1";
+    var n1 : i32;
+    var n2 : i32 = 1002;
+    var n3 = 1003;
+
+    var str1 = "_1001_";
+    var str2 : i32 = "_1002_";
 
     fn printSelf() -> i32 {
-        printf("self: %d, %s\n", n1, str1);
+        printf("self [n1: %d, n2: %d, n3: %d, str1: %s, str2: %s]\n", n1, n2, n3, str1, str2);
         return 1;
     }
 

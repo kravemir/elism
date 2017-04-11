@@ -8,13 +8,12 @@
 using namespace llvm;
 
 VarStatementNode::VarStatementNode(const std::string &name,
-                 const TypeNode *type,
+                 TypeNode *type,
                  ExprNode *const expr)
         : name(name),
           type(type),
           expr(expr)
 {
-    assert(expr);
 }
 
 void VarStatementNode::codegenAsClassStatement(ClassTypeContext &context) {
@@ -26,7 +25,21 @@ void VarStatementNode::print(Printer &printer) const {
 }
 
 void VarStatementNode::codegen(CodegenContext &context) {
-    CodegenValue* value = expr->codegen(context);
-    assert(value);
+    CodegenValue *value;
+    CodegenType *type = 0;
+    if(this->type != nullptr) {
+        type = this->type->codegen(context);
+        assert(type);
+    }
+
+    if(expr == nullptr) {
+        assert(type);
+        value = type->getDefault(context);
+        assert(value);
+    } else {
+        value = expr->codegen(context);
+        assert(value);
+    }
+
     context.addVariable(name,value);
 }

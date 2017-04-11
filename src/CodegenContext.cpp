@@ -82,6 +82,11 @@ CodegenValue *CodegenType::getElement(CodegenContext &ctx, CodegenValue *value, 
     return nullptr;
 }
 
+CodegenValue *const CodegenType::getDefault(CodegenContext &context) {
+    assert(0);
+    return nullptr;
+}
+
 CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress)
         : type(type),
           value(value),

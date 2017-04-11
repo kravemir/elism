@@ -24,9 +24,9 @@ Supported features of structured programming:
     - [ ] conditions: `if`, `if-else`
     - [x] while cycle: `while (condition) statement;`
     - [x] for cycle: `for (i: iterable) statment;`
-- [ ] class declarations:
+- [ ] class declarations: (covered in: [04-classes.bp](/examples/04-classes.bp)):
     - [x] class type declaration: `class Name { ... }`
-    - [ ] members/variables: `class Name { var X : i32; var Y = 123; ... }`
+    - [x] members/variables: `class Name { var X : i32; var Y = 123; ... }`
     - [x] methods: `class Name { fn foo() -> type { ... } }`
     - [ ] simple inheritance: `TODO`
 - [ ] class expressions:

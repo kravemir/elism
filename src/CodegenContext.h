@@ -56,6 +56,8 @@ public:
     CodegenType * const callReturnType;
 
     virtual CodegenValue *getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index);
+
+    virtual CodegenValue *const getDefault(CodegenContext &context);
 };
 
 class CodegenValue {

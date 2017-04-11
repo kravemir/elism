@@ -14,6 +14,8 @@ struct IntType: CodegenType {
 
     static IntType* get32(CodegenContext &ctx);
     static IntType* get64(CodegenContext &ctx);
+
+    CodegenValue *const getDefault(CodegenContext &context) override;
 };
 
 

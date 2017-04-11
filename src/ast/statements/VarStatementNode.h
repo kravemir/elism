@@ -11,7 +11,7 @@
 
 class VarStatementNode: public StatementNode {
 public:
-    VarStatementNode(const std::string &name, const TypeNode *type, ExprNode *const expr);
+    VarStatementNode(const std::string &name, TypeNode *type, ExprNode *const expr);
 
     void print(Printer &printer) const override;
 
@@ -21,7 +21,7 @@ public:
 
 private:
     const std::string name;
-    const TypeNode *type;
+    TypeNode *type;
     ExprNode * const expr;
 };
 
