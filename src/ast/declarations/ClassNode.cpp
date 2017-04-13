@@ -6,6 +6,8 @@
 
 #include <codegen/FunctionType.h>
 #include <llvm/IR/Module.h>
+#include <ast/expressions/CallExprNode.h>
+#include <ast/expressions/NameExprNode.h>
 
 using namespace llvm;
 
@@ -96,15 +98,13 @@ void ClassNode::codegen(CodegenContext &context) {
         // Create a new basic block to start insertion into.
         BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry.initializers", F_new);
         context.builder.SetInsertPoint(BB);
+        // dorty fox
+        context.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
 
         Type* ITy = Type::getInt64PtrTy(context.llvmContext);
         Constant* AllocSize = ConstantExpr::getSizeOf(classType);
         AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-        Instruction* Malloc = CallInst::CreateMalloc(context.builder.GetInsertBlock(),
-                                                     ITy, classType, AllocSize,
-                                                     nullptr,
-                                                     context.module->getFunction("heapAlloc"),
-                                                     name + ".instance");
+        Instruction* Malloc = context.createAlloc(classType, AllocSize,nullptr);
 
         context.builder.Insert(Malloc);
         context.builder.CreateCall(F_init, {Malloc});

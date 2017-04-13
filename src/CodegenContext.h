@@ -29,10 +29,16 @@ public:
     virtual CodegenValue * getValue(std::string name);
     virtual CodegenType * getType(std::string name);
 
+    virtual llvm::Instruction* createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize);
+
+    virtual llvm::Value* getRegion();
+
 public:
     llvm::Module * const module;
     llvm::LLVMContext &llvmContext;
     llvm::IRBuilder<> &builder;
+
+    llvm::Value* region = 0;
 
     std::map<std::string,CodegenValue*> values;
     std::map<std::string,CodegenType*> types;
@@ -87,6 +93,8 @@ public:
     llvm::AllocaInst *createAlloca(std::string name, CodegenValue *value) override;
 
     void addVariable(std::string name, CodegenValue *value) override;
+
+    llvm::Value *getRegion() override;
 
 
 public:

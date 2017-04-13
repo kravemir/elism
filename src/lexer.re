@@ -62,14 +62,14 @@ SKIP_WS:;
 
         "fn"        { printf ("   keyword: fn\n"); return TOKEN_FN; }
         "return"    { printf ("   keyword: return\n"); return TOKEN_RETURN; }
-        "let"       { printf ("   keyword: ket\n"); return TOKEN_LET; }
+        "let"       { printf ("   keyword: let\n"); return TOKEN_LET; }
         "var"       { printf ("   keyword: var\n"); return TOKEN_VAR; }
         "class"     { printf ("   keyword: class\n"); return TOKEN_CLASS; }
         "if"        { printf ("   keyword: if\n"); return TOKEN_IF; }
         "else"        { printf ("   keyword: if\n"); return TOKEN_ELSE; }
         "while"        { printf ("   keyword: if\n"); return TOKEN_WHILE; }
         "for"        { printf ("   keyword: if\n"); return TOKEN_FOR; }
-        "on"        { printf ("   keyword: if\n"); return TOKEN_ON; }
+        "on"        { printf ("   keyword: on\n"); return TOKEN_ON; }
 
         [a-zA-Z][_a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);

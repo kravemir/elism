@@ -4,6 +4,10 @@
 
 #include "CodegenContext.h"
 
+#include <llvm/IR/Module.h>
+
+using namespace llvm;
+
 CodegenContext::CodegenContext(llvm::LLVMContext &llvmContext,
                                llvm::Module *const module,
                                llvm::IRBuilder<> &builder)
@@ -52,6 +56,56 @@ CodegenType *CodegenContext::getType(std::string name) {
     if(it != types.end())
         return it->second;
     return nullptr;
+}
+
+static bool IsConstantOne(Value *val) {
+  assert(val && "IsConstantOne does not work with nullptr val");
+  const ConstantInt *CVal = dyn_cast<ConstantInt>(val);
+  return CVal && CVal->isOne();
+}
+
+
+llvm::Instruction *CodegenContext::createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize) {
+    Type* IntPtrTy = Type::getInt64PtrTy(llvmContext);
+
+    if (!allocArraySize)
+        allocArraySize = ConstantInt::get(IntPtrTy, 1);
+    else if (allocArraySize->getType() != IntPtrTy) {
+        allocArraySize = CastInst::CreateIntegerCast(allocArraySize, IntPtrTy, false, "", builder.GetInsertBlock());
+    }
+
+    if (!IsConstantOne(allocArraySize)) {
+        if (IsConstantOne(allocSize)) {
+            allocSize = allocArraySize;
+        } else if (Constant *CO = dyn_cast<Constant>(allocArraySize)) {
+            Constant *Scale = ConstantExpr::getIntegerCast(CO, IntPtrTy, false /*ZExt*/);
+            allocSize = ConstantExpr::getMul(Scale, cast<Constant>(allocSize));
+        } else {
+            allocSize = BinaryOperator::CreateMul(allocArraySize, allocSize, "mallocsize", builder.GetInsertBlock());
+        }
+    }
+
+    assert(allocSize->getType() == IntPtrTy && "malloc arg is wrong size");
+
+    Value *MallocFunc = module->getFunction("RegionAlloc");
+    PointerType *AllocPtrType = PointerType::get(allocType,0);
+    CallInst *MCall = nullptr;
+    Instruction *Result = nullptr;
+
+    MCall = CallInst::Create(MallocFunc, {getRegion(),allocSize}, "malloccall");
+    MCall->setTailCall();
+    Result = MCall;
+    if (Result->getType() != AllocPtrType) {
+        builder.GetInsertBlock()->getInstList().push_back(MCall);
+        // Create a cast instruction to convert to the right type...
+        Result = new BitCastInst(MCall, AllocPtrType);
+    }
+
+    return Result;
+}
+
+llvm::Value *CodegenContext::getRegion() {
+    return region;
 }
 
 CodegenType::CodegenType(llvm::Type *const storeType)
@@ -130,4 +184,10 @@ CodegenValue *ChildCodegenContext::getValue(std::string name) {
 
 llvm::AllocaInst *ChildCodegenContext::createAlloca(std::string name, CodegenValue *value) {
     return parent.createAlloca(name,value);
+}
+
+Value *ChildCodegenContext::getRegion() {
+    if(region != nullptr)
+        return region;
+    return parent.getRegion();
 }

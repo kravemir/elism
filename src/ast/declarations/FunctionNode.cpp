@@ -6,6 +6,8 @@
 
 #include <codegen/FunctionType.h>
 #include <codegen/VoidType.h>
+#include <ast/expressions/CallExprNode.h>
+#include <ast/expressions/NameExprNode.h>
 
 using namespace llvm;
 
@@ -114,6 +116,8 @@ void FunctionNode::codegen(CodegenContext &context) {
     context.builder.SetInsertPoint(BB);
 
     FunctionContext functionContext(context, BB);
+    // dorty fox
+    functionContext.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
     Function::arg_iterator arg = F->arg_begin();
     for(int i = 0; i < arguments.size(); i++) {
         arg->setName("arg." + arguments[i].first);
@@ -157,6 +161,8 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
     Function::arg_iterator arg = F->arg_begin();
     functionContext.classInstance = new CodegenValue(context.classType,(Argument*)(arg++));
 
+    // dorty fox
+    functionContext.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
     for(int i = 0; i < arguments.size(); i++) {
         arg->setName("arg." + arguments[i].first);
         functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));

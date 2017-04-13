@@ -99,30 +99,67 @@ void parseInput(Program &p) {
     }
 }
 
-static std::vector<void*> heapAllocatedStuff;
+struct Region {
+    std::vector<void*> heapAllocatedStuff;
+};
 
 extern "C" {
-    void *heapAlloc(size_t size) {
-        void *a = malloc(size);
-        heapAllocatedStuff.push_back(a);
-        return a;
-    }
+
+Region *NewRegion() {
+    Region *r = new Region;
+    //printf("New region created\n");
+    return r;
+}
+char *RegionAlloc(Region *r, size_t size) {
+    void *a = malloc(size);
+    r->heapAllocatedStuff.push_back(a);
+    return (char *) a;
 }
 
-static void register_heapAlloc(CodegenContext &ctx) {
-    llvm::FunctionType* heapAlloc_type = llvm::FunctionType::get(
-            llvm::Type::getInt8PtrTy(ctx.llvmContext),
-            { llvm::Type::getInt8PtrTy(ctx.llvmContext) },
-            true
-    );
+void DeleteRegion(Region *r){
+    for(void *a : r->heapAllocatedStuff) {
+        free(a);
+    }
+    delete r;
+    //printf("Region deleted\n");
+}
+}
 
-    llvm::Function *func = llvm::Function::Create(
-            heapAlloc_type,
-            llvm::Function::ExternalLinkage,
-            llvm::Twine("heapAlloc"),
+extern "C" {
+    Region* heapRegion = new Region;
+}
+
+static void register_regions(CodegenContext &ctx) {
+    llvm::Type *regionType = llvm::Type::getInt64PtrTy(ctx.llvmContext);
+
+    llvm::FunctionType* newregion_type = llvm::FunctionType::get(regionType, {}, true);
+    llvm::FunctionType* deleteregion_type = llvm::FunctionType::get(llvm::Type::getVoidTy(ctx.llvmContext), {regionType}, true);
+    llvm::FunctionType* regionalloc_type = llvm::FunctionType::get(llvm::Type::getInt8PtrTy(ctx.llvmContext), {regionType,llvm::Type::getInt64Ty(ctx.llvmContext)}, true);
+
+
+    llvm::Function *newregion = llvm::Function::Create(
+            newregion_type, llvm::Function::ExternalLinkage,
+            llvm::Twine("NewRegion"),
             ctx.module
     );
-    func->setCallingConv(llvm::CallingConv::C);
+    newregion->setCallingConv(llvm::CallingConv::C);
+
+    llvm::Function *deleteregion = llvm::Function::Create(
+            deleteregion_type, llvm::Function::ExternalLinkage,
+            llvm::Twine("DeleteRegion"),
+            ctx.module
+    );
+    deleteregion->setCallingConv(llvm::CallingConv::C);
+
+    llvm::Function *regionalloc = llvm::Function::Create(
+            regionalloc_type, llvm::Function::ExternalLinkage,
+            llvm::Twine("RegionAlloc"),
+            ctx.module
+    );
+    regionalloc->setCallingConv(llvm::CallingConv::C);
+
+    CodegenType *rtype = new CodegenType(regionType);
+    ctx.addValue("NewRegion", new CodegenValue(new ::FunctionType(newregion_type,rtype), newregion));
 }
 
 int runJit(Program &p) {
@@ -158,7 +195,8 @@ int runJit(Program &p) {
         IRBuilder<> Builder(llvmContext);
         CodegenContext ctx(llvmContext, TheModule, Builder);
         register_printf(ctx);
-        register_heapAlloc(ctx);
+        register_regions(ctx);
+
         p.codegen(ctx);
     }
 
@@ -173,11 +211,6 @@ int runJit(Program &p) {
     // can call it as a native function.
     int (*FP)() = (int (*)())(intptr_t)FPtr;
     int result = FP();
-
-    heapAlloc(1);
-    for(void *a : heapAllocatedStuff) {
-        free(a);
-    }
 
     return result;
 }

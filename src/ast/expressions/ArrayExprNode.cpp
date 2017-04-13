@@ -20,14 +20,10 @@ void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value*
     Type* ITy = Type::getInt64PtrTy(context.llvmContext);
     Constant* AllocSize = ConstantExpr::getSizeOf(arrayType->elementType->storeType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* MallocI = CallInst::CreateMalloc(
-            context.builder.GetInsertBlock(),
-            ITy,
+    Instruction* MallocI = context.createAlloc(
             arrayType->elementType->storeType,
             AllocSize,
-            size,
-            context.module->getFunction("heapAlloc"),
-            ""
+            size
     );
     context.builder.Insert(MallocI);
     Malloc = MallocI;
@@ -35,14 +31,10 @@ void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value*
     AllocSize = ConstantExpr::getSizeOf(arrayType->referenceObjectType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
 
-    Instruction* arrayObjectMallocI = CallInst::CreateMalloc(
-            context.builder.GetInsertBlock(),
-            ITy,
+    Instruction* arrayObjectMallocI = context.createAlloc(
             arrayType->referenceObjectType,
             AllocSize,
-            nullptr,
-            context.module->getFunction("heapAlloc"),
-            ""
+            nullptr
     );
     context.builder.Insert(arrayObjectMallocI);
     arrayObjectMalloc = arrayObjectMallocI;
