@@ -174,6 +174,9 @@ statement(S) ::= WHILE LPAREN expr(E) RPAREN statement(S_). {
 statement(S) ::= FOR LPAREN IDENTIFIER(NAME) COLON expr(E) RPAREN statement(S_). {
     S = new ForStatementNode(tokenToString(NAME),E,S_);
 }
+statement(S) ::= ON IDENTIFIER(NAME) ASSIGN expr(E) statement_block(S_). {
+    S = new OnStatementNode(tokenToString(NAME),E,new BlockStatementNode(moveDelete(S_)));
+}
 
 %nonassoc IF.
 %nonassoc ELSE.
@@ -185,7 +188,7 @@ statement(S) ::= IF LPAREN expr(E) RPAREN statement(S_). {
     S = new IfStatementNode(E, S_, nullptr);
 }
 statement(S) ::= statement_block(SB). {
-    S = new BlockStatementNode(*SB);
+    S = new BlockStatementNode(moveDelete(SB));
 }
 
 %type expr { ExprNode* }

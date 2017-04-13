@@ -122,12 +122,12 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
     BasicBlock *ContentBB = BasicBlock::Create(context.llvmContext, "array.content");
     BasicBlock *ContinueBB = BasicBlock::Create(context.llvmContext, "array.continue");
 
-    context.createAlloca("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
+    AllocaInst *allocaInst = context.createAlloca("array.i", new CodegenValue(count->type,ConstantInt::get(count->value->getType(), 0)));
     context.builder.CreateBr(ConditionBB);
 
     TheFunction->getBasicBlockList().push_back(ConditionBB);
     context.builder.SetInsertPoint(ConditionBB);
-    llvm::Value *cond = context.builder.CreateICmpSLT(context.getValue("array.i")->value,count->value);
+    llvm::Value *cond = context.builder.CreateICmpSLT(context.builder.CreateLoad(allocaInst),count->value);
     context.builder.CreateCondBr(cond, ContentBB, ContinueBB);
 
     TheFunction->getBasicBlockList().push_back(ContentBB);
@@ -137,14 +137,14 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
             context.builder.CreateGEP(
                     Malloc,
                     {
-                            context.getValue("array.i")->value
+                            context.builder.CreateLoad(allocaInst)
                     },
                     "array.i"
             )
     );
-    context.getValue("array.i")->doStore(
-            context,
-            new CodegenValue(count->type,context.builder.CreateAdd(context.getValue("array.i")->value, ConstantInt::get(count->value->getType(), 1)))
+    context.builder.CreateStore(
+            context.builder.CreateAdd(context.builder.CreateLoad(allocaInst), ConstantInt::get(count->value->getType(), 1)),
+            allocaInst
     );
     context.builder.CreateBr(ConditionBB);
 

@@ -69,6 +69,7 @@ SKIP_WS:;
         "else"        { printf ("   keyword: if\n"); return TOKEN_ELSE; }
         "while"        { printf ("   keyword: if\n"); return TOKEN_WHILE; }
         "for"        { printf ("   keyword: if\n"); return TOKEN_FOR; }
+        "on"        { printf ("   keyword: if\n"); return TOKEN_ON; }
 
         [a-zA-Z][_a-zA-Z0-9]* {
             printf ("identifier: %.*s\n", (int)(YYCURSOR - tok), tok);

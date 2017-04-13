@@ -26,6 +26,7 @@
 #include "statements/BlockStatementNode.h"
 #include "statements/IfStatementNode.h"
 #include "statements/WhileStatementNode.h"
+#include "statements/OnStatementNode.h"
 #include "ast/statements/ForStatementNode.h"
 
 #include "declarations/FunctionNode.h"
