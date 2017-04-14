@@ -36,11 +36,16 @@ Supported features of structured programming:
 Supported features of region based memory management:
 
 - [ ] region management:
-    - [ ] creation of region on scope
-    - [ ] automatic destruction of region at scope exit
+    - [x] creation of region on scope
+    - [x] automatic destruction of region at scope exit
+    - [ ] automated tests for regions
 - [ ] allocation of objects within region
+    - [x] default allocation on current/default region
+    - [ ] allocation on specified region
 - [ ] types defining regions
 - [ ] calling functions on/with regions
+    - [x] passing default/current region
+    - [ ] passing other regions
 
 
 Language quality requirements
