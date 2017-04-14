@@ -65,7 +65,7 @@ static bool IsConstantOne(Value *val) {
 }
 
 
-llvm::Instruction *CodegenContext::createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize) {
+llvm::Value *CodegenContext::createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize) {
     Type* IntPtrTy = Type::getInt64PtrTy(llvmContext);
 
     if (!allocArraySize)
@@ -100,6 +100,8 @@ llvm::Instruction *CodegenContext::createAlloc(llvm::Type *allocType, llvm::Valu
         // Create a cast instruction to convert to the right type...
         Result = new BitCastInst(MCall, AllocPtrType);
     }
+
+    builder.Insert(Result);
 
     return Result;
 }

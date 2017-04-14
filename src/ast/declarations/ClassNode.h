@@ -29,7 +29,6 @@ struct ClassTypeContext: ChildCodegenContext {
     }
 
     std::vector<std::pair<std::string,CodegenValue*>> variables;
-    std::vector<std::pair<std::string,CodegenValue*>> functions;
     ClassType *classType;
 };
 

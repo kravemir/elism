@@ -106,7 +106,6 @@ void FunctionNode::codegen(CodegenContext &context) {
 void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
     auto f = codegenFunction(context,context.classType);
     context.addValue(name,f);
-    context.functions.push_back({name,f});
     context.classType->functions[name] = f;
 }
 

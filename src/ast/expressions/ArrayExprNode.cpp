@@ -20,24 +20,20 @@ void createArrayAlloc(CodegenContext &context, Value* &arrayObjectMalloc, Value*
     Type* ITy = Type::getInt64PtrTy(context.llvmContext);
     Constant* AllocSize = ConstantExpr::getSizeOf(arrayType->elementType->storeType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-    Instruction* MallocI = context.createAlloc(
+    Malloc = context.createAlloc(
             arrayType->elementType->storeType,
             AllocSize,
             size
     );
-    context.builder.Insert(MallocI);
-    Malloc = MallocI;
 
     AllocSize = ConstantExpr::getSizeOf(arrayType->referenceObjectType);
     AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
 
-    Instruction* arrayObjectMallocI = context.createAlloc(
+    arrayObjectMalloc = context.createAlloc(
             arrayType->referenceObjectType,
             AllocSize,
             nullptr
     );
-    context.builder.Insert(arrayObjectMallocI);
-    arrayObjectMalloc = arrayObjectMallocI;
 
     context.builder.CreateStore(
             size,

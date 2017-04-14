@@ -99,15 +99,13 @@ void ClassNode::codegen(CodegenContext &context) {
         // Create a new basic block to start insertion into.
         BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry.initializers", F_new);
         context.builder.SetInsertPoint(BB);
-        // dorty fox
         context.region = (Argument*)F_new->arg_begin();
 
         Type* ITy = Type::getInt64PtrTy(context.llvmContext);
         Constant* AllocSize = ConstantExpr::getSizeOf(classType);
         AllocSize = ConstantExpr::getTruncOrBitCast(AllocSize, ITy);
-        Instruction* Malloc = context.createAlloc(classType, AllocSize,nullptr);
+        Value* Malloc = context.createAlloc(classType, AllocSize,nullptr);
 
-        context.builder.Insert(Malloc);
         context.builder.CreateCall(F_init, {context.region,Malloc});
         context.builder.CreateRet(Malloc);
     }

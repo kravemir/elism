@@ -29,7 +29,7 @@ public:
     virtual CodegenValue * getValue(std::string name);
     virtual CodegenType * getType(std::string name);
 
-    virtual llvm::Instruction* createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize);
+    virtual llvm::Value* createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize);
 
     virtual llvm::Value* getRegion();
 
