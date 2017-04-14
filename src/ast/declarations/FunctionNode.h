@@ -11,6 +11,8 @@
 #include "ast/TypeNode.h"
 #include "CodegenContext.h"
 
+class ClassType;
+
 class FunctionNode: public StatementNode {
 public:
     FunctionNode(const std::string &name,
@@ -24,6 +26,9 @@ public:
     void codegen(CodegenContext &context);
 
     void codegenAsClassStatement(ClassTypeContext &context) override;
+
+private:
+    CodegenValue* codegenFunction(CodegenContext &context, ClassType *classType);
 
 private:
     std::string name;

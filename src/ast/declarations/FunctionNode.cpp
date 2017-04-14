@@ -99,51 +99,26 @@ public:
 };
 
 void FunctionNode::codegen(CodegenContext &context) {
-    CodegenType *returnType = this->returnType->codegen(context);
-    std::vector<CodegenType*> arg_types;
-    std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
-
-    for(auto arg : arguments) {
-        CodegenType *argType = arg.second->codegen(context);
-        arg_types.push_back(argType);
-        args_llvmtypes.push_back(argType->storeType);
-    }
-
-    llvm::FunctionType *FT = llvm::FunctionType::get(returnType->storeType, args_llvmtypes, false);
-    Function *F = Function::Create(FT, Function::ExternalLinkage, name, context.module);
-
-    // Create a new basic block to start insertion into.
-    BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
-    context.builder.SetInsertPoint(BB);
-
-    FunctionContext functionContext(context, BB);
-    // dorty fox
-    Function::arg_iterator arg = F->arg_begin();
-    arg->setName("region");
-    functionContext.region = (Argument*)(arg++);
-    for(int i = 0; i < arguments.size(); i++) {
-        arg->setName("arg." + arguments[i].first);
-        functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));
-    }
-    for(StatementNode *stmt : statements) {
-        stmt->codegen(functionContext);
-    }
-    if(dynamic_cast<VoidType*>(returnType))
-        context.builder.CreateRetVoid();
-
-    ::FunctionType *CFT = new ::FunctionType(FT,returnType);
-
-    context.addValue(name,new CodegenValue(CFT,F));
+    context.addValue(name,codegenFunction(context, nullptr));
 }
 
 
 void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
+    auto f = codegenFunction(context,context.classType);
+    context.addValue(name,f);
+    context.functions.push_back({name,f});
+    context.classType->functions[name] = f;
+}
+
+CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *classType) {
     CodegenType *returnType = this->returnType->codegen(context);
     std::vector<CodegenType*> arg_types;
     std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
 
-    arg_types.push_back(context.classType);
-    args_llvmtypes.push_back(context.classType->storeType);
+    if(classType) {
+        arg_types.push_back(classType);
+        args_llvmtypes.push_back(classType->storeType);
+    }
 
     for(auto arg : arguments) {
         CodegenType *argType = arg.second->codegen(context);
@@ -156,17 +131,19 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
 
     // Create a new basic block to start insertion into.
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
-    context.builder.SetInsertPoint(BB);
 
     FunctionContext functionContext(context, BB);
-    functionContext.thisType = context.classType;
+    functionContext.builder.SetInsertPoint(BB);
+    functionContext.thisType = classType;
     Function::arg_iterator arg = F->arg_begin();
     arg->setName("region");
     functionContext.region = (Argument*)(arg++);
-    arg->setName("this");
-    functionContext.classInstance = new CodegenValue(context.classType,(Argument*)(arg++));
 
-    // dorty fox
+    if(classType) {
+        arg->setName("this");
+        functionContext.classInstance = new CodegenValue(classType, (Argument *) (arg++));
+    }
+
     for(int i = 0; i < arguments.size(); i++) {
         arg->setName("arg." + arguments[i].first);
         functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));
@@ -175,11 +152,8 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
         stmt->codegen(functionContext);
     }
     if(dynamic_cast<VoidType*>(returnType))
-        context.builder.CreateRetVoid();
+        functionContext.builder.CreateRetVoid();
 
     ::FunctionType *CFT = new ::FunctionType(FT,returnType);
-
-    context.addValue(name,new CodegenValue(CFT,F));
-    context.functions.push_back({name,new CodegenValue(CFT,F)});
-    context.classType->functions[name] = new CodegenValue(CFT,F);
+    return new CodegenValue(CFT,F);
 }
