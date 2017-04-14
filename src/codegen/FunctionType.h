@@ -15,10 +15,14 @@ struct FunctionType: CodegenType {
     CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
                          const llvm::Twine &Name = "") override {
         std::vector<llvm::Value*> values;
+        if(!native)
+            values.push_back(ctx.region);
         for(CodegenValue *v : args)
             values.push_back(v->value);
         return new CodegenValue(callReturnType,ctx.builder.CreateCall(value->value,values,Name));
     }
+
+    bool native = false;
 };
 
 

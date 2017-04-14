@@ -101,7 +101,8 @@ public:
 void FunctionNode::codegen(CodegenContext &context) {
     CodegenType *returnType = this->returnType->codegen(context);
     std::vector<CodegenType*> arg_types;
-    std::vector<llvm::Type*> args_llvmtypes;
+    std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
+
     for(auto arg : arguments) {
         CodegenType *argType = arg.second->codegen(context);
         arg_types.push_back(argType);
@@ -117,8 +118,9 @@ void FunctionNode::codegen(CodegenContext &context) {
 
     FunctionContext functionContext(context, BB);
     // dorty fox
-    functionContext.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
     Function::arg_iterator arg = F->arg_begin();
+    arg->setName("region");
+    functionContext.region = (Argument*)(arg++);
     for(int i = 0; i < arguments.size(); i++) {
         arg->setName("arg." + arguments[i].first);
         functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));
@@ -138,7 +140,7 @@ void FunctionNode::codegen(CodegenContext &context) {
 void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
     CodegenType *returnType = this->returnType->codegen(context);
     std::vector<CodegenType*> arg_types;
-    std::vector<llvm::Type*> args_llvmtypes;
+    std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
 
     arg_types.push_back(context.classType);
     args_llvmtypes.push_back(context.classType->storeType);
@@ -159,10 +161,12 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
     FunctionContext functionContext(context, BB);
     functionContext.thisType = context.classType;
     Function::arg_iterator arg = F->arg_begin();
+    arg->setName("region");
+    functionContext.region = (Argument*)(arg++);
+    arg->setName("this");
     functionContext.classInstance = new CodegenValue(context.classType,(Argument*)(arg++));
 
     // dorty fox
-    functionContext.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
     for(int i = 0; i < arguments.size(); i++) {
         arg->setName("arg." + arguments[i].first);
         functionContext.addValue(arguments[i].first, new CodegenValue(arg_types[i], (Argument*)(arg++)));

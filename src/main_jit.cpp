@@ -47,7 +47,9 @@ static void register_printf(CodegenContext &ctx) {
             ctx.module
     );
     func->setCallingConv(llvm::CallingConv::C);
-    ctx.addValue("printf", new CodegenValue(new ::FunctionType(printf_type,IntType::get32(ctx)), func));
+    auto cft = new ::FunctionType(printf_type,IntType::get32(ctx));
+    cft->native = true;
+    ctx.addValue("printf", new CodegenValue(cft, func));
 }
 
 extern char _binary_stdlib_bp_start[];
@@ -125,12 +127,9 @@ void DeleteRegion(Region *r){
 }
 }
 
-extern "C" {
-    Region* heapRegion = new Region;
-}
-
 static void register_regions(CodegenContext &ctx) {
     llvm::Type *regionType = llvm::Type::getInt64PtrTy(ctx.llvmContext);
+    ctx.regionType = regionType;
 
     llvm::FunctionType* newregion_type = llvm::FunctionType::get(regionType, {}, true);
     llvm::FunctionType* deleteregion_type = llvm::FunctionType::get(llvm::Type::getVoidTy(ctx.llvmContext), {regionType}, true);
@@ -209,8 +208,10 @@ int runJit(Program &p) {
 
     // Cast it to the right type (takes no arguments, returns a double) so we
     // can call it as a native function.
-    int (*FP)() = (int (*)())(intptr_t)FPtr;
-    int result = FP();
+    Region *region = NewRegion();
+    int (*FP)(Region *) = (int (*)(Region *))(intptr_t)FPtr;
+    int result = FP(region);
+    DeleteRegion(region);
 
     return result;
 }

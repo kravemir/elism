@@ -3,13 +3,13 @@ fn main () -> i32 {
     let values =  [ 3, 1, 4, 2, 1 ];
     let maxWeight = 12;
 
+    printf("Max weight: %d\n", maxWeight);
+    printf("Number of items: %d\n", values.length);
+
     on TMP = NewRegion() {
         var m_current = [ 0; maxWeight + 1 ];
         var m_previous = [ 0; maxWeight + 1 ];
         var m_tmp = [ 0; maxWeight + 1 ];
-
-        printf("Max weight: %d\n", maxWeight);
-        printf("Number of items: %d\n", values.length);
 
         for( item: range(0,values.length) ) {
             for( w: range(0,maxWeight+1) ) {

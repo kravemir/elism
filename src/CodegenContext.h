@@ -38,6 +38,7 @@ public:
     llvm::LLVMContext &llvmContext;
     llvm::IRBuilder<> &builder;
 
+    llvm::Type* regionType = 0;
     llvm::Value* region = 0;
 
     std::map<std::string,CodegenValue*> values;

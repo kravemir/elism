@@ -39,7 +39,7 @@ void ClassNode::codegen(CodegenContext &context) {
     Type *classPtrType = PointerType::get(classType,0);
     ClassType *cClassType = new ClassType(classPtrType,super);
 
-    llvm::FunctionType *FT_init = llvm::FunctionType::get(Type::getVoidTy(context.llvmContext), {classPtrType}, false);
+    llvm::FunctionType *FT_init = llvm::FunctionType::get(Type::getVoidTy(context.llvmContext), {context.regionType,classPtrType}, false);
     Function *F_init = Function::Create(FT_init, Function::ExternalLinkage, "class." + name + ".init", context.module);
     cClassType->initF = F_init;
 
@@ -49,6 +49,7 @@ void ClassNode::codegen(CodegenContext &context) {
         // Create a new basic block to start insertion into.
         BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry.initializers", F_init);
         context.builder.SetInsertPoint(BB);
+        typeContext.region = (Argument*)F_init->arg_begin();
 
         for (StatementNode *var : statements) {
             if(dynamic_cast<VarStatementNode*>(var)) // TODO: codegen as class initialzier
@@ -73,7 +74,7 @@ void ClassNode::codegen(CodegenContext &context) {
         idx = super ? 1 : 0;
         for (auto v : typeContext.variables) {
             Value *ptr = typeContext.builder.CreateGEP(
-                    (Argument *) (F_init->arg_begin()),
+                    (Argument *) (++(F_init->arg_begin())),
                     (std::vector<Value *>) {
                             Constant::getNullValue(IntegerType::getInt64Ty(typeContext.llvmContext)),
                             ConstantInt::get(typeContext.llvmContext, APInt((unsigned) 32, (uint64_t) idx++))
@@ -91,7 +92,7 @@ void ClassNode::codegen(CodegenContext &context) {
     }
 
 
-    llvm::FunctionType *FT_new = llvm::FunctionType::get(classPtrType, {}, false);
+    llvm::FunctionType *FT_new = llvm::FunctionType::get(classPtrType, {context.regionType}, false);
     Function *F_new = Function::Create(FT_new, Function::ExternalLinkage, "class." + name + ".new", context.module);
 
     {
@@ -99,7 +100,7 @@ void ClassNode::codegen(CodegenContext &context) {
         BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry.initializers", F_new);
         context.builder.SetInsertPoint(BB);
         // dorty fox
-        context.region = (new CallExprNode(new NameExprNode("NewRegion"),{}))->codegen(context)->value;
+        context.region = (Argument*)F_new->arg_begin();
 
         Type* ITy = Type::getInt64PtrTy(context.llvmContext);
         Constant* AllocSize = ConstantExpr::getSizeOf(classType);
@@ -107,7 +108,7 @@ void ClassNode::codegen(CodegenContext &context) {
         Instruction* Malloc = context.createAlloc(classType, AllocSize,nullptr);
 
         context.builder.Insert(Malloc);
-        context.builder.CreateCall(F_init, {Malloc});
+        context.builder.CreateCall(F_init, {context.region,Malloc});
         context.builder.CreateRet(Malloc);
     }
 
@@ -129,7 +130,7 @@ struct ClassFunctionType: CodegenType {
 
     CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
                           const Twine &Name) override {
-        std::vector<llvm::Value*> values;
+        std::vector<llvm::Value*> values = {ctx.region};
         values.push_back(ctx.builder.CreateExtractValue(value->value,{0}));
         for(CodegenValue *v : args)
             values.push_back(v->value);

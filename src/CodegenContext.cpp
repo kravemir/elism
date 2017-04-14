@@ -163,6 +163,8 @@ void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
 ChildCodegenContext::ChildCodegenContext(CodegenContext &parent)
         : CodegenContext(parent.llvmContext, parent.module, parent.builder),
           parent(parent) {
+    region = parent.region;
+    regionType = parent.regionType;
 }
 
 void ChildCodegenContext::addVariable(std::string name, CodegenValue *value) {
