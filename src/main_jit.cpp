@@ -29,10 +29,6 @@
 using namespace std;
 using namespace llvm;
 
-static int dummy_printf(const char *__restrict __format, ...) {
-    return 0;
-}
-
 static ExecutionEngine *TheExecutionEngine;
 
 static void register_printf(CodegenContext &ctx) {
@@ -62,7 +58,7 @@ void parse(const char *buffer_ptr, Program &p) {
     YYSTYPE yylval = {0, 0};
     void *pParser = ParseAlloc(malloc);
     int tokenID;
-    while (tokenID = lex(buffer_ptr, dummy_printf, yylval)) {
+    while (tokenID = lex(buffer_ptr, yylval)) {
         Parse(pParser, tokenID, yylval, &p);
         yylval.str_value = 0;
     }

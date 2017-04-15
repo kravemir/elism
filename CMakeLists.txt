@@ -117,10 +117,8 @@ ADD_LIBRARY(rt_lib STATIC src/rtlib/regions.c)
 
 ADD_LIBRARY(shared_lib STATIC ${SOURCES} stdlib.o)
 
-ADD_EXECUTABLE(bp_lexer src/main.cpp)
 ADD_EXECUTABLE(bp_parser src/main_parser.cpp)
 ADD_EXECUTABLE(bp_jit src/main_jit.cpp)
 
-target_link_libraries(bp_lexer shared_lib ${llvm_libs} rt )
 target_link_libraries(bp_parser shared_lib ${llvm_libs} rt )
 target_link_libraries(bp_jit shared_lib rt_lib ${llvm_libs} rt )

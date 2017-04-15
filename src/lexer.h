@@ -13,6 +13,6 @@ typedef struct {
     const char *str_value;
 } YYSTYPE;
 
-int lex(const char * &YYCURSOR, int printf(const char *__restrict __format, ...), YYSTYPE &yylval);
+int lex(const char * &YYCURSOR, YYSTYPE &yylval);
 
 #endif //BP_LEXER_H_H

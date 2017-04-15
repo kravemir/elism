@@ -7,11 +7,6 @@
 #include <lexer.h>
 #include <parser.cpp>
 #include "lexer.h"
-#include "ast/Program.h"
-
-static int dummy_printf(const char *__restrict __format, ...) {
-    return 0;
-}
 
 int main(int argc, char **argv)
 {
@@ -33,7 +28,7 @@ int main(int argc, char **argv)
     void *pParser = ParseAlloc(malloc);
     int tokenID;
     Program p;
-    while(tokenID = lex(buffer_ptr,dummy_printf,yylval)) {
+    while(tokenID = lex(buffer_ptr,yylval)) {
         Parse(pParser, tokenID, yylval, &p);
         yylval.str_value = 0;
     }
