@@ -124,18 +124,26 @@ static void register_regions(CodegenContext &ctx) {
     ctx.addValue("NewRegion", new CodegenValue(new ::FunctionType(newregion_type,rtype), newregion));
 }
 
-int runJit(Program &p) {
+std::unique_ptr<llvm::Module> compileProgram(LLVMContext &llvmContext, Program &p) {
+    std::unique_ptr<llvm::Module> Owner = llvm::make_unique<llvm::Module>("my cool jit", llvmContext);
+    Module *TheModule = Owner.get();
+
+    IRBuilder<> Builder(llvmContext);
+    CodegenContext ctx(llvmContext, TheModule, Builder);
+    register_printf(ctx);
+    register_regions(ctx);
+
+    p.codegen(ctx);
+
+    return Owner;
+}
+
+int runProgram(std::unique_ptr<llvm::Module> Owner) {
     LLVMInitializeNativeTarget();
     LLVMInitializeNativeAsmPrinter();
     LLVMInitializeNativeAsmParser();
     LLVMLinkInMCJIT();
 
-    LLVMContext llvmContext;
-    SMDiagnostic error;
-    //Module *m = parseIRFile("decl.ll", error, llvmContext);
-    std::unique_ptr<llvm::Module> Owner = llvm::make_unique<llvm::Module>("my cool jit", llvmContext);
-    //std::unique_ptr<llvm::Module> Owner = std::unique_ptr<llvm::Module>(m);
-    //std::unique_ptr<llvm::Module> Owner = parseIRFile("decl.ll", error, llvmContext);
     Module *TheModule = Owner.get();
 
     std::string ErrStr;
@@ -151,26 +159,12 @@ int runJit(Program &p) {
     }
 
     TheModule->setDataLayout(TheExecutionEngine->getDataLayout());
-
-    // generate
-    {
-        IRBuilder<> Builder(llvmContext);
-        CodegenContext ctx(llvmContext, TheModule, Builder);
-        register_printf(ctx);
-        register_regions(ctx);
-
-        p.codegen(ctx);
-    }
-
-    // dump
     TheExecutionEngine->finalizeObject();
 
     // run
     Function *LF = TheModule->getFunction("main");
     void *FPtr = TheExecutionEngine->getPointerToFunction(LF);
 
-    // Cast it to the right type (takes no arguments, returns a double) so we
-    // can call it as a native function.
     Region *region = NewRegion();
     int (*FP)(Region *) = (int (*)(Region *))(intptr_t)FPtr;
     int result = FP(region);
@@ -183,5 +177,8 @@ int main(int argc, char **argv) {
     Program p;
     parseBuffer(p, _binary_stdlib_bp_start, _binary_stdlib_bp_end - _binary_stdlib_bp_start);
     parseFile(p, argv[1]);
-    return runJit(p);
+
+    LLVMContext llvmContext;
+    std::unique_ptr<llvm::Module> compiled = compileProgram(llvmContext,p);
+    return runProgram(std::move(compiled));
 }
