@@ -3,7 +3,7 @@
  */
 
 #include <iostream>
-
+#include <fstream>
 
 #include "llvm/Analysis/Passes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -28,8 +28,6 @@
 
 using namespace std;
 using namespace llvm;
-
-static ExecutionEngine *TheExecutionEngine;
 
 static void register_printf(CodegenContext &ctx) {
     std::vector<llvm::Type*> printf_arg_types;
@@ -66,37 +64,30 @@ void parse(const char *buffer_ptr, Program &p) {
     ParseFree(pParser, free);
 }
 
-void parseInput(Program &p) {
-    char *buffer;
-    {
-        size_t length = _binary_stdlib_bp_end - _binary_stdlib_bp_start;
+void parseBuffer(Program &p, const char *start, size_t length) {
+    char *buffer = new char[length + 1];
+    memcpy(buffer,start,length);
+    buffer[length] = 0;
 
-        // read whole stdlib
-        buffer = new char[length + 1];
-        memcpy(buffer,_binary_stdlib_bp_start,length);
-        buffer[length] = 0;
+    parse(buffer,p);
 
-        parse(buffer,p);
+    delete[] buffer;
+}
 
-        // free resources
-        delete[] buffer;
-    }
-    {
-        long length;
+void parseFile(Program &p, std::string filename) {
+    ifstream in(filename);
+    in.seekg(0, ios::end);
 
-        // read whole stdin
-        std::cin.seekg(0, std::ios::end);
-        length = std::cin.tellg();
-        std::cin.seekg(0, std::ios::beg);
-        buffer = new char[length + 1];
-        std::cin.read(buffer, length);
-        buffer[length] = 0;
+    long length = in.tellg();
+    char * buffer = new char[length + 1];
 
-        parse(buffer,p);
+    in.seekg(0, ios::beg);
+    in.read(buffer, length);
+    buffer[length] = 0;
 
-        // free resources
-        delete[] buffer;
-    }
+    parse(buffer,p);
+
+    delete[] buffer;
 }
 
 static void register_regions(CodegenContext &ctx) {
@@ -148,7 +139,7 @@ int runJit(Program &p) {
     Module *TheModule = Owner.get();
 
     std::string ErrStr;
-    TheExecutionEngine =
+    ExecutionEngine *TheExecutionEngine =
             EngineBuilder(std::move(Owner))
                     .setErrorStr(&ErrStr)
                     .setMCJITMemoryManager(llvm::make_unique<SectionMemoryManager>())
@@ -190,6 +181,7 @@ int runJit(Program &p) {
 
 int main(int argc, char **argv) {
     Program p;
-    parseInput(p);
+    parseBuffer(p, _binary_stdlib_bp_start, _binary_stdlib_bp_end - _binary_stdlib_bp_start);
+    parseFile(p, argv[1]);
     return runJit(p);
 }
