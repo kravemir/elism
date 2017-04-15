@@ -51,6 +51,8 @@ static void register_printf(CodegenContext &ctx) {
 extern char _binary_stdlib_bp_start[];
 extern char _binary_stdlib_bp_end[];
 
+void makeObject(unique_ptr<Module> &&unique_ptr, string basic_string);
+
 void parse(const char *buffer_ptr, Program &p) {
     // perform lexical analysis
     YYSTYPE yylval = {0, 0};
@@ -173,12 +175,113 @@ int runProgram(std::unique_ptr<llvm::Module> Owner) {
     return result;
 }
 
-int main(int argc, char **argv) {
-    Program p;
-    parseBuffer(p, _binary_stdlib_bp_start, _binary_stdlib_bp_end - _binary_stdlib_bp_start);
-    parseFile(p, argv[1]);
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
 
-    LLVMContext llvmContext;
-    std::unique_ptr<llvm::Module> compiled = compileProgram(llvmContext,p);
-    return runProgram(std::move(compiled));
+int makeObjectProgram(std::unique_ptr<Module> TheModule, string Filename){
+    // Initialize the target registry etc.
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    LLVMInitializeNativeAsmParser();
+    LLVMInitializeNativeAsmPrinter();
+
+    auto TargetTriple = sys::getDefaultTargetTriple();
+    TheModule->setTargetTriple(TargetTriple);
+
+    std::string Error;
+    auto Target = llvm::TargetRegistry::lookupTarget(TargetTriple, Error);
+
+    // Print an error and exit if we couldn't find the requested target.
+    // This generally occurs if we've forgotten to initialise the
+    // TargetRegistry or we have a bogus target triple.
+    if (!Target) {
+        errs() << Error;
+        return 1;
+    }
+
+    auto CPU = "generic";
+    auto Features = "";
+
+    TargetOptions opt;
+    auto RM = Optional<Reloc::Model>();
+    auto TheTargetMachine =
+            Target->createTargetMachine(TargetTriple, CPU, Features, opt, RM);
+
+    TheModule->setDataLayout(TheTargetMachine->createDataLayout());
+
+    std::error_code EC;
+    raw_fd_ostream dest(Filename, EC, sys::fs::F_None);
+
+    if (EC) {
+        errs() << "Could not open file: " << EC.message();
+        return 1;
+    }
+
+    legacy::PassManager pass;
+    auto FileType = TargetMachine::CGFT_ObjectFile;
+
+    if (TheTargetMachine->addPassesToEmitFile(pass, dest, FileType)) {
+        errs() << "TheTargetMachine can't emit a file of this type";
+        return 1;
+    }
+
+    TheModule->getFunction("main")->setName("elism_main");
+
+    pass.run(*TheModule);
+    dest.flush();
+
+    outs() << "Wrote " << Filename << "\n";
+
+    return 0;
+}
+
+#include <unistd.h>
+
+int main(int argc, char **argv) {
+
+    int c;
+    bool oFlag;
+    std::string outputFile;
+
+    while ((c = getopt (argc, argv, "o:")) != -1)
+        switch (c)
+        {
+            case 'o':
+                oFlag = true;
+                outputFile = optarg;
+                break;
+            case '?':
+                if (optopt == 'o')
+                    fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+                else if (isprint (optopt))
+                    fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf (stderr,
+                             "Unknown option character `\\x%x'.\n",
+                             optopt);
+                return 1;
+            default:
+                abort ();
+        }
+
+    if(optind == argc) {
+        fprintf (stderr, "No input file specified\n");
+        return 1;
+    } else {
+        Program p;
+        parseBuffer(p, _binary_stdlib_bp_start, _binary_stdlib_bp_end - _binary_stdlib_bp_start);
+        parseFile(p, argv[optind]);
+        LLVMContext llvmContext;
+        std::unique_ptr<llvm::Module> compiled = compileProgram(llvmContext, p);
+
+        if(!oFlag) {
+            return runProgram(std::move(compiled));
+        } else {
+            // $ clang knapsack.o src/rtlib/main.c build/librt_lib.a
+            return makeObjectProgram(std::move(compiled), outputFile);
+        }
+    }
 }
