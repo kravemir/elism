@@ -24,6 +24,8 @@
 #include <codegen/IntType.h>
 #include <codegen/FunctionType.h>
 
+#include "rtlib/regions.h"
+
 using namespace std;
 using namespace llvm;
 
@@ -99,32 +101,6 @@ void parseInput(Program &p) {
         // free resources
         delete[] buffer;
     }
-}
-
-struct Region {
-    std::vector<void*> heapAllocatedStuff;
-};
-
-extern "C" {
-
-Region *NewRegion() {
-    Region *r = new Region;
-    //printf("New region created\n");
-    return r;
-}
-char *RegionAlloc(Region *r, size_t size) {
-    void *a = malloc(size);
-    r->heapAllocatedStuff.push_back(a);
-    return (char *) a;
-}
-
-void DeleteRegion(Region *r){
-    for(void *a : r->heapAllocatedStuff) {
-        free(a);
-    }
-    delete r;
-    //printf("Region deleted\n");
-}
 }
 
 static void register_regions(CodegenContext &ctx) {
