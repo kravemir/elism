@@ -6,6 +6,8 @@
 #include <CodegenContext.h>
 #include "ArrayTypeNode.h"
 
+#include <codegen/ArrayType.h>
+
 ArrayTypeNode::ArrayTypeNode(TypeNode *baseType) : baseType(baseType) {}
 
 std::string ArrayTypeNode::toString() {
@@ -17,6 +19,5 @@ ArrayTypeNode::~ArrayTypeNode() {
 }
 
 CodegenType *ArrayTypeNode::codegen(CodegenContext &context) {
-    assert(0); // TODO
-    return nullptr;
+    return ArrayType::get(context, baseType->codegen(context));
 }

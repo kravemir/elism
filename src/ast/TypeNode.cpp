@@ -9,3 +9,7 @@
 TypeNode::~TypeNode() {
 
 }
+
+void TypeNode::setRegions(std::vector<std::string> &&regions) {
+    this->regions = regions;
+}

@@ -80,6 +80,15 @@ SKIP_WS:;
             return TOKEN_IDENTIFIER;
         }
 
+        "@" [a-zA-Z][_a-zA-Z0-9]* {
+
+            char *val = new char[YYCURSOR-tok];
+            memcpy(val,tok+1,YYCURSOR-tok);
+            val[YYCURSOR-tok-1] = 0;
+            yylval.str_value = val;
+            return TOKEN_AMPIDENTIFIER;
+        }
+
         "+"  { return TOKEN_PLUS; }
         "-"  { return TOKEN_MINUS; }
         "*"  { return TOKEN_MULTIPLY; }

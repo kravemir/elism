@@ -93,11 +93,11 @@ class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARG
 }
 
 %type function { FunctionNode* }
-function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
+function(F) ::= FN IDENTIFIER(NAME) region_decl fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
     F = new FunctionNode(tokenToString(NAME),RETURN_TYPE,moveDelete(ARGS),moveDelete(SB));
 }
 
-function(F) ::= FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
+function(F) ::= FN IDENTIFIER(NAME) region_decl fn_arg_def(ARGS) statement_block(SB). {
     F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),moveDelete(ARGS),moveDelete(SB));
 }
 
@@ -110,14 +110,28 @@ fn_arg_def(FAD) ::= LPAREN RPAREN. {
 }
 
 %type type_def { TypeNode* }
+%type base_type_def { TypeNode* }
 %destructor type_def { if($$) delete $$; }
-type_def(TD) ::= type_def(TD_) LBRACKET RBRACKET. {
+
+type_def(TD) ::= base_type_def(TD) region_decl(RD). {
+    TD->setRegions(moveDelete(RD));
+}
+
+base_type_def(TD) ::= base_type_def(TD_) LBRACKET RBRACKET. {
     TD = new ArrayTypeNode(TD_);
 }
 
-type_def(TD) ::= IDENTIFIER(id). {
+base_type_def(TD) ::= IDENTIFIER(id). {
     TD = new NamedTypeNode(tokenToString(id));
 }
+
+%type region_decl { std::vector<std::string>* }
+%type region_list { std::vector<std::string>* }
+region_decl(RD) ::= . { RD = new std::vector<std::string>(); }
+region_decl(RD) ::= region_list(RD).
+
+region_list(RL) ::= AMPIDENTIFIER(I). { RL = new std::vector<std::string>(); RL->push_back(tokenToString(I)); }
+region_list(RL) ::= region_list(RL) COMMA AMPIDENTIFIER(I). { RL->push_back(tokenToString(I)); }
 
 %type arg_list { std::vector<std::pair<std::string,TypeNode*>>* }
 arg_list(AL) ::= arg_def(AD) . {
@@ -129,7 +143,7 @@ arg_list(AL) ::= arg_list(AL) COMMA arg_def(AD). {
 }
 
 %type arg_def { std::pair<std::string,TypeNode*>* }
-arg_def(AD) ::= IDENTIFIER(NAME) COLON type_def(TD). {
+arg_def(AD) ::= type_def(TD) IDENTIFIER(NAME). {
     AD = new std::pair<std::string,TypeNode*>(tokenToString(NAME),TD);
 }
 
@@ -232,10 +246,10 @@ mult_expr(E) ::= mult_expr(E1) DIVIDE atom_expr(E2). {
 
 %type atom_expr { ExprNode* }
 atom_expr(A) ::= atom(A).
-atom_expr(AE) ::= atom_expr(AE_) LPAREN call_args(CA) RPAREN. {
+atom_expr(AE) ::= atom_expr(AE_) region_decl LPAREN call_args(CA) RPAREN. {
     AE = new CallExprNode(AE_, *CA);
 }
-atom_expr(AE) ::= atom_expr(AE_) LPAREN RPAREN. {
+atom_expr(AE) ::= atom_expr(AE_) region_decl LPAREN RPAREN. {
     AE = new CallExprNode(AE_, {});
 }
 atom_expr(AE) ::= atom_expr(AE_) LBRACKET expr(IDX) RBRACKET. {

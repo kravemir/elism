@@ -17,6 +17,11 @@ public:
 
     virtual std::string toString() = 0;
     virtual CodegenType *codegen(CodegenContext &context) = 0;
+
+    void setRegions(std::vector<std::string> &&regions);
+
+private:
+    std::vector<std::string> regions;
 };
 
 

@@ -13,7 +13,7 @@ class rangeIterator {
     }
 }
 
-fn range (start: i64, end: i64) -> rangeIterator {
+fn range (i64 start, i64 end) -> rangeIterator {
     var r = rangeIterator();
     r.i = start;
     r.end = end;
