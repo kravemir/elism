@@ -243,7 +243,7 @@ int makeObjectProgram(std::unique_ptr<Module> TheModule, string Filename){
 int main(int argc, char **argv) {
 
     int c;
-    bool oFlag;
+    bool oFlag = false;
     std::string outputFile;
 
     while ((c = getopt (argc, argv, "o:")) != -1)

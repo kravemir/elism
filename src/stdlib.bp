@@ -2,7 +2,7 @@ class rangeIterator {
     var i = 0;
     var end  = 0;
 
-    fn hasNext() -> i32 {
+    fn hasNext() -> bool {
         return i < end;
     }
 

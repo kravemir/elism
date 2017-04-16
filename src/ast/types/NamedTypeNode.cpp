@@ -22,6 +22,8 @@ CodegenType* NamedTypeNode::codegen(CodegenContext &context) {
         return IntType::get64(context);
     } else if ("void" == name) {
         return VoidType::get(context);
+    } else if ("bool" == name) {
+        return new IntType(1, llvm::Type::getInt1Ty(context.llvmContext));
     }
     CodegenType *type = context.getType(name);
     assert(type);

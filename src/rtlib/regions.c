@@ -4,9 +4,11 @@
 #include "regions.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 struct _Region {
-    int size, capacity;
+    int size;
+    size_t capacity;
     void** heapAllocatedStuff;
 };
 
@@ -20,7 +22,8 @@ Region *NewRegion() {
 char *RegionAlloc(Region *r, size_t size) {
     if(r->size == r->capacity) {
         r->capacity *= 4;
-        r->heapAllocatedStuff = realloc(r->heapAllocatedStuff, r->capacity);
+        r->heapAllocatedStuff = realloc(r->heapAllocatedStuff, r->capacity * sizeof(void*));
+        assert(r->heapAllocatedStuff);
     }
     void *a = malloc(size);
     r->heapAllocatedStuff[r->size++] = a;

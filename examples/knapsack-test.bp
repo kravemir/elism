@@ -1,0 +1,44 @@
+fn solveKnapsack @r, @d (i64[] @d weights, i64[] @d values, i64 maxWeight) -> i64[] @r
+{
+    var m_current = [ 0; maxWeight + 1 ];
+    var m_previous = [ 0; maxWeight + 1 ];
+    var m_tmp = [ 0; maxWeight + 1 ];
+
+    for( item: range(0,values.length) ) {
+        for( w: range(0,maxWeight+1) ) {
+            m_current[w] = m_previous[w];
+            if( weights[item] <= w ) {
+                if(m_current[w] < m_previous[w-weights[item]] + values[item])
+                    m_current[w] = m_previous[w-weights[item]] + values[item];
+            }
+        }
+        m_tmp = m_current;
+        m_current = m_previous;
+        m_previous = m_tmp;
+    }
+    return m_previous;
+}
+
+fn main () -> i32 {
+    let NUM_ITEMS = 16000;
+    let weights = [ 0; NUM_ITEMS ];
+    let values =  [ 0; NUM_ITEMS ];
+    let maxWeight = 4000;
+
+    printf("Set weight: %d, set items number: %d\n", maxWeight, values.length);
+
+    for(test: range(1,11)) {
+        for(i: range(0,NUM_ITEMS)) {
+            weights[i] = i*test*13 - (i*test*13/1231)*1231;
+            values[i] = i*test*17 - (i*test*17/373)*373;
+        }
+
+        on TMP = NewRegion() {
+            let result = solveKnapsack @TMP, @default ( weights, values, maxWeight );
+            printf("Result %d: %d\n", maxWeight, result[maxWeight]);
+        }
+
+    }
+
+    return 0;
+}
