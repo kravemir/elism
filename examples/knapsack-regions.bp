@@ -11,18 +11,18 @@ fn solveKnapsack @r, @d (i64[] @d weights, i64[] @d values, i64 maxWeight) -> i6
                 if(m_current[w] < m_previous[w-weights[item]] + values[item])
                     m_current[w] = m_previous[w-weights[item]] + values[item];
             }
-            m_tmp = m_current;
-            m_current = m_previous;
-            m_previous = m_tmp;
         }
+        m_tmp = m_current;
+        m_current = m_previous;
+        m_previous = m_tmp;
     }
     return m_previous;
 }
 
 fn main () -> i32 {
-    let weights = [ 2, 5, 7, 8, 10 ];
-    let values =  [ 3, 1, 4, 2, 1 ];
-    let maxWeight = 12;
+    let weights = [ 2, 5, 7, 8, 3, 4, 6, 9, 1 ];
+    let values =  [ 3, 1, 4, 2, 7, 5, 6, 8, 9 ];
+    let maxWeight = 17;
 
     printf("Max weight: %d\n", maxWeight);
     printf("Number of items: %d\n", values.length);
