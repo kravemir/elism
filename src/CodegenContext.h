@@ -65,6 +65,8 @@ public:
     virtual CodegenValue *getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index);
 
     virtual CodegenValue *const getDefault(CodegenContext &context);
+
+    virtual bool equals(CodegenType *pType) = 0;
 };
 
 class CodegenValue {

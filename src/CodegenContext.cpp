@@ -158,7 +158,10 @@ CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const std::vector<Codege
 }
 
 void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
-    // TODO: type check
+    if(!this->type->equals(value->type)) {
+        fprintf(stderr, "Can't assign %s to %s\n", "TODO", "TODO"); // TODO: proper names
+        exit(121);
+    }
     ctx.builder.CreateStore(value->value, storeAddress);
 }
 

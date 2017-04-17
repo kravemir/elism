@@ -134,6 +134,10 @@ struct ClassFunctionType: CodegenType {
             values.push_back(v->value);
         return new CodegenValue(callReturnType,ctx.builder.CreateCall(ctx.builder.CreateExtractValue(value->value,{1}),values,Name));
     }
+
+    bool equals(CodegenType *pType) override {
+        return false;
+    }
 };
 
 CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
@@ -187,4 +191,8 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
         }
     }
     return nullptr;
+}
+
+bool ClassType::equals(CodegenType *pType) {
+    return pType == this;
 }

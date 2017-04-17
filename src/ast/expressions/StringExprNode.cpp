@@ -12,6 +12,14 @@ std::string StringExprNode::toString() const {
     return "\"" + value + "\"";
 }
 
+struct StringType: CodegenType {
+    StringType(Type *const storeType) : CodegenType(storeType) {}
+
+    bool equals(CodegenType *pType) override {
+        return dynamic_cast<StringType*>(pType) != nullptr;
+    }
+};
+
 CodegenValue *StringExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {
     Constant *format_const = ConstantDataArray::getString(context.llvmContext, value.c_str() );
     Type* ltype = ArrayType::get(IntegerType::get(context.llvmContext, 8), value.size() + 1);
@@ -24,5 +32,5 @@ CodegenValue *StringExprNode::codegen(CodegenContext &context, const llvm::Twine
             ".str"
     );
 
-    return new CodegenValue(new CodegenType(ltype), var);
+    return new CodegenValue(new StringType(ltype), var);
 }

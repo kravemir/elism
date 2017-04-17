@@ -19,6 +19,8 @@ struct ArrayType: CodegenType {
     llvm::Type *referenceObjectType;
 
     static ArrayType* get(CodegenContext &ctx, CodegenType *elementType);
+
+    bool equals(CodegenType *pType) override;
 };
 
 

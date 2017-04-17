@@ -3,3 +3,8 @@
 //
 
 #include "FunctionType.h"
+
+bool FunctionType::equals(CodegenType *pType) {
+    // TODO
+    return false;
+}

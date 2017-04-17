@@ -52,3 +52,10 @@ CodegenValue *::ArrayType::getChild(CodegenContext &ctx, CodegenValue *value, st
     return CodegenType::getChild(ctx, value, name);
 }
 
+
+bool ::ArrayType::equals(CodegenType *pType) {
+    ::ArrayType *at = dynamic_cast<::ArrayType*>(pType);
+    if(!at)
+        return false;
+    return this->elementType->equals(at->elementType);
+}

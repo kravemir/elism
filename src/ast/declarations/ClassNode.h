@@ -13,6 +13,8 @@ struct ClassType: CodegenType {
 
     CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
 
+    bool equals(CodegenType *pType) override;
+
     ClassType* super;
     std::map<std::string,std::pair<int,CodegenType*>> children;
     std::map<std::string,CodegenValue*> functions;

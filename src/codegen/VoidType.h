@@ -14,6 +14,8 @@ public:
 
     static VoidType* get(CodegenContext &ctx);
 
+    bool equals(CodegenType *pType) override;
+
 private:
 };
 

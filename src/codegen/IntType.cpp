@@ -15,3 +15,10 @@ IntType *IntType::get64(CodegenContext &ctx) {
 CodegenValue *const IntType::getDefault(CodegenContext &context) {
     return new CodegenValue(this, llvm::ConstantInt::get(this->storeType, 0, false));
 }
+
+bool IntType::equals(CodegenType *pType) {
+    IntType *it = dynamic_cast<IntType*>(pType);
+    if(!it)
+        return false;
+    return this->bits == it->bits;
+}

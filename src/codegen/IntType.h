@@ -16,6 +16,8 @@ struct IntType: CodegenType {
     static IntType* get64(CodegenContext &ctx);
 
     CodegenValue *const getDefault(CodegenContext &context) override;
+
+    bool equals(CodegenType *pType) override;
 };
 
 

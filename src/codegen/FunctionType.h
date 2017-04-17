@@ -22,6 +22,8 @@ struct FunctionType: CodegenType {
         return new CodegenValue(callReturnType,ctx.builder.CreateCall(value->value,values,Name));
     }
 
+    bool equals(CodegenType *pType) override;
+
     bool native = false;
 };
 

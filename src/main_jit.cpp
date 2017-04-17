@@ -92,6 +92,14 @@ void parseFile(Program &p, std::string filename) {
     delete[] buffer;
 }
 
+struct RegionType: CodegenType {
+    RegionType(Type *const storeType) : CodegenType(storeType) {}
+
+    bool equals(CodegenType *pType) override {
+        return dynamic_cast<RegionType*>(pType) != nullptr;
+    }
+};
+
 static void register_regions(CodegenContext &ctx) {
     llvm::Type *regionType = llvm::Type::getInt64PtrTy(ctx.llvmContext);
     ctx.regionType = regionType;
@@ -122,7 +130,7 @@ static void register_regions(CodegenContext &ctx) {
     );
     regionalloc->setCallingConv(llvm::CallingConv::C);
 
-    CodegenType *rtype = new CodegenType(regionType);
+    CodegenType *rtype = new RegionType(regionType);
     ctx.addValue("NewRegion", new CodegenValue(new ::FunctionType(newregion_type,rtype), newregion));
 }
 
