@@ -1,6 +1,0 @@
-fn foo () {
-    return 0;
-}
-fn bar () {
-    return 0;
-}

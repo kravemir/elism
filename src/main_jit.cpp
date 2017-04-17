@@ -228,7 +228,22 @@ int makeObjectProgram(std::unique_ptr<Module> TheModule, string Filename){
         return 1;
     }
 
-    TheModule->getFunction("main")->setName("elism_main");
+    {
+        llvm::Function *mainFunction = TheModule->getFunction("main");
+        mainFunction->setName("elism_main");
+
+        llvm::FunctionType *FT = llvm::FunctionType::get(Type::getInt32Ty(TheModule->getContext()), {}, false);
+        Function *F = Function::Create(FT, Function::ExternalLinkage, "main", TheModule.get());
+        BasicBlock *BB = BasicBlock::Create(TheModule->getContext(), "entry", F);
+
+        IRBuilder<> builder(TheModule->getContext());
+        builder.SetInsertPoint(BB);
+
+        Value* region = builder.CreateCall(TheModule->getFunction("NewRegion"),{});
+        Value* result = builder.CreateCall(mainFunction,{region});
+        builder.CreateCall(TheModule->getFunction("DeleteRegion"),{region});
+        builder.CreateRet(result);
+    }
 
     pass.run(*TheModule);
     dest.flush();
