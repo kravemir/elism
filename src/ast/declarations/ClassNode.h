@@ -9,7 +9,7 @@
 #include "CodegenContext.h"
 
 struct ClassType: CodegenType {
-    ClassType(llvm::Type *const storeType, ClassType *super) : CodegenType(storeType), super(super) {}
+    ClassType(std::string name,llvm::Type *const storeType, ClassType *super, const std::string &region) : CodegenType(storeType), name(name), super(super), region(region) {}
 
     CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
 
@@ -17,11 +17,18 @@ struct ClassType: CodegenType {
 
     std::string toString() const override;
 
+    CodegenType *withRegions(CodegenContext &ctx, const std::vector<std::string> &regions) override;
+
+    std::string name;
     ClassType* super;
     std::map<std::string,std::pair<int,CodegenType*>> children;
     std::map<std::string,CodegenValue*> functions;
 
     llvm::Function *initF;
+
+    std::string region;
+
+    ClassType *base;
 };
 
 struct ClassTypeContext: ChildCodegenContext {

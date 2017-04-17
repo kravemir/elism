@@ -37,7 +37,8 @@ void ClassNode::codegen(CodegenContext &context) {
 
     StructType *classType = StructType::create(context.llvmContext,"class." + name + ".Instance");
     Type *classPtrType = PointerType::get(classType,0);
-    ClassType *cClassType = new ClassType(classPtrType,super);
+    ClassType *cClassType = new ClassType(name,classPtrType,super,context.defaultRegion);
+    cClassType->base = cClassType;
 
     llvm::FunctionType *FT_init = llvm::FunctionType::get(Type::getVoidTy(context.llvmContext), {context.regionType,classPtrType}, false);
     Function *F_init = Function::Create(FT_init, Function::ExternalLinkage, "class." + name + ".init", context.module);
@@ -198,9 +199,22 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
 }
 
 bool ClassType::equals(CodegenType *pType) {
-    return pType == this;
+    ClassType *ct = dynamic_cast<ClassType*>(pType);
+    if(ct == nullptr)
+        return false;
+    return base == ct->base && region == ct->region;
 }
 
 std::string ClassType::toString() const {
-    return "TODO: class";
+    return name + " @" + region;
+}
+
+CodegenType *ClassType::withRegions(CodegenContext &ctx, const std::vector<std::string> &regions) {
+    std::string region = ctx.defaultRegion;
+    // TODO: override
+    ClassType* ct = new ClassType(name,storeType,super,region);
+    ct->initF = initF;
+    ct->functions = functions;
+    ct->children = children;
+    return ct;
 }

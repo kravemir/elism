@@ -143,6 +143,12 @@ CodegenValue *const CodegenType::getDefault(CodegenContext &context) {
     return nullptr;
 }
 
+CodegenType *CodegenType::withRegions(CodegenContext &ctx, const std::vector<std::string> &regions) {
+    fprintf(stderr,"Doesn't support regions %s\n",this->toString().c_str());
+    assert(0);
+    return nullptr;
+}
+
 CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress)
         : type(type),
           value(value),

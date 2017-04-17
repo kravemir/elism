@@ -27,5 +27,5 @@ CodegenType* NamedTypeNode::codegen(CodegenContext &context) {
     }
     CodegenType *type = context.getType(name);
     assert(type);
-    return type;
+    return type->withRegions(context,regions);
 }

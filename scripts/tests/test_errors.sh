@@ -16,7 +16,7 @@ testType() {
     assertEquals 121 $?
 }
 
-ERROR_REGIONS="
+ERROR_REGIONS_ARRAYS="
 fn main() -> i32 {
     var a1 = [0;10];
     on TMP = NewRegion() {
@@ -26,11 +26,31 @@ fn main() -> i32 {
     return 0;
 }"
 
-testRegions() {
+ERROR_REGIONS_CLASSES="
+class A {
+}
+fn main() -> i32 {
+    var a1 = A();
+    on TMP = NewRegion() {
+        var a2 = A();
+        a1 = a2;
+    }
+    return 0;
+}"
+
+testRegionsArrays() {
     TMP=$(mktemp)
     TMP_O=$(mktemp)
 
-    echo "${ERROR_REGIONS}" >TMP
+    echo "${ERROR_REGIONS_ARRAYS}" >TMP
+    build/bp_jit -o TMP_O TMP > /dev/null
+    assertEquals 121 $?
+}
+testRegionsClasses() {
+    TMP=$(mktemp)
+    TMP_O=$(mktemp)
+
+    echo "${ERROR_REGIONS_CLASSES}" >TMP
     build/bp_jit -o TMP_O TMP > /dev/null
     assertEquals 121 $?
 }

@@ -61,6 +61,9 @@ public:
 
     virtual std::string toString() const = 0;
 
+    // TODO: workaround, split class to named type generator and type
+    virtual CodegenType* withRegions(CodegenContext &ctx, const std::vector<std::string> &regions);
+
 public:
     llvm::Type * const storeType;
     CodegenType * const callReturnType;
