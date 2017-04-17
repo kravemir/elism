@@ -132,6 +132,8 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
 
     FunctionContext functionContext(context, BB);
+    functionContext.defaultRegion = "fn.default";
+
     functionContext.builder.SetInsertPoint(BB);
     functionContext.thisType = classType;
     Function::arg_iterator arg = F->arg_begin();

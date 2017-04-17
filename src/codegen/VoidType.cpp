@@ -13,3 +13,7 @@ VoidType *VoidType::get(CodegenContext &ctx) {
 bool VoidType::equals(CodegenType *pType) {
     return dynamic_cast<VoidType*>(pType) != nullptr;
 }
+
+std::string VoidType::toString() const {
+    return "void";
+}

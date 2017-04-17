@@ -18,6 +18,10 @@ struct StringType: CodegenType {
     bool equals(CodegenType *pType) override {
         return dynamic_cast<StringType*>(pType) != nullptr;
     }
+
+    std::string toString() const override {
+        return "str";
+    }
 };
 
 CodegenValue *StringExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {

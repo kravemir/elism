@@ -18,6 +18,9 @@ struct IntType: CodegenType {
     CodegenValue *const getDefault(CodegenContext &context) override;
 
     bool equals(CodegenType *pType) override;
+
+    std::string toString() const override;
+
 };
 
 

@@ -9,7 +9,7 @@
 #include <CodegenContext.h>
 
 struct ArrayType: CodegenType {
-    ArrayType(llvm::Type *const storeType, llvm::Type *const referenceObjectType, CodegenType *elementType);
+    ArrayType(llvm::Type *const storeType, llvm::Type *const referenceObjectType, CodegenType *elementType, const std::string &region);
 
     CodegenValue *getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index) override;
 
@@ -17,10 +17,13 @@ struct ArrayType: CodegenType {
 
     CodegenType *elementType;
     llvm::Type *referenceObjectType;
+    std::string region;
 
-    static ArrayType* get(CodegenContext &ctx, CodegenType *elementType);
+    static ArrayType* get(CodegenContext &ctx, CodegenType *elementType, const std::string &region);
 
     bool equals(CodegenType *pType) override;
+
+    std::string toString() const override;
 };
 
 

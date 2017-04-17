@@ -138,6 +138,10 @@ struct ClassFunctionType: CodegenType {
     bool equals(CodegenType *pType) override {
         return false;
     }
+
+    std::string toString() const override {
+        return "TODO: cft";
+    }
 };
 
 CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
@@ -195,4 +199,8 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
 
 bool ClassType::equals(CodegenType *pType) {
     return pType == this;
+}
+
+std::string ClassType::toString() const {
+    return "TODO: class";
 }

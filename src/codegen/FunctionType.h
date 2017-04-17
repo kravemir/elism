@@ -24,6 +24,8 @@ struct FunctionType: CodegenType {
 
     bool equals(CodegenType *pType) override;
 
+    std::string toString() const override;
+
     bool native = false;
 };
 

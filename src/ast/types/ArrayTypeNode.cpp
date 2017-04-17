@@ -19,5 +19,12 @@ ArrayTypeNode::~ArrayTypeNode() {
 }
 
 CodegenType *ArrayTypeNode::codegen(CodegenContext &context) {
-    return ArrayType::get(context, baseType->codegen(context));
+    std::string region = context.defaultRegion;
+    if(this->regions.size() == 1)
+        region = regions[0];
+    else if(this->regions.size() > 1) {
+        fprintf(stderr,"Error - array type can have only one region\n");
+        exit(1);
+    }
+    return ArrayType::get(context, baseType->codegen(context),region);
 }

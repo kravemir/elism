@@ -40,6 +40,7 @@ public:
 
     llvm::Type* regionType = 0;
     llvm::Value* region = 0;
+    std::string defaultRegion;
 
     std::map<std::string,CodegenValue*> values;
     std::map<std::string,CodegenType*> types;
@@ -57,6 +58,8 @@ public:
     bool isCallable() const {
         return callReturnType != nullptr;
     }
+
+    virtual std::string toString() const = 0;
 
 public:
     llvm::Type * const storeType;

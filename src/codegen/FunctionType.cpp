@@ -8,3 +8,7 @@ bool FunctionType::equals(CodegenType *pType) {
     // TODO
     return false;
 }
+
+std::string FunctionType::toString() const {
+    return "TODO: function";
+}

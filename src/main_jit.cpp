@@ -98,6 +98,10 @@ struct RegionType: CodegenType {
     bool equals(CodegenType *pType) override {
         return dynamic_cast<RegionType*>(pType) != nullptr;
     }
+
+    string toString() const override {
+        return "Region";
+    }
 };
 
 static void register_regions(CodegenContext &ctx) {

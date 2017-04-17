@@ -65,7 +65,7 @@ CodegenValue *ArrayLiteralExprNode::codegen(CodegenContext &context, const llvm:
         valuesValues.push_back(e->codegen(context));
     }
 
-    ::ArrayType *type = ::ArrayType::get(context,valuesValues[0]->type);
+    ::ArrayType *type = ::ArrayType::get(context,valuesValues[0]->type,context.defaultRegion);
 
     // create array object: allocation, fill object size and reference
     Value* arrayObjectMalloc, *Malloc;
@@ -97,7 +97,7 @@ CodegenValue *ArrayInitializerExprNode::codegen(CodegenContext &context, const l
     CodegenValue *value = this->value->codegen(context, Name + ".value");
     CodegenValue *count = this->count->codegen(context, Name + ".count");
 
-    ::ArrayType *type = ::ArrayType::get(context,value->type);
+    ::ArrayType *type = ::ArrayType::get(context,value->type,context.defaultRegion);
 
     // create array object: allocation, fill object size and reference
     Value* arrayObjectMalloc, *Malloc;

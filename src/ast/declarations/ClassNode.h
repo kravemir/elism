@@ -15,6 +15,8 @@ struct ClassType: CodegenType {
 
     bool equals(CodegenType *pType) override;
 
+    std::string toString() const override;
+
     ClassType* super;
     std::map<std::string,std::pair<int,CodegenType*>> children;
     std::map<std::string,CodegenValue*> functions;

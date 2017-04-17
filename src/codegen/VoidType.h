@@ -16,6 +16,8 @@ public:
 
     bool equals(CodegenType *pType) override;
 
+    std::string toString() const override;
+
 private:
 };
 

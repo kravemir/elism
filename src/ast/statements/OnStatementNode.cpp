@@ -16,6 +16,7 @@ void OnStatementNode::print(Printer &printer) const {
 void OnStatementNode::codegen(CodegenContext &context) {
     CodegenValue* region = expr->codegen(context,"on." + name);
     ChildCodegenContext ctx = ChildCodegenContext(context);
+    ctx.defaultRegion = name;
     ctx.region = region->value;
 
     stmt->codegen(ctx);

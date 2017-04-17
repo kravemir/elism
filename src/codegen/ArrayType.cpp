@@ -7,19 +7,20 @@
 
 using namespace llvm;
 
-::ArrayType::ArrayType(Type *const storeType, llvm::Type *const referenceObjectType, CodegenType *elementType)
+::ArrayType::ArrayType(Type *const storeType, llvm::Type *const referenceObjectType, CodegenType *elementType, const std::string &region)
         : CodegenType(storeType),
           referenceObjectType(referenceObjectType),
-          elementType(elementType)
+          elementType(elementType),
+          region(region)
 {}
 
-::ArrayType *::ArrayType::get(CodegenContext &ctx, CodegenType *base) {
+::ArrayType *::ArrayType::get(CodegenContext &ctx, CodegenType *base, const std::string &region) {
     StructType *lType = StructType::get(ctx.llvmContext, {
             Type::getInt64Ty(ctx.llvmContext),
             PointerType::get(base->storeType, 0)
     });
 
-    return new ArrayType(PointerType::get(lType,0), lType, base);
+    return new ArrayType(PointerType::get(lType,0), lType, base, region);
 }
 
 CodegenValue *::ArrayType::getElement(CodegenContext &ctx, CodegenValue *value, CodegenValue *index) {
@@ -57,5 +58,12 @@ bool ::ArrayType::equals(CodegenType *pType) {
     ::ArrayType *at = dynamic_cast<::ArrayType*>(pType);
     if(!at)
         return false;
+    if(this->region != at->region) {
+        return false;
+    }
     return this->elementType->equals(at->elementType);
+}
+
+std::string (::ArrayType::toString)() const {
+    return elementType->toString() + "[] @" + region;
 }

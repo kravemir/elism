@@ -22,3 +22,7 @@ bool IntType::equals(CodegenType *pType) {
         return false;
     return this->bits == it->bits;
 }
+
+std::string IntType::toString() const {
+    return "i" + std::to_string(bits);
+}

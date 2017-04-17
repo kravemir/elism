@@ -20,7 +20,7 @@ public:
 
     void setRegions(std::vector<std::string> &&regions);
 
-private:
+protected:
     std::vector<std::string> regions;
 };
 

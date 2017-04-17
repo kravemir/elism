@@ -159,7 +159,7 @@ CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const std::vector<Codege
 
 void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
     if(!this->type->equals(value->type)) {
-        fprintf(stderr, "Can't assign %s to %s\n", "TODO", "TODO"); // TODO: proper names
+        fprintf(stderr, "Can't assign ``%s'' to ``%s''\n", value->type->toString().c_str(), this->type->toString().c_str()); // TODO: proper names
         exit(121);
     }
     ctx.builder.CreateStore(value->value, storeAddress);
@@ -170,6 +170,7 @@ ChildCodegenContext::ChildCodegenContext(CodegenContext &parent)
           parent(parent) {
     region = parent.region;
     regionType = parent.regionType;
+    defaultRegion = parent.defaultRegion;
 }
 
 void ChildCodegenContext::addVariable(std::string name, CodegenValue *value) {
