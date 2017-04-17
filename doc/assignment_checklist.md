@@ -39,13 +39,19 @@ Supported features of region based memory management:
     - [x] creation of region on scope
     - [x] automatic destruction of region at scope exit
     - [ ] automated tests for regions
-- [ ] allocation of objects within region
+- [ ] allocation of objects within region:
     - [x] default allocation on current/default region
     - [ ] allocation on specified region
-- [ ] types defining regions
-- [ ] calling functions on/with regions
+- [ ] calling functions on/with regions:
     - [x] passing default/current region
     - [ ] passing other regions
+- [ ] regions of references:
+    - [ ] use default region of current scope when not specified
+    - [ ] safety check: region of assigned value must match region of variable type
+    - [ ] safety check: region of assigned call arguments must match regions of parameter types
+- [ ] class reference properties to data on different regions
+    - [ ] region arguments for class types (like generics)
+    - [ ] safety check: instance region may not outlive region parameters
 
 
 Language quality requirements
