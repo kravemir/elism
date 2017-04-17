@@ -30,5 +30,5 @@ fn main () -> i32 {
     var bar = Bar();
     bar.printSelf();
 
-    return 42;
+    return 0;
 }
