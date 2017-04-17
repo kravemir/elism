@@ -35,18 +35,19 @@ Supported features of structured programming:
 
 Supported features of region based memory management:
 
-- [ ] region management:
+- [ ] region management (TODO: test cases, examples):
     - [x] creation of region on scope
     - [x] automatic destruction of region at scope exit
     - [ ] automated tests for regions
 - [ ] allocation of objects within region:
     - [x] default allocation on current/default region
     - [ ] allocation on specified region
-- [ ] calling functions on/with regions:
+- [ ] calling functions on/with regions (TODO: test cases, examples):
     - [x] passing default/current region
     - [ ] passing other regions
-- [ ] regions of references:
-    - [ ] use default region of current scope when not specified
+- [ ] regions of reference types (TODO: test cases, examples):
+    - [x] use default region of current scope when not specified
+    - [ ] use own regions for array types
     - [ ] safety check: region of assigned value must match region of variable type
     - [ ] safety check: region of assigned call arguments must match regions of parameter types
 - [ ] class reference properties to data on different regions
