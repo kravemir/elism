@@ -36,7 +36,10 @@ CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, con
     for(int i = 0; i < args.size() && i < argTypes.size(); i++) {
         // TODO: region map
         if(!args[i]->type->equals(this->argTypes[i],regionsRemap)) {
-            fprintf(stderr, "Can't call with ``%s'' instead of ``%s''\n", args[i]->type->toString().c_str(), this->argTypes[i]->toString().c_str());
+            fprintf(stderr, "Argument type ``%s'' differs to parameter type ``%s'', with region mapping:\n", args[i]->type->toString().c_str(), this->argTypes[i]->toString().c_str());
+            for(auto it : regionsRemap) {
+                fprintf(stderr, "\t%s -> %s\n", it.first.c_str(), it.second.c_str());
+            }
             exit(121);
         }
     }

@@ -1,0 +1,12 @@
+fn foo @FA (i64[] @FA a, i64[] @FA b) -> i32 {
+    return 0;
+}
+
+fn main() -> i32 {
+    var a1 = [0;10];
+    on TMP = NewRegion() {
+        var a2 = [0;10];
+        foo @TMP (a1,a2);
+    }
+    return 0;
+}

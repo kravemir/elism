@@ -1,0 +1,2 @@
+Argument type ``i64[] @TMP'' differs to parameter type ``i64[] @FA'', with region mapping:
+	fn_default -> FA

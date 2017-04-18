@@ -1,11 +1,23 @@
 #!/bin/bash
 
-find scripts/tests/error_inputs -type f | sort | while read SRC_FILE;
+echo -e  "\nBEGIN: basic error testing"
+
+find scripts/tests/error_inputs -type f -name "*.bp.expect" | sort | while read RESULT_FILE;
 do
-    TMP_O=$(mktemp)
+    SRC_FILE=${RESULT_FILE%.expect}
     echo "Testing error: ${SRC_FILE}"
-    ./build/bp_jit -o "${TMP_O}" "${SRC_FILE}"
-    [[ "$?" == "121" ]] || exit 1
+    ./build/bp_jit "${SRC_FILE}" 2>&1 | diff - "${RESULT_FILE}" || exit 1
 done || (echo "FAIL: Errors" && exit 1)
 
-echo "DONE: error testing"
+echo -e "DONE: basic error testing\n"
+
+echo -e "BEGIN: basic error testing"
+
+find scripts/tests/error_regions -type f -name "*.bp.expect" | sort | while read RESULT_FILE;
+do
+    SRC_FILE=${RESULT_FILE%.expect}
+    echo "Testing error: ${SRC_FILE}"
+    ./build/bp_jit "${SRC_FILE}" 2>&1 | diff - "${RESULT_FILE}" || exit 1
+done || (echo "FAIL: Errors" && exit 1)
+
+echo -e "DONE: regions safety error testing\n"
