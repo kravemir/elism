@@ -206,3 +206,10 @@ Value *ChildCodegenContext::getRegion() {
         return region;
     return parent.getRegion();
 }
+
+CodegenType *ChildCodegenContext::getType(std::string name) {
+    CodegenType *type = CodegenContext::getType(name);
+    if(type == nullptr)
+        type = parent.getType(name);
+    return type;
+}

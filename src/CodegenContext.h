@@ -114,6 +114,8 @@ public:
 
     llvm::Value *getRegion() override;
 
+    CodegenType *getType(std::string name) override;
+
 
 public:
     CodegenContext &parent;

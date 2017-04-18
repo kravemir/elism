@@ -26,8 +26,9 @@ CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, con
         retType = ct->withRegions(ctx,{ctx.defaultRegion});
     }
 
+    // TODO: check lengths
     std::map<std::string,std::string> regionsRemap;
-    for(int i = 0; i < regions.size(); i++) {
+    for(int i = 0; i < regions.size() && i < this->regions.size(); i++) {
         regionsRemap[regions[i]] = this->regions[i];
     }
 

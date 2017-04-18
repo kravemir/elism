@@ -16,6 +16,8 @@ CodegenValue * CallExprNode::codegen(CodegenContext &context, const llvm::Twine 
     for(ExprNode* e : args) {
         argsv.push_back(e->codegen(context));
     }
+    if(regions.size() == 0)
+        regions.push_back(context.defaultRegion);
     return callee->doCall(context, regions, argsv, Name);
 }
 
