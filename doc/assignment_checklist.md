@@ -47,9 +47,9 @@ Supported features of region based memory management:
     - [ ] passing other regions (handle for allocation, not lexical scope)
 - [ ] regions of reference types (TODO: test cases, examples):
     - [x] use default region of current scope when not specified
-    - [ ] use own regions for array types
+    - [ ] use own regions for array types, `ClassType @InstanceR [] @ArrayR`
     - [ ] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
-    - [ ] safety check: region of assigned value must match region of variable type
+    - [x] safety check: region of assigned value must match region of variable type
     - [x] safety check: region of assigned call arguments must match regions of parameter types - remap regions
 - [ ] class reference properties to data on different regions
     - [ ] region arguments for class types (like generics)
