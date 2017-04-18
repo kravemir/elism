@@ -33,28 +33,33 @@ Supported features of structured programming:
     - [x] variables: `obj.x`
     - [x] method call: `obj.method()`
 
-Supported features of region based memory management:
+Supported features of region based memory management. Covers region management, and application of safe regions on implemented language functionality:
 
-- [ ] region management (TODO: test cases, examples):
+- [ ] region management (TODO: automated tests, examples):
     - [x] creation of region on scope
     - [x] automatic destruction of region at scope exit
-    - [ ] automated tests for regions
-- [ ] allocation of objects within region:
+- [ ] allocation of objects within region (TODO: automated tests, examples):
     - [x] default allocation on current/default region
-    - [ ] allocation on specified region
-- [ ] calling functions on/with regions (TODO: test cases, examples):
-    - [x] passing default/current region
-    - [ ] passing other regions (handle for allocation, not lexical scope)
-- [ ] regions of reference types (TODO: test cases, examples):
+- [ ] calling functions on/with regions (TODO: automated tests, examples):
+    - [ ] declaration of multiple in/out regions (in lexical meaning, static analysis)
+    - [x] passing handle default/current region (for allocation)
+- [ ] regions of reference types (TODO: automated tests, examples):
     - [x] use default region of current scope when not specified
-    - [ ] use own regions for array types, `ClassType @InstanceR [] @ArrayR`
+    - [ ] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
     - [ ] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
     - [x] safety check: region of assigned value must match region of variable type
     - [x] safety check: region of assigned call arguments must match regions of parameter types - remap regions
+
+
+Features not required by an assignment (future improvement):
+
+- [ ] allocation of objects within region:
+    - [ ] allocation on specified region
+- [ ] calling functions on/with regions (TODO: test cases, examples):
+    - [ ] passing other regions (handle for allocation, not lexical scope)
 - [ ] class reference properties to data on different regions
     - [ ] region arguments for class types (like generics)
     - [ ] safety check: instance region may not outlive region parameters
-
 
 Language quality requirements
 -----------------------------
