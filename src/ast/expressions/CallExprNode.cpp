@@ -4,7 +4,7 @@
 
 #include "CallExprNode.h"
 
-CallExprNode::CallExprNode(ExprNode *expr, std::vector<ExprNode*> args) : expr(expr), args(args) {}
+CallExprNode::CallExprNode(ExprNode *expr, const std::vector<std::string> &regions, std::vector<ExprNode*> args) : expr(expr), regions(regions), args(args) {}
 
 std::string CallExprNode::toString() const {
     return expr->toString() + "()";
@@ -16,7 +16,9 @@ CodegenValue * CallExprNode::codegen(CodegenContext &context, const llvm::Twine 
     for(ExprNode* e : args) {
         argsv.push_back(e->codegen(context));
     }
-    return callee->doCall(context, argsv, Name);
+    if(regions.size() == 0)
+        regions.push_back(context.defaultRegion);
+    return callee->doCall(context, regions, argsv, Name);
 }
 
 CallExprNode::~CallExprNode() {

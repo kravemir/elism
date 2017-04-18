@@ -14,7 +14,7 @@ public:
 
     static VoidType* get(CodegenContext &ctx);
 
-    bool equals(CodegenType *pType) override;
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override;
 
     std::string toString() const override;
 

@@ -17,6 +17,7 @@ class FunctionNode: public StatementNode {
 public:
     FunctionNode(const std::string &name,
                  TypeNode *returnType,
+                 const std::vector<std::string> &regions,
                  const std::vector<std::pair<std::string,TypeNode*>> arguments,
                  const std::vector<StatementNode *> &statements);
     virtual ~FunctionNode();
@@ -33,6 +34,7 @@ private:
 private:
     std::string name;
     TypeNode *returnType;
+    std::vector<std::string> regions;
     std::vector<std::pair<std::string, TypeNode *>> arguments;
     std::vector<StatementNode*> statements;
 };

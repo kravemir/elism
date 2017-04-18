@@ -1,0 +1,8 @@
+fn main() -> i32 {
+    var a1 = [0;10];
+    on TMP = NewRegion() {
+        var a2 = [0;10];
+        a1 = a2;
+    }
+    return 0;
+}

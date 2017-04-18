@@ -1,0 +1,13 @@
+class A {}
+fn foo @FA (A @FA a, A @FA b) -> i32 {
+    return 0;
+}
+
+fn main() -> i32 {
+    var a1 = A();
+    on TMP = NewRegion() {
+        var a2 = A();
+        foo @fn_default (a1,a2);
+    }
+    return 0;
+}

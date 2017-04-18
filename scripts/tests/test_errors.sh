@@ -1,59 +1,23 @@
 #!/bin/bash
 
-ERROR_STR_TO_INT="
-fn main() -> i32 {
-    var i = 0;
-    i = \"AAAA\";
-    return 0;
-}"
+echo -e  "\nBEGIN: basic error testing"
 
-testType() {
-    TMP=$(mktemp)
-    TMP_O=$(mktemp)
+find scripts/tests/error_inputs -type f -name "*.bp.expect" | sort | while read RESULT_FILE;
+do
+    SRC_FILE=${RESULT_FILE%.expect}
+    echo "Testing error: ${SRC_FILE}"
+    ./build/bp_jit "${SRC_FILE}" 2>&1 | diff - "${RESULT_FILE}" || exit 1
+done || (echo "FAIL: Errors" && exit 1)
 
-    echo "${ERROR_STR_TO_INT}" >TMP
-    build/bp_jit -o TMP_O TMP > /dev/null 2> /dev/null
-    assertEquals 121 $?
-}
+echo -e "DONE: basic error testing\n"
 
-ERROR_REGIONS_ARRAYS="
-fn main() -> i32 {
-    var a1 = [0;10];
-    on TMP = NewRegion() {
-        var b1 = [0;10];
-        a1 = b1;
-    }
-    return 0;
-}"
+echo -e "BEGIN: basic error testing"
 
-ERROR_REGIONS_CLASSES="
-class A {
-}
-fn main() -> i32 {
-    var a1 = A();
-    on TMP = NewRegion() {
-        var a2 = A();
-        a1 = a2;
-    }
-    return 0;
-}"
+find scripts/tests/error_regions -type f -name "*.bp.expect" | sort | while read RESULT_FILE;
+do
+    SRC_FILE=${RESULT_FILE%.expect}
+    echo "Testing error: ${SRC_FILE}"
+    ./build/bp_jit "${SRC_FILE}" 2>&1 | diff - "${RESULT_FILE}" || exit 1
+done || (echo "FAIL: Errors" && exit 1)
 
-testRegionsArrays() {
-    TMP=$(mktemp)
-    TMP_O=$(mktemp)
-
-    echo "${ERROR_REGIONS_ARRAYS}" >TMP
-    build/bp_jit -o TMP_O TMP > /dev/null
-    assertEquals 121 $?
-}
-testRegionsClasses() {
-    TMP=$(mktemp)
-    TMP_O=$(mktemp)
-
-    echo "${ERROR_REGIONS_CLASSES}" >TMP
-    build/bp_jit -o TMP_O TMP > /dev/null
-    assertEquals 121 $?
-}
-
-# https://github.com/kward/shunit2#quickstart
-. shunit2
+echo -e "DONE: regions safety error testing\n"

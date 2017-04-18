@@ -1,0 +1,47 @@
+class A {
+    var length = 0;
+}
+
+fn foo_default (A a, A b) -> i32 {
+    return a.length * 10 + b.length;
+}
+
+fn foo_named_default @FOO_DEFAULT (A @FOO_DEFAULT a, A @FOO_DEFAULT b) -> i32 {
+    return a.length * 10 + b.length;
+}
+
+fn foo_two @FOO_A, @FOO_B (A @FOO_A a, A @FOO_B b) -> i32 {
+    return a.length * 10 + b.length;
+}
+
+fn main() -> i32 {
+    var a1 = A();
+    a1.length = 4;
+
+    // implicit current region, no inference, yet!
+    let i1 = foo_default (a1,a1);
+    let i2 = foo_named_default (a1,a1);
+
+    on TMP = NewRegion() {
+        var a2 = A();
+        a2.length = 2;
+
+        // implicit current region, no inference, yet!
+        let i3 = foo_default (a2,a2);
+        let i4 = foo_named_default (a2,a2);
+        printf("i1: %d, i2: %d, i3: %d, i4: %d\n", i1, i2, i3, i4);
+
+        // explicit region
+        let e1 = foo_default @fn_default (a1,a1);
+        let e2 = foo_named_default @fn_default (a1,a1);
+        let e3 = foo_default @TMP (a2,a2);
+        let e4 = foo_named_default @TMP (a2,a2);
+        printf("e1: %d, e2: %d, e3: %d, e4: %d\n", e1, e2, e3, e4);
+
+        // explicit regions
+        let ee1 = foo_two @fn_default, @TMP (a1,a2);
+        let ee2 = foo_two @TMP, @fn_default (a2,a1);
+        printf("ee1: %d, ee2: %d\n", ee1, ee2);
+    }
+    return 0;
+}

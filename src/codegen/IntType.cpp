@@ -16,7 +16,7 @@ CodegenValue *const IntType::getDefault(CodegenContext &context) {
     return new CodegenValue(this, llvm::ConstantInt::get(this->storeType, 0, false));
 }
 
-bool IntType::equals(CodegenType *pType) {
+bool IntType::equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) {
     IntType *it = dynamic_cast<IntType*>(pType);
     if(!it)
         return false;

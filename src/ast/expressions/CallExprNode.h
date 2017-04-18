@@ -10,7 +10,7 @@
 
 class CallExprNode: public ExprNode {
 public:
-    CallExprNode(ExprNode *expr, std::vector<ExprNode*> args);
+    CallExprNode(ExprNode *expr, const std::vector<std::string> &regions, std::vector<ExprNode*> args);
 
     ~CallExprNode() override;
 
@@ -19,6 +19,7 @@ public:
     CodegenValue * codegen(CodegenContext &context, const llvm::Twine &Name = "") override;
 
 private:
+    std::vector<std::string> regions;
     ExprNode *expr;
     std::vector<ExprNode*> args;
 };

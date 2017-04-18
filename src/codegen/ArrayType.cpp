@@ -39,7 +39,7 @@ CodegenValue *::ArrayType::getElement(CodegenContext &ctx, CodegenValue *value, 
 CodegenValue *::ArrayType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
     if("length" == name) {
         return new CodegenValue(
-                IntType::get32(ctx),
+                IntType::get64(ctx),
                 ctx.builder.CreateLoad(ctx.builder.CreateGEP(
                         value->value,
                         {
@@ -54,14 +54,22 @@ CodegenValue *::ArrayType::getChild(CodegenContext &ctx, CodegenValue *value, st
 }
 
 
-bool ::ArrayType::equals(CodegenType *pType) {
+bool ::ArrayType::equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) {
     ::ArrayType *at = dynamic_cast<::ArrayType*>(pType);
     if(!at)
         return false;
-    if(this->region != at->region) {
-        return false;
+    if(regionsRemap.size() > 0) {
+        auto it = regionsRemap.find(this->region);
+        // TODO check if found, what next if not found???
+        if (it->second != at->region) {
+            return false;
+        }
+    } else {
+        if (this->region != at->region) {
+            return false;
+        }
     }
-    return this->elementType->equals(at->elementType);
+    return this->elementType->equals(at->elementType,regionsRemap);
 }
 
 std::string (::ArrayType::toString)() const {

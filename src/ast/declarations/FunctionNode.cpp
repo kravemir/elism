@@ -13,9 +13,11 @@ using namespace llvm;
 
 FunctionNode::FunctionNode(const std::string &name,
                            TypeNode *returnType,
+                           const std::vector<std::string> &regions,
                            const std::vector<std::pair<std::string, TypeNode *>> arguments,
                            const std::vector<StatementNode *> &statements)
         : name(name),
+          regions(regions),
           arguments(arguments),
           returnType(returnType),
           statements(statements)
@@ -61,9 +63,8 @@ FunctionNode::~FunctionNode() {
 
 class FunctionContext: public ChildCodegenContext {
 public:
-    FunctionContext(CodegenContext &parent, BasicBlock *entryBlock)
-            : ChildCodegenContext(parent),
-              entryBlock(entryBlock)
+    FunctionContext(CodegenContext &parent)
+            : ChildCodegenContext(parent)
     {}
 
     AllocaInst* createAlloca(std::string name, CodegenValue *value) override {
@@ -110,7 +111,13 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
 }
 
 CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *classType) {
-    CodegenType *returnType = this->returnType->codegen(context);
+    if(regions.size() == 0)
+        regions.push_back("fn_default");
+
+    FunctionContext functionContext(context);
+    functionContext.defaultRegion = regions[0];
+
+    CodegenType *returnType = this->returnType->codegen(functionContext);
     std::vector<CodegenType*> arg_types;
     std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
 
@@ -120,7 +127,7 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     }
 
     for(auto arg : arguments) {
-        CodegenType *argType = arg.second->codegen(context);
+        CodegenType *argType = arg.second->codegen(functionContext);
         arg_types.push_back(argType);
         args_llvmtypes.push_back(argType->storeType);
     }
@@ -130,9 +137,7 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
 
     // Create a new basic block to start insertion into.
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
-
-    FunctionContext functionContext(context, BB);
-    functionContext.defaultRegion = "fn.default";
+    functionContext.entryBlock = BB;
 
     functionContext.builder.SetInsertPoint(BB);
     functionContext.thisType = classType;
@@ -155,6 +160,6 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     if(dynamic_cast<VoidType*>(returnType))
         functionContext.builder.CreateRetVoid();
 
-    ::FunctionType *CFT = new ::FunctionType(FT,returnType);
+    ::FunctionType *CFT = new ::FunctionType(FT,returnType,regions,arg_types);
     return new CodegenValue(CFT,F);
 }

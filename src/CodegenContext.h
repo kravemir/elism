@@ -51,8 +51,8 @@ public:
     CodegenType(llvm::Type *const storeType);
     CodegenType(llvm::Type *const storeType, CodegenType *const callReturnType);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
-                                 const llvm::Twine &Name = "");
+    virtual CodegenValue* doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
+                                 const std::vector<CodegenValue *> &args, const llvm::Twine &Name = "");
     virtual CodegenValue* getChild(CodegenContext &ctx, CodegenValue *value, std::string name);
 
     bool isCallable() const {
@@ -72,14 +72,23 @@ public:
 
     virtual CodegenValue *const getDefault(CodegenContext &context);
 
-    virtual bool equals(CodegenType *pType) = 0;
+    /**
+     * Compares self to other, comparison shall check data types, and regions.
+     *
+     * Region mapping argument is for function calls. It maps invocation regions to regions in function declaration.
+     *
+     * @param other
+     * @param regionsRemap maps region name of value (self) to name of regions for other
+     * @return true/false
+     */
+    virtual bool equals(CodegenType *other, const std::map<std::string,std::string> &regionsRemap) = 0;
 };
 
 class CodegenValue {
 public:
     CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *storeAddress = nullptr);
 
-    virtual CodegenValue* doCall(CodegenContext &ctx,
+    virtual CodegenValue* doCall(CodegenContext &ctx, const std::vector<std::string> &regions,
                                  const std::vector<CodegenValue *> &args,
                                  const llvm::Twine &Name = "");
     virtual void doStore(CodegenContext &ctx, CodegenValue *value);
@@ -104,6 +113,8 @@ public:
     void addVariable(std::string name, CodegenValue *value) override;
 
     llvm::Value *getRegion() override;
+
+    CodegenType *getType(std::string name) override;
 
 
 public:
