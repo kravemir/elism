@@ -200,11 +200,21 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
 }
 
 bool ClassType::equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) {
-    // TODO: region remap
     ClassType *ct = dynamic_cast<ClassType*>(pType);
     if(ct == nullptr)
         return false;
-    return base == ct->base && region == ct->region;
+    if(regionsRemap.size() > 0) {
+        auto it = regionsRemap.find(this->region);
+        // TODO check if found, what next if not found???
+        if (it->second != ct->region) {
+            return false;
+        }
+    } else {
+        if (this->region != ct->region) {
+            return false;
+        }
+    }
+    return base == ct->base;
 }
 
 std::string ClassType::toString() const {
@@ -213,10 +223,14 @@ std::string ClassType::toString() const {
 
 CodegenType *ClassType::withRegions(CodegenContext &ctx, const std::vector<std::string> &regions) {
     std::string region = ctx.defaultRegion;
-    // TODO: override
+    if(regions.size() == 1)
+        region = regions[0];
+    else
+        assert(regions.size() == 0);
     ClassType* ct = new ClassType(name,storeType,super,region);
     ct->initF = initF;
     ct->functions = functions;
     ct->children = children;
+    ct->base = this->base;
     return ct;
 }
