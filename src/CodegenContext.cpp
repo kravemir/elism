@@ -122,8 +122,8 @@ CodegenType::CodegenType(llvm::Type *const storeType, CodegenType *const callRet
 {
 }
 
-CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
-                                  const llvm::Twine &Name) {
+CodegenValue *CodegenType::doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
+                                  const std::vector<CodegenValue *> &args, const llvm::Twine &Name) {
     assert(0);
     return nullptr;
 }
@@ -158,13 +158,14 @@ CodegenValue::CodegenValue(CodegenType *type, llvm::Value *value, llvm::Value *s
     assert(value);
 }
 
-CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const std::vector<CodegenValue *> &args,
-                                   const llvm::Twine &Name) {
-    return type->doCall(ctx, this, args, Name);
+CodegenValue *CodegenValue::doCall(CodegenContext &ctx, const std::vector<std::string> &regions,
+                                   const std::vector<CodegenValue *> &args, const llvm::Twine &Name) {
+    return type->doCall(ctx, this, regions, args, Name);
 }
 
 void CodegenValue::doStore(CodegenContext &ctx, CodegenValue *value) {
-    if(!this->type->equals(value->type)) {
+    // TODO: region remap!
+    if(!this->type->equals(value->type,{})) {
         fprintf(stderr, "Can't assign ``%s'' to ``%s''\n", value->type->toString().c_str(), this->type->toString().c_str()); // TODO: proper names
         exit(121);
     }

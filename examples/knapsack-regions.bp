@@ -28,7 +28,7 @@ fn main () -> i32 {
     printf("Number of items: %d\n", values.length);
 
     on TMP = NewRegion() {
-        let result = solveKnapsack @TMP, @default ( weights, values, maxWeight );
+        let result = solveKnapsack @TMP, @fn_default ( weights, values, maxWeight );
 
         for( lw : range(0,maxWeight+1) ) {
             printf("last results %d: %d\n", lw, result[lw]);

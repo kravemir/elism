@@ -10,7 +10,7 @@ VoidType *VoidType::get(CodegenContext &ctx) {
     return new VoidType(llvm::Type::getVoidTy(ctx.llvmContext));
 }
 
-bool VoidType::equals(CodegenType *pType) {
+bool VoidType::equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) {
     return dynamic_cast<VoidType*>(pType) != nullptr;
 }
 

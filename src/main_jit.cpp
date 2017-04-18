@@ -43,7 +43,7 @@ static void register_printf(CodegenContext &ctx) {
             ctx.module
     );
     func->setCallingConv(llvm::CallingConv::C);
-    auto cft = new ::FunctionType(printf_type,IntType::get32(ctx));
+    auto cft = new ::FunctionType(printf_type,IntType::get32(ctx),{},{});
     cft->native = true;
     ctx.addValue("printf", new CodegenValue(cft, func));
 }
@@ -95,7 +95,7 @@ void parseFile(Program &p, std::string filename) {
 struct RegionType: CodegenType {
     RegionType(Type *const storeType) : CodegenType(storeType) {}
 
-    bool equals(CodegenType *pType) override {
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override {
         return dynamic_cast<RegionType*>(pType) != nullptr;
     }
 
@@ -135,7 +135,7 @@ static void register_regions(CodegenContext &ctx) {
     regionalloc->setCallingConv(llvm::CallingConv::C);
 
     CodegenType *rtype = new RegionType(regionType);
-    ctx.addValue("NewRegion", new CodegenValue(new ::FunctionType(newregion_type,rtype), newregion));
+    ctx.addValue("NewRegion", new CodegenValue(new ::FunctionType(newregion_type,rtype,{},{}), newregion));
 }
 
 std::unique_ptr<llvm::Module> compileProgram(LLVMContext &llvmContext, Program &p) {

@@ -86,19 +86,19 @@ class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_de
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),std::move(*ARGS),std::move(*SB)));
+  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),{},std::move(*ARGS),std::move(*SB)));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-  CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,std::move(*ARGS),std::move(*SB)));
+  CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,{},std::move(*ARGS),std::move(*SB)));
 }
 
 %type function { FunctionNode* }
-function(F) ::= FN IDENTIFIER(NAME) region_decl fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-    F = new FunctionNode(tokenToString(NAME),RETURN_TYPE,moveDelete(ARGS),moveDelete(SB));
+function(F) ::= FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
+    F = new FunctionNode(tokenToString(NAME),RETURN_TYPE,moveDelete(RD),moveDelete(ARGS),moveDelete(SB));
 }
 
-function(F) ::= FN IDENTIFIER(NAME) region_decl fn_arg_def(ARGS) statement_block(SB). {
-    F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),moveDelete(ARGS),moveDelete(SB));
+function(F) ::= FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) statement_block(SB). {
+    F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),moveDelete(RD),moveDelete(ARGS),moveDelete(SB));
 }
 
 %type fn_arg_def { std::vector<std::pair<std::string,TypeNode*>>* }
@@ -246,11 +246,11 @@ mult_expr(E) ::= mult_expr(E1) DIVIDE atom_expr(E2). {
 
 %type atom_expr { ExprNode* }
 atom_expr(A) ::= atom(A).
-atom_expr(AE) ::= atom_expr(AE_) region_decl LPAREN call_args(CA) RPAREN. {
-    AE = new CallExprNode(AE_, *CA);
+atom_expr(AE) ::= atom_expr(AE_) region_decl(RD) LPAREN call_args(CA) RPAREN. {
+    AE = new CallExprNode(AE_, moveDelete(RD), *CA);
 }
-atom_expr(AE) ::= atom_expr(AE_) region_decl LPAREN RPAREN. {
-    AE = new CallExprNode(AE_, {});
+atom_expr(AE) ::= atom_expr(AE_) region_decl(RD) LPAREN RPAREN. {
+    AE = new CallExprNode(AE_, moveDelete(RD), {});
 }
 atom_expr(AE) ::= atom_expr(AE_) LBRACKET expr(IDX) RBRACKET. {
     AE = new ArrayElementExprNode(AE_, IDX);

@@ -13,7 +13,7 @@ struct ClassType: CodegenType {
 
     CodegenValue *getChild(CodegenContext &ctx, CodegenValue *value, std::string name) override;
 
-    bool equals(CodegenType *pType) override;
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override;
 
     std::string toString() const override;
 

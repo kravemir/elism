@@ -13,9 +13,11 @@ using namespace llvm;
 
 FunctionNode::FunctionNode(const std::string &name,
                            TypeNode *returnType,
+                           const std::vector<std::string> &regions,
                            const std::vector<std::pair<std::string, TypeNode *>> arguments,
                            const std::vector<StatementNode *> &statements)
         : name(name),
+          regions(regions),
           arguments(arguments),
           returnType(returnType),
           statements(statements)
@@ -132,7 +134,7 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     BasicBlock *BB = BasicBlock::Create(context.llvmContext, "entry", F);
 
     FunctionContext functionContext(context, BB);
-    functionContext.defaultRegion = "fn.default";
+    functionContext.defaultRegion = "fn_default";
 
     functionContext.builder.SetInsertPoint(BB);
     functionContext.thisType = classType;
@@ -155,6 +157,6 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     if(dynamic_cast<VoidType*>(returnType))
         functionContext.builder.CreateRetVoid();
 
-    ::FunctionType *CFT = new ::FunctionType(FT,returnType);
+    ::FunctionType *CFT = new ::FunctionType(FT,returnType,regions,arg_types);
     return new CodegenValue(CFT,F);
 }

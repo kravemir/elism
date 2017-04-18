@@ -111,7 +111,7 @@ void ClassNode::codegen(CodegenContext &context) {
         context.builder.CreateRet(Malloc);
     }
 
-    ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType);
+    ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType,{},{});
     context.addValue(name, new CodegenValue(CFT,F_new));
     context.addType(name, cClassType);
 
@@ -127,16 +127,17 @@ struct ClassFunctionType: CodegenType {
             : CodegenType(storeType, callReturnType)
     {}
 
-    CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
-                          const Twine &Name) override {
+    CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
+                          const std::vector<CodegenValue *> &args, const Twine &Name) override {
         std::vector<llvm::Value*> values = {ctx.region};
         values.push_back(ctx.builder.CreateExtractValue(value->value,{0}));
         for(CodegenValue *v : args)
             values.push_back(v->value);
+        // TODO: check
         return new CodegenValue(callReturnType,ctx.builder.CreateCall(ctx.builder.CreateExtractValue(value->value,{1}),values,Name));
     }
 
-    bool equals(CodegenType *pType) override {
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override {
         return false;
     }
 
@@ -198,7 +199,8 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
     return nullptr;
 }
 
-bool ClassType::equals(CodegenType *pType) {
+bool ClassType::equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) {
+    // TODO: region remap
     ClassType *ct = dynamic_cast<ClassType*>(pType);
     if(ct == nullptr)
         return false;

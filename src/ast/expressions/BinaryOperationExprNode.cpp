@@ -58,6 +58,7 @@ CodegenValue * BinaryOperationExprNode::codegen(CodegenContext &context, const l
             default:
                 assert(0);
         }
+        //printf("type: %s\n",cv1->type->toString().c_str());
         return new CodegenValue(cv1->type, res);
     }
 

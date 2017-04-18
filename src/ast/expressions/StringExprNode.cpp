@@ -15,7 +15,8 @@ std::string StringExprNode::toString() const {
 struct StringType: CodegenType {
     StringType(Type *const storeType) : CodegenType(storeType) {}
 
-    bool equals(CodegenType *pType) override {
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override {
+        // TODO: check region
         return dynamic_cast<StringType*>(pType) != nullptr;
     }
 

@@ -9,30 +9,25 @@
 #include <ast/declarations/ClassNode.h>
 
 struct FunctionType: CodegenType {
-    FunctionType(llvm::Type *ptrType, CodegenType *const callReturnType) : CodegenType(ptrType, callReturnType) {
+    FunctionType(llvm::Type *ptrType, CodegenType *const callReturnType, const std::vector<std::string> &regions, const std::vector<CodegenType*> &argTypes)
+            : CodegenType(ptrType, callReturnType),
+              regions(regions),
+              argTypes(argTypes)
+    {
         assert(callReturnType);
     }
 
-    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<CodegenValue *> &args,
-                         const llvm::Twine &Name = "") override {
-        std::vector<llvm::Value*> values;
-        if(!native)
-            values.push_back(ctx.region);
-        for(CodegenValue *v : args)
-            values.push_back(v->value);
-        CodegenType *retType =callReturnType;
-        if(ClassType* ct = dynamic_cast<ClassType*>(retType)) {
-            // TODO: more complex, based on called regions
-            retType = ct->withRegions(ctx,{ctx.defaultRegion});
-        }
-        return new CodegenValue(retType,ctx.builder.CreateCall(value->value,values,Name));
-    }
+    CodegenValue *doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
+                         const std::vector<CodegenValue *> &args, const llvm::Twine &Name = "") override;
 
-    bool equals(CodegenType *pType) override;
+    bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override;
 
     std::string toString() const override;
 
     bool native = false;
+
+    std::vector<std::string> regions;
+    std::vector<CodegenType*> argTypes;
 };
 
 
