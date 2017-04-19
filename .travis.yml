@@ -1,18 +1,32 @@
 language: cpp
 
 dist: trusty
+sudo: false
+
+addons:
+  apt:
+    sources:
+      - llvm-toolchain-trusty-3.9
+    packages:
+      - cmake
+      - clang-3.9
+      - llvm-3.9-dev
+      - llvm-3.9-runtime
+      - re2c
+      - lemon
+      - cloc
 
 install:
-  - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-  - sudo add-apt-repository -y "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main"
-  - sudo apt-get update -qq
-  - sudo apt-get install -y cmake clang-3.9 llvm-3.9-dev llvm-3.9-runtime re2c lemon cloc
-  - wget http://mirrors.kernel.org/ubuntu/pool/universe/s/sqlite3/lemon_3.14.1-1build1_amd64.deb
-  - sudo dpkg -i lemon_3.14.1-1build1_amd64.deb
+  - mkdir -p .local/bin .local/src
+  - wget -O .local/bin/lempar.c http://www.sqlite.org/src/raw/tool/lempar.c?name=db1bdb4821f2d8fbd76e577cf3ab18642c8d08d1
+  - wget -O .local/src/lemon.c http://www.sqlite.org/src/raw/tool/lemon.c?name=6b0cdffb377e79c6295c40300677688f3d35c21c0154da635642ef82dc3a5836
+  - gcc .local/src/lemon.c -o .local/bin/lemon
+  - chmod +x .local/bin/lemon
+  - export PATH="$(pwd)/.local/bin:$PATH"
 
 script:
   - mkdir build
-  - sh -c "cd build; cmake ..; make"
+  - sh -c "cd build; cmake ..; make -j3"
   - bash scripts/tests/test_jit.sh
   - bash scripts/tests/test_errors.sh
 
