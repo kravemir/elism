@@ -35,19 +35,20 @@ Supported features of structured programming:
 
 Supported features of region based memory management. Covers region management, and application of safe regions on implemented language functionality:
 
-- [ ] region management (TODO: automated tests, examples):
+- [x] region management (covered in: [05-regions.bp](/examples/05-regions.bp), TODO: automated tests):
     - [x] creation of region on scope
     - [x] automatic destruction of region at scope exit
-- [ ] allocation of objects within region (TODO: automated tests, examples):
+- [x] allocation of objects within region (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] default allocation on current/default region
-- [ ] calling functions on/with regions (TODO: automated tests, examples):
-    - [ ] declaration of multiple in/out regions (in lexical meaning, static analysis)
-    - [x] passing handle default/current region (for allocation)
-- [ ] regions of reference types (TODO: automated tests, examples):
+- [ ] reference types with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] use default region of current scope when not specified
     - [ ] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
     - [ ] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
     - [x] safety check: region of assigned value must match region of variable type
+- [ ] calling functions on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
+    - [x] declaration of multiple in/out regions (in lexical meaning, static analysis)
+    - [ ] remapping region for return value: `fn foo @A () -> i64[] @A {...};`, type of `foo @B ()` is `i64[] @B`
+    - [x] passing handle default/current region (for allocation)
     - [x] safety check: region of assigned call arguments must match regions of parameter types - remap regions
 
 
