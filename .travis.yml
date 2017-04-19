@@ -10,14 +10,11 @@ install:
   - wget http://mirrors.kernel.org/ubuntu/pool/universe/s/sqlite3/lemon_3.14.1-1build1_amd64.deb
   - sudo dpkg -i lemon_3.14.1-1build1_amd64.deb
 
-before_script:
-  - mkdir build
-  - cd build
-  - cmake --version
-  - cmake ..
-
 script:
-  - make
+  - mkdir build
+  - sh -c "cd build; cmake ..; make"
+  - bash scripts/tests/test_jit.sh
+  - bash scripts/tests/test_errors.sh
 
 after_success:
-  - cloc src
+  - cloc "$TRAVIS_BUILD_DIR/src"
