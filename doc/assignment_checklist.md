@@ -59,11 +59,12 @@ Supported features of region based memory management. Covers region management, 
     - [x] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
     - [x] safety: type checking  `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
     - [x] safety: region of assigned value must match region of variable type
-- [ ] declaration of functions, and function calls, on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
+- [x] declaration of functions, and function calls, on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] declaration of multiple in/out regions (in lexical meaning, static analysis)
     - [x] explicit types with regions for parameter type
     - [x] remapping region for return value: `fn foo @A () -> i64[] @A {...};`, type of `foo @B ()` is `i64[] @B`
-    - [ ] passing handle default/current/first region (for allocation, TODO test for real allocation)
+    - [x] passing handle first region
+    - [x] safety: only acquired handle can be passed, can't pass first region (handle) which don't have
     - [x] safety: region of assigned call arguments must match regions of parameter types - remap regions
 
 Other

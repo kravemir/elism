@@ -16,8 +16,14 @@ std::string FunctionType::toString() const {
 CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
                                    const std::vector<CodegenValue *> &args, const llvm::Twine &Name) {
     std::vector<llvm::Value*> values;
-    if(!native)
-        values.push_back(ctx.region);
+    if(!native) {
+        llvm::Value *handle = ctx.getRegionHandle(regions[0]);
+        if(handle == nullptr) {
+            fprintf(stderr, "Don't have handle for: %s\n",regions[0].c_str());
+            exit(1);
+        }
+        values.push_back(handle);
+    }
     for(CodegenValue *v : args)
         values.push_back(v->value);
     CodegenType *retType =callReturnType;

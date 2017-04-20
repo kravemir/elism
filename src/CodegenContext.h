@@ -32,6 +32,7 @@ public:
     virtual llvm::Value* createAlloc(llvm::Type *allocType, llvm::Value *allocSize, llvm::Value *allocArraySize);
 
     virtual llvm::Value* getRegion();
+    virtual llvm::Value* getRegionHandle(const std::string &name);
 
 public:
     llvm::Module * const module;
@@ -117,6 +118,8 @@ public:
     llvm::Value *getRegion() override;
 
     CodegenType *getType(std::string name) override;
+
+    llvm::Value *getRegionHandle(const std::string &name) override;
 
 
 public:

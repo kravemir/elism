@@ -110,6 +110,13 @@ llvm::Value *CodegenContext::getRegion() {
     return region;
 }
 
+llvm::Value *CodegenContext::getRegionHandle(const std::string &name) {
+    if(defaultRegion == name) {
+        return region;
+    }
+    return nullptr;
+}
+
 CodegenType::CodegenType(llvm::Type *const storeType)
         : storeType(storeType),
           callReturnType(nullptr)
@@ -212,4 +219,11 @@ CodegenType *ChildCodegenContext::getType(std::string name) {
     if(type == nullptr)
         type = parent.getType(name);
     return type;
+}
+
+Value *ChildCodegenContext::getRegionHandle(const std::string &name) {
+    Value *value = CodegenContext::getRegionHandle(name);
+    if(value == nullptr)
+        value = parent.getRegionHandle(name);
+    return value;
 }

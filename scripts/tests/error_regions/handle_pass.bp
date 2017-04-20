@@ -1,0 +1,15 @@
+fn foo @F () -> i64 {
+    return 0;
+}
+
+fn bar @A, @B () {
+    // only handle for first region @A is passed, not for @B
+    foo @B ();
+}
+
+fn main() -> i32 {
+    on TMP = NewRegion() {
+        bar @A, @B ();
+    }
+    return 0;
+}
