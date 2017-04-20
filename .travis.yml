@@ -24,11 +24,15 @@ install:
   - chmod +x .local/bin/lemon
   - export PATH="$(pwd)/.local/bin:$PATH"
 
-script:
+before_script:
   - mkdir build
+
+script:
   - sh -c "cd build; cmake ..; make -j3"
   - bash scripts/tests/test_jit.sh
   - bash scripts/tests/test_errors.sh
 
 after_success:
   - cloc "$TRAVIS_BUILD_DIR/src"
+  - sh -c 'cd "$TRAVIS_BUILD_DIR/src" wc -l $(find examples/ -name '*.bp' | sort)'
+  - sh -c 'cd "$TRAVIS_BUILD_DIR/src" wc -l $(find scripts/tests/ -name '*.bp' | sort)'
