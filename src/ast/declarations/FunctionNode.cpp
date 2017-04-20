@@ -118,6 +118,7 @@ CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *
     functionContext.defaultRegion = regions[0];
 
     CodegenType *returnType = this->returnType->codegen(functionContext);
+    //fprintf(stderr,"aaa: %s\n",returnType->toString().c_str());
     std::vector<CodegenType*> arg_types;
     std::vector<llvm::Type*> args_llvmtypes = {context.regionType};
 

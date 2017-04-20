@@ -1,0 +1,11 @@
+fn foo @R () -> i64[] @R {
+    return [0; 10];
+}
+
+fn main() -> i32 {
+    var a = [1,4];
+    on TMP = NewRegion() {
+        a = foo();
+    }
+    return 0;
+}

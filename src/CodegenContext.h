@@ -82,6 +82,8 @@ public:
      * @return true/false
      */
     virtual bool equals(CodegenType *other, const std::map<std::string,std::string> &regionsRemap) = 0;
+
+    virtual CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) = 0;
 };
 
 class CodegenValue {

@@ -23,6 +23,11 @@ struct StringType: CodegenType {
     std::string toString() const override {
         return "str";
     }
+
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override {
+        assert(0);
+        return nullptr;
+    }
 };
 
 CodegenValue *StringExprNode::codegen(CodegenContext &context, const llvm::Twine &Name) {

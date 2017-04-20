@@ -17,3 +17,7 @@ bool VoidType::equals(CodegenType *pType, const std::map<std::string,std::string
 std::string VoidType::toString() const {
     return "void";
 }
+
+CodegenType *VoidType::withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) {
+    return this;
+}

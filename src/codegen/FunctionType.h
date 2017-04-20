@@ -24,6 +24,8 @@ struct FunctionType: CodegenType {
 
     std::string toString() const override;
 
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override;
+
     bool native = false;
 
     std::vector<std::string> regions;

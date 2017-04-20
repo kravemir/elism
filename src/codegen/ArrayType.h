@@ -24,6 +24,8 @@ struct ArrayType: CodegenType {
     bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override;
 
     std::string toString() const override;
+
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override;
 };
 
 

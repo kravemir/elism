@@ -21,10 +21,7 @@ CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, con
     for(CodegenValue *v : args)
         values.push_back(v->value);
     CodegenType *retType =callReturnType;
-    if(ClassType* ct = dynamic_cast<ClassType*>(retType)) {
-        // TODO: more complex, based on called regions
-        retType = ct->withRegions(ctx,{ctx.defaultRegion});
-    }
+
 
     // TODO: check lengths
     std::map<std::string,std::string> regionsRemap;
@@ -43,5 +40,19 @@ CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, con
             exit(121);
         }
     }
+
+    // todo
+    std::map<std::string,std::string> regionsRemapInvert;
+    for(auto it : regionsRemap) {
+        regionsRemapInvert[it.second] = it.first;
+    }
+
+    retType = retType->withRemapRegions(ctx,regionsRemapInvert);
+
     return new CodegenValue(retType,ctx.builder.CreateCall(value->value,values,Name));
+}
+
+CodegenType *FunctionType::withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) {
+    assert(0);
+    return nullptr;
 }

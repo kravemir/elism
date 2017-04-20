@@ -18,6 +18,8 @@ public:
 
     std::string toString() const override;
 
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override;
+
 private:
 };
 

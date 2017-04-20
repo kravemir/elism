@@ -19,6 +19,8 @@ struct ClassType: CodegenType {
 
     CodegenType *withRegions(CodegenContext &ctx, const std::vector<std::string> &regions) override;
 
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override;
+
     std::string name;
     ClassType* super;
     std::map<std::string,std::pair<int,CodegenType*>> children;

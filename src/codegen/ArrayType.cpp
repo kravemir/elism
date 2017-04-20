@@ -75,3 +75,7 @@ bool ::ArrayType::equals(CodegenType *pType, const std::map<std::string,std::str
 std::string (::ArrayType::toString)() const {
     return elementType->toString() + "[] @" + region;
 }
+
+CodegenType *::ArrayType::withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) {
+    return ::ArrayType::get(context,elementType->withRemapRegions(context,map),map.find(this->region)->second);
+}

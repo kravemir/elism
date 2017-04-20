@@ -111,7 +111,7 @@ void ClassNode::codegen(CodegenContext &context) {
         context.builder.CreateRet(Malloc);
     }
 
-    ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType,{},{});
+    ::FunctionType *CFT = new ::FunctionType(FT_new,cClassType->withRegions(context,{"fn_default"}),{"fn_default"},{});
     context.addValue(name, new CodegenValue(CFT,F_new));
     context.addType(name, cClassType);
 
@@ -143,6 +143,11 @@ struct ClassFunctionType: CodegenType {
 
     std::string toString() const override {
         return "TODO: cft";
+    }
+
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override {
+        assert(0);
+        return nullptr;
     }
 };
 
@@ -227,10 +232,27 @@ CodegenType *ClassType::withRegions(CodegenContext &ctx, const std::vector<std::
         region = regions[0];
     else
         assert(regions.size() == 0);
+    assert("" != region);
     ClassType* ct = new ClassType(name,storeType,super,region);
     ct->initF = initF;
     ct->functions = functions;
     ct->children = children;
     ct->base = this->base;
     return ct;
+}
+
+CodegenType *ClassType::withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) {
+    std::string r;
+    auto it = map.find(region);
+    if(it != map.end()) {
+        r = it->second;
+    } else {
+        fprintf(stderr,"Can't find region to remap ``%s'', self ``%s''\n",region.c_str(),this->toString().c_str());
+        for(auto it : map) {
+            fprintf(stderr, "\t%s -> %s\n", it.first.c_str(), it.second.c_str());
+        }
+        throw "AAA";
+        exit(1);
+    }
+    return this->withRegions(context, { r } );
 }

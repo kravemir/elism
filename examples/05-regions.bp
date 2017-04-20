@@ -103,9 +103,38 @@ fn test_class_array() {
     }
 }
 
+fn return_foo_default () -> i64[] {
+    return [0; 21];
+}
+
+fn return_foo_named_default @FOO_A () -> i64[] @FOO_A {
+    return [0; 42];
+}
+
+fn test_returns() {
+    // implicit current region, no inference, yet!
+    let i1 = return_foo_default().length;
+    let i2 = return_foo_named_default().length;
+
+    on TMP = NewRegion() {
+        // implicit current region, no inference, yet!
+        let i3 = return_foo_default().length;
+        let i4 = return_foo_named_default().length;
+        printf("returns => i1: %d, i2: %d, i3: %d, i4: %d\n", i1, i2, i3, i4);
+
+        // explicit region
+        let e1 = return_foo_default @fn_default ().length;
+        let e2 = return_foo_named_default @fn_default ().length;
+        let e3 = return_foo_default @TMP ().length;
+        let e4 = return_foo_named_default @TMP ().length;
+        printf("returns => e1: %d, e2: %d, e3: %d, e4: %d\n", e1, e2, e3, e4);
+    }
+}
+
 fn main() -> i32 {
     test_array_foos();
     test_class_foos();
     test_class_array();
+    test_returns();
     return 0;
 }

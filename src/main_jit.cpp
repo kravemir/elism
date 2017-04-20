@@ -102,6 +102,11 @@ struct RegionType: CodegenType {
     string toString() const override {
         return "Region";
     }
+
+    CodegenType *withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) override {
+        // TODO: some brainy here, region handles
+        return this;
+    }
 };
 
 static void register_regions(CodegenContext &ctx) {

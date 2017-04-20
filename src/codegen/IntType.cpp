@@ -26,3 +26,7 @@ bool IntType::equals(CodegenType *pType, const std::map<std::string,std::string>
 std::string IntType::toString() const {
     return "i" + std::to_string(bits);
 }
+
+CodegenType *IntType::withRemapRegions(CodegenContext &context, const std::map<std::string, std::string> &map) {
+    return this;
+}
