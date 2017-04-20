@@ -3,27 +3,36 @@ Assignment Checklist
 
 Checklist for bachelors work assignment.
 
-Language functional requirements
---------------------------------
+Basic language structures
+-------------------------
 
 Supported features of structured programming:
 
-- [ ] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
+- [x] data types (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
     - [x] integer numbers
     - [x] strings
+    - [x] void type
     - [X] arrays reference
-    - [ ] void type
-- [ ] expressions:
+    - [x] class reference (see classes)
+- [x] expressions:
     - [x] arithmetical operations: `+`, `-`, `*`, `/`
     - [x] array manipulation: `array[idx]`, `array.length`
-    - [ ] function call: `foo()`
+    - [x] function call: `foo()`
+    - [ ] safety: types of arguments passed to function call must match types in function declaration
 - [x] statements: (covered in: [02-basic-syntax.bp](/examples/02-basic-syntax.bp))
     - [x] assignment: `name = expr;`
     - [x] array element assignment: `array[idx] = val;`
+    - [x] variable `var` and value `let` declaration
+    - [x] safety: value in declaration must much `let` and `var` type, or type can be inferred
+    - [ ] safety: type of assigned value must match target type in assignment statement
+    - [ ] safety: type of assigned value must match target type in array assignment statement
 - [x] control structures: (covered in: [03-cycles.bp](/examples/03-cycles.bp))
     - [x] conditions: `if`, `if-else`
     - [x] while cycle: `while (condition) statement;`
     - [x] for cycle: `for (i: iterable) statment;`
+
+Simple OOP support:
+
 - [x] class declarations: (covered in: [04-classes.bp](/examples/04-classes.bp))
     - [x] class type declaration: `class Name { ... }`
     - [x] members/variables: `class Name { var X : i32; var Y = 123; ... }`
@@ -33,6 +42,9 @@ Supported features of structured programming:
     - [x] variables: `obj.x`
     - [x] method call: `obj.method()`
 
+Region based memory management
+------------------------------
+
 Supported features of region based memory management. Covers region management, and application of safe regions on implemented language functionality:
 
 - [x] region management (covered in: [05-regions.bp](/examples/05-regions.bp), TODO: automated tests):
@@ -41,19 +53,27 @@ Supported features of region based memory management. Covers region management, 
 - [x] allocation of objects within region (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] default allocation on current/default region
 - [ ] reference types with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
-    - [ ] inferred types with regions from assigned value for `let` and `var` statements 
-    - [ ] explicit types with regions for `let` and `var` statements, and for argument type
+    - [x] inferred types with regions from assigned value for `let` and `var` statements 
+    - [ ] explicit types with regions for `let` and `var` statements
     - [x] use default region of current scope when not specified
     - [x] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
-    - [x] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
-    - [x] safety check: region of assigned value must match region of variable type
+    - [x] safety: type checking  `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
+    - [x] safety: region of assigned value must match region of variable type
 - [ ] declaration of functions, and function calls, on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] declaration of multiple in/out regions (in lexical meaning, static analysis)
-    - [ ] explicit types with regions for parameter type
+    - [x] explicit types with regions for parameter type
     - [ ] remapping region for return value: `fn foo @A () -> i64[] @A {...};`, type of `foo @B ()` is `i64[] @B`
     - [x] passing handle default/current region (for allocation)
-    - [x] safety check: region of assigned call arguments must match regions of parameter types - remap regions
+    - [x] safety: region of assigned call arguments must match regions of parameter types - remap regions
 
+Other
+-----
+
+Quality requirements:
+
+- [ ] values and variables of inner scopes aren't propagated to parrent scope
+- [ ] automated tests for all safety checks
+- [ ] nice output
 
 Features not required by an assignment (future improvement):
 
@@ -64,10 +84,3 @@ Features not required by an assignment (future improvement):
 - [ ] class reference properties to data on different regions
     - [ ] region arguments for class types (like generics)
     - [ ] safety check: instance region may not outlive region parameters
-
-Language quality requirements
------------------------------
-
-N/A:
-
-- [ ] values and variables of inner scopes aren't propagated to parrent scope
