@@ -1,0 +1,3 @@
+Argument type ``A @fn_default[] @TMP'' differs to parameter type ``A @FOO_A[] @FOO_B'', with region mapping:
+	TMP -> FOO_A
+	fn_default -> FOO_B
