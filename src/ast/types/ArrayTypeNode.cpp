@@ -8,7 +8,9 @@
 
 #include <codegen/ArrayType.h>
 
-ArrayTypeNode::ArrayTypeNode(TypeNode *baseType) : baseType(baseType) {}
+ArrayTypeNode::ArrayTypeNode(TypeNode *baseType,std::vector<std::string> &&regions) : baseType(baseType) {
+    this->regions = regions;
+}
 
 std::string ArrayTypeNode::toString() {
     return baseType->toString() + "[]";

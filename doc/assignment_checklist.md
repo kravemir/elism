@@ -41,12 +41,15 @@ Supported features of region based memory management. Covers region management, 
 - [x] allocation of objects within region (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] default allocation on current/default region
 - [ ] reference types with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
+    - [ ] inferred types with regions from assigned value for `let` and `var` statements 
+    - [ ] explicit types with regions for `let` and `var` statements, and for argument type
     - [x] use default region of current scope when not specified
-    - [ ] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
-    - [ ] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
+    - [x] declare instance regions for array types, `ClassType @InstanceR [] @ArrayR`
+    - [x] safety check: `ClassType @R`, `i64[] @R`, `ClassType @InstanceR [] @ArrayR`
     - [x] safety check: region of assigned value must match region of variable type
-- [ ] calling functions on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
+- [ ] declaration of functions, and function calls, on/with regions (covered in: [05-regions.bp](/examples/05-regions.bp), N/A: automated tests):
     - [x] declaration of multiple in/out regions (in lexical meaning, static analysis)
+    - [ ] explicit types with regions for parameter type
     - [ ] remapping region for return value: `fn foo @A () -> i64[] @A {...};`, type of `foo @B ()` is `i64[] @B`
     - [x] passing handle default/current region (for allocation)
     - [x] safety check: region of assigned call arguments must match regions of parameter types - remap regions

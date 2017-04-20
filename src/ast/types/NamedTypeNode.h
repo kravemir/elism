@@ -10,7 +10,7 @@
 
 class NamedTypeNode: public TypeNode {
 public:
-    NamedTypeNode(const std::string &name);
+    NamedTypeNode(const std::string &name,std::vector<std::string> &&regions);
 
     std::string toString() override;
 

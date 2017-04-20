@@ -86,7 +86,7 @@ class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_de
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),{},std::move(*ARGS),std::move(*SB)));
+  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void",{}),{},std::move(*ARGS),std::move(*SB)));
 }
 class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
   CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,{},std::move(*ARGS),std::move(*SB)));
@@ -98,7 +98,7 @@ function(F) ::= FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) BEAK type_d
 }
 
 function(F) ::= FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) statement_block(SB). {
-    F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void"),moveDelete(RD),moveDelete(ARGS),moveDelete(SB));
+    F = new FunctionNode(tokenToString(NAME),new NamedTypeNode("void",{}),moveDelete(RD),moveDelete(ARGS),moveDelete(SB));
 }
 
 %type fn_arg_def { std::vector<std::pair<std::string,TypeNode*>>* }
@@ -110,19 +110,14 @@ fn_arg_def(FAD) ::= LPAREN RPAREN. {
 }
 
 %type type_def { TypeNode* }
-%type base_type_def { TypeNode* }
 %destructor type_def { if($$) delete $$; }
 
-type_def(TD) ::= base_type_def(TD) region_decl(RD). {
-    TD->setRegions(moveDelete(RD));
+type_def(TD) ::= type_def(TD_) LBRACKET RBRACKET region_decl(RD). {
+    TD = new ArrayTypeNode(TD_,moveDelete(RD));
 }
 
-base_type_def(TD) ::= base_type_def(TD_) LBRACKET RBRACKET. {
-    TD = new ArrayTypeNode(TD_);
-}
-
-base_type_def(TD) ::= IDENTIFIER(id). {
-    TD = new NamedTypeNode(tokenToString(id));
+type_def(TD) ::= IDENTIFIER(id) region_decl(RD). {
+    TD = new NamedTypeNode(tokenToString(id),moveDelete(RD));
 }
 
 %type region_decl { std::vector<std::string>* }

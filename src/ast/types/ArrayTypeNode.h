@@ -11,7 +11,7 @@
 
 class ArrayTypeNode: public TypeNode {
 public:
-    ArrayTypeNode(TypeNode *baseType);
+    ArrayTypeNode(TypeNode *baseType, std::vector<std::string> &&regions);
 
     virtual ~ArrayTypeNode();
 

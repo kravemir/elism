@@ -9,7 +9,9 @@
 #include <codegen/VoidType.h>
 #include "NamedTypeNode.h"
 
-NamedTypeNode::NamedTypeNode(const std::string &name) : name(name) {}
+NamedTypeNode::NamedTypeNode(const std::string &name,std::vector<std::string> &&regions) : name(name) {
+    this->regions = regions;
+}
 
 std::string NamedTypeNode::toString() {
     return name;

@@ -86,8 +86,26 @@ fn test_class_foos() {
     }
 }
 
+fn class_array_foo @FOO_A, @FOO_B (A @FOO_A [] @FOO_B array) -> i32 {
+    return array.length * 10 + array[0].length;
+}
+
+fn test_class_array() {
+    var a_instance = A();
+    a_instance.length = 2;
+
+    on TMP = NewRegion() {
+        var array = [a_instance; 4];
+
+        // implicit current region, no inference, yet!
+        let result = class_array_foo @fn_default, @TMP (array);
+        printf("class-array => result: %d\n", result);
+    }
+}
+
 fn main() -> i32 {
     test_array_foos();
     test_class_foos();
+    test_class_array();
     return 0;
 }
