@@ -6,7 +6,7 @@ class rangeIterator {
         return i < end;
     }
 
-    fn next() -> i32 {
+    fn next() -> i64 {
         var ii = i;
         i = i+1;
         return ii;
