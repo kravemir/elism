@@ -32,8 +32,23 @@ fn main () -> i32 {
         }
 
         on TMP = NewRegion() {
-            let result = solveKnapsack @TMP, @fn_default ( weights, values, maxWeight );
-            printf("Result %d: %d\n", maxWeight, result[maxWeight]);
+            let mw = maxWeight - (test-1-(test-1)/5*5)*800;
+            let result = solveKnapsack @TMP, @fn_default ( weights, values, mw );
+            printf("Result %d: %d\n", mw, result[mw]);
+        }
+
+    }
+
+    for(test: range(1,11)) {
+        for(i: range(0,NUM_ITEMS)) {
+            weights[i] = 13*i*test - (i*test*13/1231)*1231;
+            values[i] = 17*i*test - (i*test*17/373)*373;
+        }
+
+        on TMP = NewRegion() {
+            let mw = 200;
+            let result = solveKnapsack @TMP, @fn_default ( weights, values, mw );
+            printf("Result %d: %d\n", mw, result[mw]);
         }
 
     }
