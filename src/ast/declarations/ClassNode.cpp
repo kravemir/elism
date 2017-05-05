@@ -123,18 +123,74 @@ ClassNode::~ClassNode() {
 }
 
 struct ClassFunctionType: CodegenType {
-    ClassFunctionType(Type * storeType, CodegenType *const callReturnType)
-            : CodegenType(storeType, callReturnType)
+    ClassFunctionType(Type * storeType, CodegenType *const callReturnType, std::string instanceRegion, const std::vector<std::string> &regions, const std::vector<CodegenType*> &argTypes)
+            : CodegenType(storeType, callReturnType), instanceRegion(instanceRegion), regions(regions), argTypes(argTypes)
     {}
 
     CodegenValue * doCall(CodegenContext &ctx, CodegenValue *value, const std::vector<std::string> &regions,
                           const std::vector<CodegenValue *> &args, const Twine &Name) override {
-        std::vector<llvm::Value*> values = {ctx.region};
+        std::vector<llvm::Value*> values;
+        // add default handle
+        if(true) {
+            assert(regions.size() > 0);
+            llvm::Value *handle = ctx.getRegionHandle(regions[0]);
+            if(handle == nullptr) {
+                fprintf(stderr, "Don't have handle for: %s\n",regions[0].c_str());
+                exit(1);
+            }
+            values.push_back(handle);
+        }
+        // add this ptr
         values.push_back(ctx.builder.CreateExtractValue(value->value,{0}));
+        // add arguments
         for(CodegenValue *v : args)
             values.push_back(v->value);
-        // TODO: check
-        return new CodegenValue(callReturnType,ctx.builder.CreateCall(ctx.builder.CreateExtractValue(value->value,{1}),values,Name));
+        CodegenType *retType =callReturnType;
+
+        if(regions.size() != this->regions.size()) {
+            fprintf(stderr, "Call regions count %lu differs from function declaration regions count %lu\n", regions.size(), this->regions.size());
+            value->value->getType()->dump();
+            exit(121);
+        }
+
+        std::map<std::string,std::string> regionsRemap;
+        for(int i = 0; i < regions.size() && i < this->regions.size(); i++) {
+            regionsRemap[regions[i]] = this->regions[i];
+        }
+
+        // TODO: varargs for printf
+        for(int i = 0; i < args.size() && i < argTypes.size(); i++) {
+            // TODO: region map
+            if(!args[i]->type->equals(this->argTypes[i],regionsRemap)) {
+                fprintf(stderr, "Argument type ``%s'' differs to parameter type ``%s'', with region mapping:\n", args[i]->type->toString().c_str(), this->argTypes[i]->toString().c_str());
+                for(auto it : regionsRemap) {
+                    fprintf(stderr, "\t%s -> %s\n", it.first.c_str(), it.second.c_str());
+                }
+                exit(121);
+            }
+        }
+
+        // todo
+        std::map<std::string,std::string> regionsRemapInvert;
+        for(auto it : regionsRemap) {
+            regionsRemapInvert[it.second] = it.first;
+        }
+
+        retType = retType->withRemapRegions(ctx,regionsRemapInvert);
+
+        {
+            auto it = regionsRemap.find(instanceRegion);
+            if(it == regionsRemap.end() || it->second != "this") {
+                fprintf(stderr, "Bad instance region for call, should be %s, not %s\n", instanceRegion.c_str(), it == regionsRemap.end() ? "<none>" : it->second.c_str());
+                for(auto it : regionsRemap) {
+                    fprintf(stderr, "\t%s -> %s\n", it.first.c_str(), it.second.c_str());
+                }
+                exit(121);
+
+            }
+        }
+
+        return new CodegenValue(retType,ctx.builder.CreateCall(ctx.builder.CreateExtractValue(value->value,{1}),values,Name));
     }
 
     bool equals(CodegenType *pType, const std::map<std::string,std::string> &regionsRemap) override {
@@ -149,6 +205,10 @@ struct ClassFunctionType: CodegenType {
         assert(0);
         return nullptr;
     }
+
+    std::string instanceRegion; // TODO: shouldn't be part of type bad value
+    std::vector<std::string> regions;
+    std::vector<CodegenType*> argTypes;
 };
 
 CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std::string name) {
@@ -181,8 +241,11 @@ CodegenValue *ClassType::getChild(CodegenContext &ctx, CodegenValue *value, std:
                                 PointerType::get(it->second->type->storeType, 0)
                         }
                 );
-
-                ClassFunctionType *type = new ClassFunctionType(lType, it->second->type->callReturnType);
+                ::FunctionType* ftype = (::FunctionType *) it->second->type;
+                assert(ftype->regions.size() > 0);
+                ClassType *clsType = dynamic_cast<ClassType*>(value->type);
+                assert(clsType);
+                ClassFunctionType *type = new ClassFunctionType(lType, ftype->callReturnType, clsType->region, ftype->regions, ftype->argTypes);
                 Value *val = ConstantStruct::get(lType, {
                         Constant::getNullValue(storeType),
                         Constant::getNullValue(PointerType::get(it->second->type->storeType, 0)),

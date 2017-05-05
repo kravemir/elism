@@ -111,8 +111,12 @@ void FunctionNode::codegenAsClassStatement(ClassTypeContext &context) {
 }
 
 CodegenValue* FunctionNode::codegenFunction(CodegenContext &context, ClassType *classType) {
-    if(regions.size() == 0)
-        regions.push_back("fn_default");
+    if(regions.size() == 0) {
+        if(classType == nullptr)
+            regions.push_back("fn_default");
+        else
+            regions.push_back("this");
+    }
 
     FunctionContext functionContext(context);
     functionContext.defaultRegion = regions[0];

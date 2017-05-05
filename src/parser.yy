@@ -85,11 +85,11 @@ class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_de
 class_statements(CS) ::= class_statements(CS) VAR IDENTIFIER(NAME) COLON type_def(TYPE) ASSIGN expr(VALUE) SEMICOLON. {
   CS->push_back(new VarStatementNode(tokenToString(NAME),TYPE,VALUE));
 }
-class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) statement_block(SB). {
-  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void",{}),{},std::move(*ARGS),std::move(*SB)));
+class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) statement_block(SB). {
+  CS->push_back(new FunctionNode(tokenToString(NAME),new NamedTypeNode("void",{}),moveDelete(RD),std::move(*ARGS),std::move(*SB)));
 }
-class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
-  CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,{},std::move(*ARGS),std::move(*SB)));
+class_statements(CS) ::= class_statements(CS) FN IDENTIFIER(NAME) region_decl(RD) fn_arg_def(ARGS) BEAK type_def(RETURN_TYPE) statement_block(SB). {
+  CS->push_back(new FunctionNode(tokenToString(NAME),RETURN_TYPE,moveDelete(RD),std::move(*ARGS),std::move(*SB)));
 }
 
 %type function { FunctionNode* }

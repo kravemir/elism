@@ -28,8 +28,12 @@ CodegenValue *FunctionType::doCall(CodegenContext &ctx, CodegenValue *value, con
         values.push_back(v->value);
     CodegenType *retType =callReturnType;
 
+    if(regions.size() != this->regions.size()) {
+        fprintf(stderr, "Call regions count %lu differs from function declaration regions count %lu\n", regions.size(), this->regions.size());
+        value->value->dump();
+        exit(121);
+    }
 
-    // TODO: check lengths
     std::map<std::string,std::string> regionsRemap;
     for(int i = 0; i < regions.size() && i < this->regions.size(); i++) {
         regionsRemap[regions[i]] = this->regions[i];
