@@ -17,12 +17,8 @@ addons:
       - cloc
 
 install:
-  - mkdir -p .local/bin .local/src
-  - wget -O .local/bin/lempar.c http://www.sqlite.org/src/raw/tool/lempar.c?name=db1bdb4821f2d8fbd76e577cf3ab18642c8d08d1
-  - wget -O .local/src/lemon.c http://www.sqlite.org/src/raw/tool/lemon.c?name=6b0cdffb377e79c6295c40300677688f3d35c21c0154da635642ef82dc3a5836
-  - gcc .local/src/lemon.c -o .local/bin/lemon
-  - chmod +x .local/bin/lemon
-  - export PATH="$(pwd)/.local/bin:$PATH"
+  - ./scripts/install_local_lemon.sh
+  - export PATH="${HOME}/.local/bin:$PATH"
 
 before_script:
   - mkdir build
