@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-pushd `dirname $0` > /dev/null
-cd ../..
+cd "$(dirname $0)/../../" > /dev/null
 ROOT_PATH=`pwd -P`
-popd > /dev/null
+cd - > /dev/null
 
 sh -c "cd ${ROOT_PATH}/examples; make programs"
 

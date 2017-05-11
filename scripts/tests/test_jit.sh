@@ -3,10 +3,9 @@ set -e
 
 : ${COMPILER:=./build/elism}
 
-pushd `dirname $0` > /dev/null
-cd ../../examples
+cd "$(dirname $0)/../../examples" > /dev/null
 EXAMPLES_PATH=`pwd -P`
-popd > /dev/null
+cd - > /dev/null
 
 find ${EXAMPLES_PATH} -name "*.expect.out" | sort | while read RESULT_FILE;
 do
