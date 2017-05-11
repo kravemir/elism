@@ -15,6 +15,7 @@ addons:
       - re2c
       - lemon
       - cloc
+      - valgrind
 
 install:
   - bash scripts/install_local_lemon.sh
@@ -22,7 +23,7 @@ install:
 
 script:
   - sh -c "mkdir -p build; cd build; cmake ..; make -j3"
-  - bash scripts/tests/test_jit.sh
-  - bash scripts/tests/test_errors.sh
+  - bash scripts/tests/test_fine_errors.sh
+  - bash scripts/tests/test_valgrind.sh
 
 after_success: bash scripts/print_stats.sh

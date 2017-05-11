@@ -1,9 +1,16 @@
 #!/bin/bash
 set -e
 
-find examples -name "*.expect.out" | sort | while read RESULT_FILE;
+: ${COMPILER:=./build/elism}
+
+pushd `dirname $0` > /dev/null
+cd ../../examples
+EXAMPLES_PATH=`pwd -P`
+popd > /dev/null
+
+find ${EXAMPLES_PATH} -name "*.expect.out" | sort | while read RESULT_FILE;
 do
     SRC_FILE=${RESULT_FILE%.expect.out}
-    echo "Testing lexer: ${SRC_FILE} against ${RESULT_FILE}"
-    ./build/bp_jit "${SRC_FILE}" | diff - "${RESULT_FILE}"
+    echo "Testing JIT execution: ${SRC_FILE} against ${RESULT_FILE}"
+    ${COMPILER} "${SRC_FILE}" | diff - "${RESULT_FILE}"
 done;
