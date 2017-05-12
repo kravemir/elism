@@ -1,5 +1,16 @@
+html, body {
+  padding: 0; margin: 0;
+  height: 100%;
+  position: relative;
+}
+
+.wrapper {
+  margin-left: 0;
+  margin-right: 0;
+}
 
 table.page-sidebar-layout {
+  min-height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -22,5 +33,47 @@ table.page-sidebar-layout {
 }
 
 td.page-sidebar {
-  background: #ececec; // TODO: hardcoded color
+  background: #f0f0f0; // TODO: hardcoded color
+  border-right: 1px solid #9a9a9a; // TODO: hardcoded color
+  width: 277px;
+
+  ul {
+    background: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    a, a:visited {
+      display: block;
+      border-color: #f0f0f0; // TODO: hardcoded color
+      border-width: 1px 0;
+      border-style: solid;
+      padding: 0.3em 1em 0.2em;
+      color: #444; // TODO: hardcoded color
+    }
+  }
+
+  li.root {
+    a {
+      margin: 2em 0 1em;
+      font-size: 1.7em;
+    }
+  }
+
+  li li a {
+    padding-left: 1em * 2;
+  }
+
+  li li li a {
+    padding-left: 1em * 2;
+  }
+
+  li.active {
+    > a, > a:visited {
+      border-color: #dadada; // TODO: hardcoded color
+      background: #e7e7e7; // TODO: hardcoded color
+      color: #236;  // TODO: hardcoded color
+    }
+  }
 }

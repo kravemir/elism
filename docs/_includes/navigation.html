@@ -2,7 +2,7 @@
 {% capture html %}
 <ul>
     {% if include.context == "/" %}
-    <li class="{% if page.url == "/" %}active{% endif %}">
+    <li class="root {% if page.url == "/" %}active{% endif %}">
     <a href="{{ site.baseurl }}/">{{ site.title }}</a>
     </li>
     {% endif %}
@@ -11,12 +11,14 @@
     {% for entry in entries %}
 
     {% capture slug    %}{{ entry.url | split: "/"   | last                       }}{% endcapture %}
-    {% capture current %}{{ entry.url | remove: slug | remove: "//" | append: "/" }}{% endcapture %}
+    {% capture current %}{{ entry.url | remove: slug | replace: "//", "/" | append: "/" | replace: "//", "/" }}{% endcapture %}
 
-    {% if current == include.context %}
-    <li class="{% if page.url contains entry.url %}active{% endif %}">
+    {% if current == include.context and entry.url != include.context and entry.title %}
+    <li class="{% if page.url == entry.url %}active{% endif %}">
         <a href="{{ site.baseurl }}{{ entry.url }}">{{ entry.title }}</a>
-        {% include navigation.html context=entry.url %}
+        {% if page.url contains entry.url %}
+            {% include navigation.html context=entry.url %}
+        {% endif %}
     </li>
     {% endif %}
 
